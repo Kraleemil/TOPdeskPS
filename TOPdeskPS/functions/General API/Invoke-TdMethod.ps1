@@ -24,6 +24,9 @@
     .PARAMETER Accept
         Value for the Accept header. Some TOPdesk endpoints need a versioned media type, for example application/x.topdesk-collection-person-v2+json. When not specified no Accept header is sent.
 
+    .PARAMETER OutFile
+        Saves the response body to this file instead of returning it. Used for downloading attachments, images and avatars.
+
     .PARAMETER File
     path to the file that you want to upload. If you specify a body then we will construct a multipart/form request.
     In Windows PowerShell this functionality isn't built in.
@@ -58,6 +61,9 @@
 
         [string]
         $Accept,
+
+        [string]
+        $OutFile,
 
         [Parameter(ParameterSetName = 'File')]
         [Alias('InFile')]
@@ -111,6 +117,9 @@
                 }
                 if ($ContentType) {
                     $params.contenttype = $contenttype
+                }
+                if ($OutFile) {
+                    $params.OutFile = $OutFile
                 }
                 Write-PSFMessage -Level InternalComment -Message "Params to be bassed to IRM: $($params.Keys -join ",")"
                 Invoke-RestMethod @Params
