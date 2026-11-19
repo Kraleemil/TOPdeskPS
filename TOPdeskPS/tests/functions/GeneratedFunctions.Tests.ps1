@@ -1,11 +1,13 @@
-﻿Describe "Generated functions send the expected requests" {
+﻿. "$PSScriptRoot\TestHelpers.ps1"
+
+Describe "Generated functions send the expected requests" {
     InModuleScope TOPdeskPS {
         $script:__LoginToken = 'Basic dGVzdDp0ZXN0'
         Set-PSFConfig -FullName TOPdeskPS.Url -Value 'https://td.example'
 
-        Mock Invoke-RestMethod {
-            $script:call = [pscustomobject]@{ Uri = ([uri]$Uri).AbsoluteUri; Method = "$Method"; Body = $Body; ContentType = $ContentType; Headers = $Headers; OutFile = $OutFile; Form = $Form }
-            [pscustomobject]@{ results = @() }
+        Mock Invoke-WebRequest {
+            $script:call = [pscustomobject]@{ Uri = ([uri]$Uri).AbsoluteUri; Method = "$Method"; Body = (ConvertFrom-TdRequestBody -Body $Body); ContentType = $ContentType; Headers = $Headers }
+            New-TdFakeResponse ([pscustomobject]@{ results = @() })
         }
 
         It "lists with the paging style of the endpoint" {
@@ -40,7 +42,7 @@
         It "builds nested bodies and sends the vendor content type" {
             New-TdKnowledgeBaseItem -TranslationLanguage 'en' -TranslationContentTitle 'Printer' -ParentId 'f1' -Confirm:$false
             $script:call.Method | Should Be 'Post'
-            $script:call.ContentType | Should Be 'application/x.topdesk-kb-create-ki-v1+json'
+            $script:call.ContentType | Should Be 'application/x.topdesk-kb-create-ki-v1+json; charset=utf-8'
             $body = $script:call.Body | ConvertFrom-Json
             $body.translation.language | Should Be 'en'
             $body.translation.content.title | Should Be 'Printer'
@@ -62,6 +64,7 @@
         }
 
         It "saves downloads to -OutFile" {
+            Mock Invoke-RestMethod { $script:call = [pscustomobject]@{ Uri = ([uri]$Uri).AbsoluteUri; OutFile = $OutFile } }
             Save-TdIncidentAttachment -Id 'i1' -AttachmentId 'a1' -OutFile 'TestDrive:\file.bin'
             $script:call.Uri | Should Be 'https://td.example/tas/api/incidents/id/i1/attachments/a1/download'
             $script:call.OutFile | Should Be 'TestDrive:\file.bin'
@@ -73,11 +76,10 @@
             Send-TdIncidentAttachment -Id 'i1' -File $file -Description 'log' -InvisibleForCaller -Confirm:$false
             $script:call.Method | Should Be 'Post'
             $script:call.Uri | Should Be 'https://td.example/tas/api/incidents/id/i1/attachments'
-            if ($PSVersionTable.PSVersion.Major -ge 6) {
-                $script:call.Form.description | Should Be 'log'
-                $script:call.Form.invisibleForCaller | Should Be 'true'
-                $script:call.Form.file.Name | Should Be 'upload.txt'
-            }
+            $script:call.ContentType | Should BeLike 'multipart/form-data; boundary=*'
+            $script:call.Body | Should Match 'name="description"\r\nContent-Type: text/plain; charset=utf-8\r\n\r\nlog\r\n'
+            $script:call.Body | Should Match 'name="invisibleForCaller"\r\nContent-Type: text/plain; charset=utf-8\r\n\r\ntrue\r\n'
+            $script:call.Body | Should Match 'name="file"; filename="upload.txt"'
         }
 
         It "sends JSON patch documents" {

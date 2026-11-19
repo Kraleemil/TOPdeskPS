@@ -33,6 +33,10 @@ Connects to your TOPdesk instance and registers the url. The next time you run C
 ```
 Requests a login token with your normal TOPdesk password. TOPdesk has deprecated logging in as an operator this way in favour of application passwords, so the command writes a warning. It keeps working for existing scripts.
 
+### Danish and other languages
+
+All text is sent to and read from TOPdesk as UTF-8, so names like "Søren Ærø" work in parameters, filters, responses, file names and passwords. If æ, ø and å look wrong in a Windows PowerShell console, that is the console's display encoding; run `[Console]::OutputEncoding = [System.Text.Encoding]::UTF8` to fix the display.
+
 ## Get Incidents
 
 Return incidents

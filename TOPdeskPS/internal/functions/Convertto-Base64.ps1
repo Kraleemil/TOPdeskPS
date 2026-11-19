@@ -25,7 +25,7 @@ function Convertto-Base64 {
 
 
     process {
-        $bytes = [System.Text.Encoding]::ASCII.GetBytes($InputObject)
+        $bytes = [System.Text.Encoding]::UTF8.GetBytes($InputObject)
         [System.Convert]::ToBase64String($bytes)
     }
 }

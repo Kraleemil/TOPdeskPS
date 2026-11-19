@@ -1,4 +1,6 @@
-﻿Describe "List functions send the expected requests" {
+﻿. "$PSScriptRoot\TestHelpers.ps1"
+
+Describe "List functions send the expected requests" {
     InModuleScope TOPdeskPS {
         $script:__LoginToken = 'Basic dGVzdDp0ZXN0'
         Set-PSFConfig -FullName TOPdeskPS.Url -Value 'https://td.example'
@@ -16,7 +18,7 @@
         Context "Invoke-TdPagedRequest" {
             It "requests pages until the result size is reached" {
                 $script:calls = @()
-                Mock Invoke-RestMethod { $script:calls += "$Uri"; 1..2 | ForEach-Object { [pscustomobject]@{ id = $_ } } }
+                Mock Invoke-WebRequest { $script:calls += "$Uri"; New-TdFakeResponse (1..2 | ForEach-Object { [pscustomobject]@{ id = $_ } }) }
                 $result = Invoke-TdPagedRequest -Uri 'https://td.example/tas/api/x' -StartParameter 'pageStart' -SizeParameter 'pageSize' -MaxPageSize 2 -ResultSize 5
                 $result.Count | Should Be 5
                 $script:calls.Count | Should Be 3
@@ -25,36 +27,36 @@
             }
             It "stops on a short page" {
                 $script:calls = @()
-                Mock Invoke-RestMethod { $script:calls += "$Uri"; [pscustomobject]@{ id = 1 } }
+                Mock Invoke-WebRequest { $script:calls += "$Uri"; New-TdFakeResponse ([pscustomobject]@{ id = 1 }) }
                 $result = Invoke-TdPagedRequest -Uri 'https://td.example/tas/api/x' -MaxPageSize 10 -ResultSize 100
                 @($result).Count | Should Be 1
                 $script:calls.Count | Should Be 1
             }
             It "stops when the API returns no content" {
-                Mock Invoke-RestMethod { '' }
+                Mock Invoke-WebRequest { New-TdFakeResponse -Empty }
                 @(Invoke-TdPagedRequest -Uri 'https://td.example/tas/api/x' -ResultSize 100).Count | Should Be 0
             }
             It "unwraps envelopes" {
-                Mock Invoke-RestMethod { [pscustomobject]@{ results = @([pscustomobject]@{ id = 1 }, [pscustomobject]@{ id = 2 }); next = $null } }
+                Mock Invoke-WebRequest { New-TdFakeResponse ([pscustomobject]@{ results = @([pscustomobject]@{ id = 1 }, [pscustomobject]@{ id = 2 }); next = $null }) }
                 $result = Invoke-TdPagedRequest -Uri 'https://td.example/tas/api/x' -MaxPageSize 10 -ResultSize 10
                 ($result.id -join ',') | Should Be '1,2'
             }
             It "sends a single request when there is no start parameter" {
                 $script:calls = @()
-                Mock Invoke-RestMethod { $script:calls += "$Uri"; 1..3 | ForEach-Object { [pscustomobject]@{ id = $_ } } }
+                Mock Invoke-WebRequest { $script:calls += "$Uri"; New-TdFakeResponse (1..3 | ForEach-Object { [pscustomobject]@{ id = $_ } }) }
                 $null = Invoke-TdPagedRequest -Uri 'https://td.example/tas/api/x' -StartParameter '' -SizeParameter '$top' -MaxPageSize 3 -ResultSize 100
                 $script:calls.Count | Should Be 1
                 Get-QueryValue $script:calls[0] '$top' | Should Be '3'
             }
             It "passes the Accept header" {
-                Mock Invoke-RestMethod { $script:headers = $Headers; @() }
+                Mock Invoke-WebRequest { $script:headers = $Headers; New-TdFakeResponse (@()) }
                 $null = Invoke-TdPagedRequest -Uri 'https://td.example/tas/api/x' -Accept 'application/x.test+json'
                 $script:headers['Accept'] | Should Be 'application/x.test+json'
             }
         }
 
         Context "Get-TdIncident" {
-            Mock Invoke-RestMethod { $script:lastUri = "$Uri"; @() }
+            Mock Invoke-WebRequest { $script:lastUri = "$Uri"; New-TdFakeResponse (@()) }
 
             It "uses FIQL, pageStart/pageSize and the default sort" {
                 Get-TdIncident -Completed:$false -OperatorGroupId 'g1', 'g2' -ResultSize 50
@@ -105,7 +107,7 @@
         }
 
         Context "Get-TdPerson" {
-            Mock Invoke-RestMethod { $script:lastUri = "$Uri"; @() }
+            Mock Invoke-WebRequest { $script:lastUri = "$Uri"; New-TdFakeResponse (@()) }
 
             It "uses starts-with FIQL and hides archived persons" {
                 Get-TdPerson -FirstName 'Bo' -LastName 'van Dam'
@@ -124,7 +126,7 @@
         }
 
         Context "Change functions" {
-            Mock Invoke-RestMethod { $script:lastUri = "$Uri"; [pscustomobject]@{ results = @() } }
+            Mock Invoke-WebRequest { $script:lastUri = "$Uri"; New-TdFakeResponse ([pscustomobject]@{ results = @() }) }
 
             It "Get-TdChange translates filters to FIQL" {
                 Get-TdChange -Open -ChangeType simple -Phase rfc, progress
@@ -144,7 +146,7 @@
         }
 
         Context "Other list functions" {
-            Mock Invoke-RestMethod { $script:lastUri = "$Uri"; $script:headers = $Headers; @() }
+            Mock Invoke-WebRequest { $script:lastUri = "$Uri"; $script:headers = $Headers; New-TdFakeResponse (@()) }
 
             It "Get-TdOperator uses FIQL" {
                 Get-TdOperator -TOPdeskLoginName 'jdoe' -ResultSize 300
@@ -168,7 +170,7 @@
                 $script:lastUri | Should Be 'https://td.example/tas/api/incidents/statuses'
             }
             It "Get-TdAssetField pins the v1 media type by default" {
-                Mock Invoke-RestMethod { $script:headers = $Headers; [pscustomobject]@{ dataSet = @() } }
+                Mock Invoke-WebRequest { $script:headers = $Headers; New-TdFakeResponse ([pscustomobject]@{ dataSet = @() }) }
                 Get-TdAssetField
                 $script:headers['Accept'] | Should Be 'application/x.topdesk-am-fields-v1+json'
             }

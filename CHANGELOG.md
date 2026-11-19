@@ -24,6 +24,11 @@ Compared with the official TOPdesk API specifications on developers.topdesk.com 
 * build/New-TdCommandDoc.ps1 regenerates the command reference in docs/commands.
 
 ### Fixed
+* Danish and other non-ASCII text (æ, ø, å, ü, é, …) now works on every PowerShell version:
+  * Request bodies are sent as UTF-8 with charset=utf-8 (Windows PowerShell sent ISO-8859-1).
+  * Responses are decoded with the charset TOPdesk sends, or UTF-8 when it sends none (Windows PowerShell used ISO-8859-1).
+  * File uploads send UTF-8 field values and file names and the file content unchanged; one implementation for Windows PowerShell 5.1 and PowerShell 7.
+  * User names and passwords are encoded as UTF-8 in the Basic authorization header (they were ASCII, so æøå became "?").
 * Get-TdIncident ignored -ExternalLinkId.
 * Get-TdOperator never returned more than one page of results.
 * Get-TdChangeActivity ignored -Archived.
