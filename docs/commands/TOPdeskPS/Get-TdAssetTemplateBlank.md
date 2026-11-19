@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version:
+online version: https://andrewpla.github.io/TOPdeskPS/commands/Get-TdAssetTemplateBlank
 schema: 2.0.0
 ---
 
@@ -12,18 +12,19 @@ Returns blank asset cards
 
 ## SYNTAX
 
+### Name (Default)
 ```
-Get-TdAssetTemplateBlank [-TemplateName] <String> [<CommonParameters>]
+Get-TdAssetTemplateBlank [-TemplateName] <string> [<CommonParameters>]
+```
+
+### Id
+```
+Get-TdAssetTemplateBlank -TemplateId <string> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-This API returns a blank asset card based on a specific template.
-You can add the id or name of the specific template as a parameter to the endpoint (templateid / templateName).
-The result will show all the fields on the card, and their properties.
-You can use this endpoint to see the mandatory fields of the asset, and with that, create new assets of that type. 
-.PARAMETER NameFragment
-To filter assets by their name-fragment use this parameter.
-It's case-insensitive.
+Returns a blank asset card for a template (GET /tas/api/assetmgmt/assets/blank), by template name or id. The result shows all the fields on the card and their properties.
+Use it to see the mandatory fields of the asset, and with that, create new assets of that type.
 
 ## EXAMPLES
 
@@ -34,20 +35,42 @@ Get-TdAssetTemplateBlank -TemplateName 'Network Device'
 
 Returns all fields on the card for the template specified.
 
+### EXAMPLE 2
+```
+Get-TdAssetTemplate | Where-Object name -eq 'Network Device' | Get-TdAssetTemplateBlank
+```
+
+Returns the blank card of the template, using its id.
+
 ## PARAMETERS
 
 ### -TemplateName
-Name of the templateid
+Name of the template.
 
 ```yaml
 Type: String
-Parameter Sets: (All)
+Parameter Sets: Name
 Aliases:
 
 Required: True
 Position: 1
-Default value: None
+Default value:
 Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -TemplateId
+Id of the template. See Get-TdAssetTemplate.
+
+```yaml
+Type: String
+Parameter Sets: Id
+Aliases: Id
+
+Required: True
+Position: Named
+Default value:
+Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```
 

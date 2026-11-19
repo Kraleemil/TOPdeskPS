@@ -20,8 +20,7 @@
     param (
         $Name = '*',
 
-        [Parameter(Mandatory,
-            ValueFromPipelineByPropertyName,
+        [Parameter(ValueFromPipelineByPropertyName,
             ParameterSetName = 'Operator')]
         [Alias('id')]
         $Operator

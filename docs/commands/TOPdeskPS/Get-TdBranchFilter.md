@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version:
+online version: https://andrewpla.github.io/TOPdeskPS/commands/Get-TdBranchFilter
 schema: 2.0.0
 ---
 
@@ -13,7 +13,7 @@ Returns branch filters
 ## SYNTAX
 
 ```
-Get-TdBranchFilter [-Name <Object>] -Operator <Object> [<CommonParameters>]
+Get-TdBranchFilter [-Name <Object>] [-Operator <Object>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -38,8 +38,7 @@ Returns branch filters for the provided operator
 ## PARAMETERS
 
 ### -Name
-Filter on the name.
-Wildcards supported.
+Filter on the name. Wildcards supported.
 
 ```yaml
 Type: Object
@@ -58,12 +57,12 @@ Id of the operator that you want branch filters for
 
 ```yaml
 Type: Object
-Parameter Sets: (All)
+Parameter Sets: Operator
 Aliases: id
 
-Required: True
+Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```
