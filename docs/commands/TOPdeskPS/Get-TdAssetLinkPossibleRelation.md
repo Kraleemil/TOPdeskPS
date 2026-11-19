@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version:
+online version: https://andrewpla.github.io/TOPdeskPS/commands/Get-TdAssetlinkPossibleRelation
 schema: 2.0.0
 ---
 
@@ -13,7 +13,7 @@ Returns possible relations between source and target asset.
 ## SYNTAX
 
 ```
-Get-TdAssetLinkPossibleRelation [-AssetId] <String> [-TargetAssetId] <String> [<CommonParameters>]
+Get-TdAssetLinkPossibleRelation [-AssetId] <string> [-TargetAssetId] <string> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -42,7 +42,7 @@ Aliases: Id, sourceId
 
 Required: True
 Position: 1
-Default value: None
+Default value:
 Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```
@@ -57,7 +57,7 @@ Aliases: targetId
 
 Required: True
 Position: 2
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

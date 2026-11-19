@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version:
+online version: https://andrewpla.github.io/TOPdeskPS/commands/Send-TdChangeActivityFile
 schema: 2.0.0
 ---
 
@@ -13,7 +13,7 @@ Upload a file to a change activity.
 ## SYNTAX
 
 ```
-Send-TdChangeActivityFile [-ChangeId] <String> [-File] <FileInfo[]> [<CommonParameters>]
+Send-TdChangeActivityFile [-ChangeId] <string> [-File] <FileInfo[]> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -47,7 +47,7 @@ Aliases: id
 
 Required: True
 Position: 1
-Default value: None
+Default value:
 Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```
@@ -62,8 +62,8 @@ Aliases:
 
 Required: True
 Position: 2
-Default value: None
-Accept pipeline input: True (ByPropertyName, ByValue)
+Default value:
+Accept pipeline input: True (ByValue, ByPropertyName)
 Accept wildcard characters: False
 ```
 

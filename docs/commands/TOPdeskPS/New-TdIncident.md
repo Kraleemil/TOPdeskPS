@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version:
+online version: https://andrewpla.github.io/TOPdeskPS/commands/TOPdeskPS/New-TdIncident
 schema: 2.0.0
 ---
 
@@ -13,19 +13,7 @@ Creates a new incident
 ## SYNTAX
 
 ```
-New-TdIncident [[-Action] <String>] [-ActionInvisibleForCaller] [[-EntryTypeId] <String>]
- [[-CallTypeId] <String>] [[-ObjectName] <String>] [[-LocationId] <String>] [[-ExternalNumber] <String>]
- [[-Subcategory] <String>] [[-MainIncidentId] <String>] [[-BriefDescription] <String>]
- [-CallerLookupEmail] <String> [[-CallerLookupId] <String>] [[-Status] <String>] [[-Request] <String>]
- [[-CallerBranchId] <String>] [[-Category] <String>] [[-ImpactId] <String>] [[-UrgencyId] <String>]
- [[-PriorityId] <String>] [[-DurationId] <String>] [[-TargetDate] <String>] [[-SlaId] <String>] [-OnHold]
- [[-OperatorId] <String>] [[-OperatorGroupId] <String>] [[-SupplierId] <String>]
- [[-ProcessingStatusId] <String>] [-Responded] [[-ResponseDate] <String>] [-Completed]
- [[-CompletedDate] <String>] [[-Closed] <String>] [[-ClosedDate] <String>] [[-ClosureCodeId] <String>]
- [[-Costs] <String>] [[-CallerPhoneNumber] <String>] [[-CallerMobileNumber] <String>] [[-CallerEmail] <String>]
- [[-CallerDepartmentId] <String>] [[-CallerLocationId] <String>] [[-CallerBudgetHolderId] <String>]
- [[-CallerPersonExtraFieldAId] <String>] [[-CallerPersonExtraFieldBId] <String>] [-MajorCall]
- [[-MajorCallObjectId] <String>] [-PublishToSsd] [-WhatIf] [-Confirm] [<CommonParameters>]
+New-TdIncident [[-Action] <string>] [[-EntryTypeId] <string>] [[-CallTypeId] <string>] [[-ObjectName] <string>] [[-LocationId] <string>] [[-ExternalNumber] <string>] [[-Subcategory] <string>] [[-MainIncidentId] <string>] [[-BriefDescription] <string>] [[-CallerLookupEmail] <string>] [[-CallerLookupId] <string>] [[-Status] <string>] [[-Request] <string>] [[-CallerBranchId] <string>] [[-Category] <string>] [[-CategoryId] <string>] [[-ImpactId] <string>] [[-UrgencyId] <string>] [[-PriorityId] <string>] [[-DurationId] <string>] [[-TargetDate] <string>] [[-SlaId] <string>] [[-OperatorId] <string>] [[-OperatorGroupId] <string>] [[-SupplierId] <string>] [[-ProcessingStatusId] <string>] [[-ResponseDate] <string>] [[-CompletedDate] <string>] [[-Closed] <string>] [[-ClosedDate] <string>] [[-ClosureCodeId] <string>] [[-Costs] <string>] [[-CallerPhoneNumber] <string>] [[-CallerMobileNumber] <string>] [[-CallerEmail] <string>] [[-CallerDepartmentId] <string>] [[-CallerLocationId] <string>] [[-CallerBudgetHolderId] <string>] [[-CallerPersonExtraFieldAId] <string>] [[-CallerPersonExtraFieldBId] <string>] [[-MajorCallObjectId] <string>] [-ActionInvisibleForCaller] [-OnHold] [-Responded] [-Completed] [-MajorCall] [-PublishToSsd] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -53,20 +41,18 @@ Creates a new incident and and assigns it to the Techsupport operator group
 Initial action.
 The following html tags can be used to format the text:
 
-\<i\>
-\<em\>
-\<b\>
-\<strong\>
-\<u\>
-\<a\>
-\<img\> BASE64-encoding has to be used.
-Only pictures up to the size of 450x450 pixels are supported.
-Allowed picture-formats:
+<i>
+<em>
+<b>
+<strong>
+<u>
+<a>
+<img> BASE64-encoding has to be used. Only pictures up to the size of 450x450 pixels are supported. Allowed picture-formats:
 gif, png, bmp, pcx, iff, ras, pnm, psd, jpg
 Example:
-\<img src="data:image/png;base64,iVBORw0KGgoAAA..."\>
+<img src="data:image/png;base64,iVBORw0KGgoAAA...">
 
-Line breaks can be added via \<br\> tags and are automatically added after a closing \<p\> or \<div\>.
+Line breaks can be added via <br> tags and are automatically added after a closing <p> or <div>.
       Can be set by operators and persons.
 
 ```yaml
@@ -76,7 +62,7 @@ Aliases:
 
 Required: False
 Position: 1
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -109,7 +95,7 @@ Aliases:
 
 Required: False
 Position: 2
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -127,7 +113,7 @@ Aliases:
 
 Required: False
 Position: 3
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -145,7 +131,7 @@ Aliases:
 
 Required: False
 Position: 4
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -163,7 +149,7 @@ Aliases:
 
 Required: False
 Position: 5
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -180,7 +166,7 @@ Aliases:
 
 Required: False
 Position: 6
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -190,8 +176,7 @@ Subcategory by name.
 Can be set by operators.
 For partials, if not provided, will be automatically copied from the main incident.
 Can be set by persons only when the appropriate setting for the new call form is checked.
-It is an error to provide both an id and a name.
-If a subcategory is provided without a category, the corresponding category will be filled in automatically, unless there are multiple matching categories, in which case the request will fail.
+It is an error to provide both an id and a name. If a subcategory is provided without a category, the corresponding category will be filled in automatically, unless there are multiple matching categories, in which case the request will fail.
 
 ```yaml
 Type: String
@@ -200,7 +185,7 @@ Aliases:
 
 Required: False
 Position: 7
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -218,14 +203,13 @@ Aliases:
 
 Required: False
 Position: 8
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -BriefDescription
-Brief description for the incident.
-This can be set by operators.
+Brief description for the incident. This can be set by operators.
 For partials, if not provided, will be automatically copied from the main incident.
 Can be set by persons only when the appropriate setting for the new call form is checked.
 
@@ -236,14 +220,13 @@ Aliases:
 
 Required: False
 Position: 9
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -CallerLookupEmail
-This is the email of the incident's caller.
-TOPdesk will fill the caller's details into the incident automatically.
+This is the email of the incident's caller. TOPdesk will fill the caller's details into the incident automatically.
 
 Lookup value for filling in a registered caller's contact details.
 Can only be set by operators.
@@ -255,9 +238,9 @@ Type: String
 Parameter Sets: (All)
 Aliases:
 
-Required: True
+Required: False
 Position: 10
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -272,14 +255,13 @@ Aliases: CallerId
 
 Required: False
 Position: 11
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -Status
-Status of the incident.
-Available values:
+Status of the incident. Available values:
 FirstLine
 SecondLine
       Partial
@@ -291,27 +273,24 @@ Aliases:
 
 Required: False
 Position: 12
-Default value: FirstLine
+Default value: firstLine
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -Request
-The initial request for the incident.
-You will likely want to use a here-string to construct the request of the incident.
+The initial request for the incident. You will likely want to use a here-string to construct the request of the incident.
 
-Line breaks can be added via \<br\> tags and are automatically added after a closing \<p\> or
+Line breaks can be added via <br> tags and are automatically added after a closing <p> or
 The following html tags can be used to format the text:
 
-\<i\>
-\<em\>
-\<b\>
-\<strong\>
-\<u\>
-\<a\>
-\<img\> BASE64-encoding has to be used.
-Only pictures up to the size of 450x450 pixels are supported.
-Allowed picture-formats:
+<i>
+<em>
+<b>
+<strong>
+<u>
+<a>
+<img> BASE64-encoding has to be used. Only pictures up to the size of 450x450 pixels are supported. Allowed picture-formats:
 gif, png, bmp, pcx, iff, ras, pnm, psd, jpg
 
 ```yaml
@@ -321,14 +300,13 @@ Aliases:
 
 Required: False
 Position: 13
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -CallerBranchId
-The caller branch by id.
-can only be set by operators.
+The caller branch by id. can only be set by operators.
 
 ```yaml
 Type: String
@@ -337,7 +315,7 @@ Aliases:
 
 Required: False
 Position: 14
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -356,7 +334,26 @@ Aliases:
 
 Required: False
 Position: 15
-Default value: None
+Default value:
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -CategoryId
+Category by id.
+Can be set by operators.
+For partials, if not provided, will be automatically copied from the main incident.
+Can be set by persons only when the appropriate setting for the new call form is checked.
+It is an error to provide both an id and a name.
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 16
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -372,8 +369,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 16
-Default value: None
+Position: 17
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -389,8 +386,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 17
-Default value: None
+Position: 18
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -399,8 +396,7 @@ Accept wildcard characters: False
 Priority by id.
 Can only be set by operators.
 Cannot be provided for partials as its automatically copied from the main incident.
-Will be automatically filled in if you provide impact and/or urgency leading to a unique priority according to your priority matrix, and the same request doesn't provide a priority.
-For incidents with a linked SLA, if the priority provided cannot be found in the Service Level Priority List, the duration field of the incident will be emptied.
+Will be automatically filled in if you provide impact and/or urgency leading to a unique priority according to your priority matrix, and the same request doesn't provide a priority. For incidents with a linked SLA, if the priority provided cannot be found in the Service Level Priority List, the duration field of the incident will be emptied.
 
 ```yaml
 Type: String
@@ -408,8 +404,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 18
-Default value: None
+Position: 19
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -424,8 +420,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 19
-Default value: None
+Position: 20
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -434,10 +430,7 @@ Accept wildcard characters: False
 Target date.
 Can only be set by operators.
 Example: "targetDate" : "2015-11-15T14:00:00.000+0200"
-The given time offset will be used.
-Without a given offset Zulu/UTC time will be assumed.
-E.g.
-2015-10-28T10:30:00.000 is equivalent to 2015-10-28T10:30:00.000+0000
+The given time offset will be used. Without a given offset Zulu/UTC time will be assumed. E.g. 2015-10-28T10:30:00.000 is equivalent to 2015-10-28T10:30:00.000+0000
 
 ```yaml
 Type: String
@@ -445,8 +438,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 20
-Default value: None
+Position: 21
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -461,16 +454,14 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 21
-Default value: None
+Position: 22
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -OnHold
-Specify whether the incident is on hold.
-On hold date will be filled accordingly.
-can only be set by operators.
+Specify whether the incident is on hold. On hold date will be filled accordingly. can only be set by operators.
 
 ```yaml
 Type: SwitchParameter
@@ -495,8 +486,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 22
-Default value: None
+Position: 23
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -513,8 +504,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 23
-Default value: None
+Position: 24
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -529,8 +520,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 24
-Default value: None
+Position: 25
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -545,8 +536,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 25
-Default value: None
+Position: 26
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -554,8 +545,7 @@ Accept wildcard characters: False
 ### -Responded
 Whether the incident is responded.
 SLM-licence is needed.
-Can only be set by operators.
-When the setting "Status determines responded" is on, this will be filled automatically (manual setting is prohibited).
+Can only be set by operators. When the setting "Status determines responded" is on, this will be filled automatically (manual setting is prohibited).
 
 ```yaml
 Type: SwitchParameter
@@ -575,10 +565,7 @@ SLM-licence is needed.
 Can only be set by operators.
 Will automatically be set to current date if left out and "responded : true" is set.
 Example: "responseDate" : "2015-11-15T14:00:00.000+0200"
-The given time offset will be used.
-Without a given offset Zulu/UTC time will be assumed.
-E.g.
-2015-10-28T10:30:00.000 is equivalent to 2015-10-28T10:30:00.000+0000
+The given time offset will be used. Without a given offset Zulu/UTC time will be assumed. E.g. 2015-10-28T10:30:00.000 is equivalent to 2015-10-28T10:30:00.000+0000
 
 ```yaml
 Type: String
@@ -586,8 +573,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 26
-Default value: None
+Position: 27
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -618,8 +605,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 27
-Default value: None
+Position: 28
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -627,31 +614,7 @@ Accept wildcard characters: False
 ### -Closed
 Whether the incident is closed.
 Can only be set by operators.
-For partials, will be ignored.
-The value of completed will be used instead.
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 28
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -ClosedDate
-Closed date.
-Can only be set by operators.
-For partials, will be ignored.
-The value of completedDate will be used instead.
-Example: "closedDate" : "2018-11-15T14:00:00.000+0200"
-The given time offset will be used.
-Without a given offset Zulu/UTC time will be assumed.
-E.g.
-2018-10-28T10:30:00.000 is equivalent to 2018-10-28T10:30:00.000+0000
+For partials, will be ignored. The value of completed will be used instead.
 
 ```yaml
 Type: String
@@ -660,7 +623,26 @@ Aliases:
 
 Required: False
 Position: 29
-Default value: None
+Default value:
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ClosedDate
+Closed date.
+Can only be set by operators.
+For partials, will be ignored. The value of completedDate will be used instead.
+Example: "closedDate" : "2018-11-15T14:00:00.000+0200"
+The given time offset will be used. Without a given offset Zulu/UTC time will be assumed. E.g. 2018-10-28T10:30:00.000 is equivalent to 2018-10-28T10:30:00.000+0000
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 30
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -675,8 +657,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 30
-Default value: None
+Position: 31
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -691,8 +673,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 31
-Default value: None
+Position: 32
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -707,8 +689,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 32
-Default value: None
+Position: 33
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -723,8 +705,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 33
-Default value: None
+Position: 34
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -739,8 +721,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 34
-Default value: None
+Position: 35
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -755,8 +737,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 35
-Default value: None
+Position: 36
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -771,8 +753,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 36
-Default value: None
+Position: 37
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -787,8 +769,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 37
-Default value: None
+Position: 38
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -803,8 +785,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 38
-Default value: None
+Position: 39
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -819,8 +801,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 39
-Default value: None
+Position: 40
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -851,8 +833,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 40
-Default value: None
+Position: 41
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -869,36 +851,6 @@ Aliases:
 Required: False
 Position: Named
 Default value: False
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -WhatIf
-If this switch is enabled, no actions are performed but informational messages will be displayed that explain what would happen if the command were to run.
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases: wi
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Confirm
-If this switch is enabled, you will be prompted for confirmation before executing any operations that change state.
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases: cf
-
-Required: False
-Position: Named
-Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

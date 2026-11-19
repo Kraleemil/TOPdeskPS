@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version:
+online version: https://andrewpla.github.io/TOPdeskPS/commands/Set-TdBranch
 schema: 2.0.0
 ---
 
@@ -13,10 +13,7 @@ update a branch by id
 ## SYNTAX
 
 ```
-Set-TdBranch -BranchId <Object> [-Name <String>] [-Specification <String>] [-ClientReferenceNumber <String>]
- [-Phone <String>] [-fax <String>] [-Email <String>] [-Website <String>] [-BranchType <String>]
- [-HeadBranchId <Object>] [-Address <Hashtable>] [-PostalAddress <Hashtable>] [-OptionalFields1 <Hashtable>]
- [-OptionalFields2 <Hashtable>] [-WhatIf] [-Confirm] [<CommonParameters>]
+Set-TdBranch -BranchId <Object> [-Name <string>] [-Specification <string>] [-ClientReferenceNumber <string>] [-Phone <string>] [-fax <string>] [-Email <string>] [-Website <string>] [-BranchType <string>] [-HeadBranchId <Object>] [-Address <hashtable>] [-PostalAddress <hashtable>] [-OptionalFields1 <hashtable>] [-OptionalFields2 <hashtable>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -34,17 +31,16 @@ Updates the Test Branch phone number.
 ## PARAMETERS
 
 ### -BranchId
-ID of the branch.
-See Get-TdBranch
+ID of the branch. See Get-TdBranch
 
 ```yaml
 Type: Object
-Parameter Sets: (All)
+Parameter Sets: BranchId
 Aliases: Id
 
 Required: True
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```
@@ -59,7 +55,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -74,7 +70,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -89,7 +85,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -104,7 +100,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -119,7 +115,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -134,7 +130,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -149,14 +145,13 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -BranchType
-Define the type of branch.
-Optional values: 'independentBranch', 'headBranch', 'hasAHeadBranch'
+Define the type of branch. Optional values: 'independentBranch', 'headBranch', 'hasAHeadBranch'
 
 ```yaml
 Type: String
@@ -165,7 +160,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -180,7 +175,7 @@ Aliases: HeadBranch
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -195,7 +190,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -210,7 +205,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -225,7 +220,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -240,37 +235,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -WhatIf
-If this switch is enabled, no actions are performed but informational messages will be displayed that explain what would happen if the command were to run.
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases: wi
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Confirm
-If this switch is enabled, you will be prompted for confirmation before executing any operations that change state.
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases: cf
-
-Required: False
-Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version:
+online version: https://andrewpla.github.io/TOPdeskPS/commands/Get-TdChangeRequest
 schema: 2.0.0
 ---
 
@@ -31,8 +31,7 @@ returns list of change requests associated with specified change
 ## PARAMETERS
 
 ### -ChangeId
-ID of the Change.
-See Get-TdChange
+ID of the Change. See Get-TdChange
 
 ```yaml
 Type: Object
@@ -41,7 +40,7 @@ Aliases: Id
 
 Required: True
 Position: 1
-Default value: None
+Default value:
 Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```

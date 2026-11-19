@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version:
+online version: https://andrewpla.github.io/TOPdeskPS/commands/Get-TdAssetDetail
 schema: 2.0.0
 ---
 
@@ -13,7 +13,7 @@ Returns additional information about assets
 ## SYNTAX
 
 ```
-Get-TdAssetDetail [-AssetId] <String> [<CommonParameters>]
+Get-TdAssetDetail [-AssetId] <string> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -40,7 +40,7 @@ Aliases: id
 
 Required: True
 Position: 1
-Default value: None
+Default value:
 Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```
@@ -54,6 +54,5 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 ## OUTPUTS
 
 ## NOTES
-See https://developers.topdesk.com/explorer/?page=assets#/Assets/getAssets for more information.
 
 ## RELATED LINKS

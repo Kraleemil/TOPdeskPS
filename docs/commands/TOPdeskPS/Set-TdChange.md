@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version: https://developers.topdesk.com/explorer/?page=change#/Working%20as%20an%20operator/patch_operatorChanges__identifier_
+online version: https://andrewpla.github.io/TOPdeskPS/commands/Set-TdChange
 schema: 2.0.0
 ---
 
@@ -13,7 +13,7 @@ Sort of sets a change, this is poorly supported by TOPdesk :/
 ## SYNTAX
 
 ```
-Set-TdChange [-ChangeId] <String> [-BodyInput] <Object> [-WhatIf] [-Confirm] [<CommonParameters>]
+Set-TdChange [-ChangeId] <string> [-BodyInput] <Object> [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -26,8 +26,7 @@ does most of the change setting, poorly supported by TOPdesk, read the .LINK
 Set-TdChange -ChangeId 'C1807-627' -BodyInput 'body text'
 ```
 
-sets the body of specified change.
-this api is poorly supported by TOPdesk
+sets the body of specified change. this api is poorly supported by TOPdesk
 
 ## PARAMETERS
 
@@ -41,7 +40,7 @@ Aliases:
 
 Required: True
 Position: 1
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -56,37 +55,7 @@ Aliases:
 
 Required: True
 Position: 2
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -WhatIf
-If this switch is enabled, no actions are performed but informational messages will be displayed that explain what would happen if the command were to run.
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases: wi
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Confirm
-If this switch is enabled, you will be prompted for confirmation before executing any operations that change state.
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases: cf
-
-Required: False
-Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -104,4 +73,3 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 ## RELATED LINKS
 
 [https://developers.topdesk.com/explorer/?page=change#/Working%20as%20an%20operator/patch_operatorChanges__identifier_](https://developers.topdesk.com/explorer/?page=change#/Working%20as%20an%20operator/patch_operatorChanges__identifier_)
-

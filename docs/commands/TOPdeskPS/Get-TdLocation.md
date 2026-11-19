@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version:
+online version: https://andrewpla.github.io/TOPdeskPS/commands/Get-TdLocation
 schema: 2.0.0
 ---
 
@@ -13,7 +13,7 @@ returns list of locations
 ## SYNTAX
 
 ```
-Get-TdLocation [[-Name] <String>] [-Archived] [<CommonParameters>]
+Get-TdLocation [[-Name] <string>] [-Archived] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -38,8 +38,7 @@ Returns location2
 ## PARAMETERS
 
 ### -Name
-only return locations matching the pattern.
-Wildcards accepts
+only return locations matching the pattern. Wildcards accepts
 
 ```yaml
 Type: String

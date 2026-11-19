@@ -1,22 +1,19 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version:
+online version: https://andrewpla.github.io/TOPdeskPS/commands/TOPdeskPS/Invoke-TdMethod
 schema: 2.0.0
 ---
 
 # Invoke-TdMethod
 
 ## SYNOPSIS
-Wrapper for Invoke-RestMethod.
-This command is exposed in case you encounter api calls that aren't part of this module.
-All api commands call this command to perform the web request.
+Wrapper for Invoke-RestMethod. This command is exposed in case you encounter api calls that aren't part of this module. All api commands call this command to perform the web request.
 
 ## SYNTAX
 
 ```
-Invoke-TdMethod [-Uri] <Uri> [-ContentType <String>] [-Body <PSObject>] [-Method <String>] [-Token <String>]
- [-File <FileInfo>] [<CommonParameters>]
+Invoke-TdMethod [-Uri] <uri> [-ContentType <string>] [-Body <psobject>] [-Method <string>] [-Token <string>] [-Accept <string>] [-OutFile <string>] [-File <FileInfo>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -34,7 +31,7 @@ Sends a Get request to your TOPdesk instance.
 ## PARAMETERS
 
 ### -Uri
-A description of the Uri parameter.
+the uri that you are targeting
 
 ```yaml
 Type: Uri
@@ -43,13 +40,13 @@ Aliases:
 
 Required: True
 Position: 1
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -ContentType
-A description of the ContentType parameter.
+default for contenttype is application/json . You may need to use a different contenttype for uploading files.
 
 ```yaml
 Type: String
@@ -58,15 +55,13 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value: application/json
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -Body
-The body of the request to be sent to TOPdesk.
-Accepts a PSCustomObject.
-If you also specify a file we will convert the body into a multipart/form request.
+The body of the request to be sent to TOPdesk. Accepts a PSCustomObject. If you also specify a file we will convert the body into a multipart/form request.
 
 ```yaml
 Type: PSObject
@@ -75,7 +70,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -105,25 +100,54 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Accept
+Value for the Accept header. Some TOPdesk endpoints need a versioned media type, for example application/x.topdesk-collection-person-v2+json. When not specified no Accept header is sent.
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value:
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -OutFile
+Saves the response body to this file instead of returning it. Used for downloading attachments, images and avatars.
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -File
-path to the file that you want to upload.
-If you specify a body then we will construct a multipart/form request.
+path to the file that you want to upload. If you specify a body then we will construct a multipart/form request.
 In Windows PowerShell this functionality isn't built in.
 If no body is specified then we will just use the -infile parameter of Invoke-RestMethod
 
 ```yaml
 Type: FileInfo
-Parameter Sets: (All)
+Parameter Sets: File
 Aliases: InFile
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

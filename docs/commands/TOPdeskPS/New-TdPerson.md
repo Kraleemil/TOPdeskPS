@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version:
+online version: https://andrewpla.github.io/TOPdeskPS/commands/New-TdPerson
 schema: 2.0.0
 ---
 
@@ -13,19 +13,11 @@ Creates new persons
 ## SYNTAX
 
 ```
-New-TdPerson [-Surname] <String> [[-BranchId] <String>] [[-FirstName] <String>] [[-FirstInitials] <String>]
- [[-Prefixes] <String>] [[-Gender] <String>] [[-EmployeeNumber] <String>] [[-NetworkLoginName] <String>]
- [[-LocationId] <String>] [[-DepartmentId] <String>] [[-DepartmentFree] <String>] [[-TasLoginName] <String>]
- [[-Password] <SecureString>] [[-PhoneNumber] <String>] [[-MobileNumber] <String>] [[-Fax] <String>]
- [[-Email] <String>] [[-JobTitle] <String>] [-ShowBudgetholder] [-ShowDepartment] [-ShowBranch]
- [-ShowSubsidiaries] [-AuthorizeAll] [-AuthorizeDepartment] [-AuthorizeBudgetHolder] [-AuthorizeBranch]
- [-AuthorizeSubsidiaryBranches] [-IsManager] [[-ManagerId] <String>] [[-BudgetholderID] <String>] [-WhatIf]
- [-Confirm] [<CommonParameters>]
+New-TdPerson [-Surname] <string> [[-BranchId] <string>] [[-FirstName] <string>] [[-FirstInitials] <string>] [[-Prefixes] <string>] [[-Gender] <string>] [[-EmployeeNumber] <string>] [[-NetworkLoginName] <string>] [[-LocationId] <string>] [[-DepartmentId] <string>] [[-DepartmentFree] <string>] [[-TasLoginName] <string>] [[-Password] <securestring>] [[-PhoneNumber] <string>] [[-MobileNumber] <string>] [[-Fax] <string>] [[-Email] <string>] [[-JobTitle] <string>] [[-ManagerId] <string>] [[-BudgetholderID] <string>] [-ShowBudgetholder] [-ShowDepartment] [-ShowBranch] [-ShowSubsidiaries] [-AuthorizeAll] [-AuthorizeDepartment] [-AuthorizeBudgetHolder] [-AuthorizeBranch] [-AuthorizeSubsidiaryBranches] [-IsManager] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Creates new persons in TOPdesk.
-Logged in operator must have:
+Creates new persons in TOPdesk. Logged in operator must have:
 Create permissions on persons
 Login data write permissions to set login name and password
 
@@ -57,15 +49,13 @@ Aliases: LastName
 
 Required: True
 Position: 1
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -BranchId
-Id of the person's branch.
-This is mandatory.
-See examples for mobileNumber
+Id of the person's branch. This is mandatory. See examples for mobileNumber
 
 ```yaml
 Type: String
@@ -74,7 +64,7 @@ Aliases:
 
 Required: False
 Position: 2
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -89,7 +79,7 @@ Aliases:
 
 Required: False
 Position: 3
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -104,7 +94,7 @@ Aliases:
 
 Required: False
 Position: 4
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -119,14 +109,13 @@ Aliases:
 
 Required: False
 Position: 5
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -Gender
-Gender of the user.
-default value is 'UNDEFINED'
+Gender of the user. default value is 'UNDEFINED'
 
 ```yaml
 Type: String
@@ -150,7 +139,7 @@ Aliases:
 
 Required: False
 Position: 7
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -165,7 +154,7 @@ Aliases:
 
 Required: False
 Position: 8
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -180,7 +169,7 @@ Aliases:
 
 Required: False
 Position: 9
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -195,13 +184,13 @@ Aliases:
 
 Required: False
 Position: 10
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -DepartmentFree
-Department text-field (has to be used when "Modules Settings \> Supporting Files \> Department(person) \> Plain text field" is set)
+Department text-field (has to be used when “Modules Settings > Supporting Files > Department(person) > Plain text field” is set)
 
 ```yaml
 Type: String
@@ -210,13 +199,13 @@ Aliases:
 
 Required: False
 Position: 11
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -TasLoginName
-Login name, operator requires permission "Settings \> Login Settings"
+Login name, operator requires permission “Settings > Login Settings”
 
 ```yaml
 Type: String
@@ -225,14 +214,13 @@ Aliases:
 
 Required: False
 Position: 12
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -Password
-Password, operator requires permission "Settings \> Login Settings".
-Is mandatory when "Functional Settings \> Login Settings \> Self Service Portal \> Password mandatory on Person card" is set.
+Password, operator requires permission "Settings > Login Settings". Is mandatory when “Functional Settings > Login Settings > Self Service Portal > Password mandatory on Person card” is set.
 
 ```yaml
 Type: SecureString
@@ -241,7 +229,7 @@ Aliases:
 
 Required: False
 Position: 13
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -256,7 +244,7 @@ Aliases:
 
 Required: False
 Position: 14
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -271,7 +259,7 @@ Aliases:
 
 Required: False
 Position: 15
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -286,7 +274,7 @@ Aliases:
 
 Required: False
 Position: 16
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -301,7 +289,7 @@ Aliases: EmailAddress
 
 Required: False
 Position: 17
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -316,7 +304,7 @@ Aliases:
 
 Required: False
 Position: 18
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -481,7 +469,7 @@ Aliases:
 
 Required: False
 Position: 19
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -496,37 +484,7 @@ Aliases:
 
 Required: False
 Position: 20
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -WhatIf
-If this switch is enabled, no actions are performed but informational messages will be displayed that explain what would happen if the command were to run.
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases: wi
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Confirm
-If this switch is enabled, you will be prompted for confirmation before executing any operations that change state.
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases: cf
-
-Required: False
-Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

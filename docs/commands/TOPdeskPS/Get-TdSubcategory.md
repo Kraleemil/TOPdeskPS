@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version:
+online version: https://andrewpla.github.io/TOPdeskPS/commands/TOPdeskPS/Get-TdSubcategory
 schema: 2.0.0
 ---
 
@@ -13,7 +13,7 @@ Get subcategories from TOPdesk
 ## SYNTAX
 
 ```
-Get-TdSubcategory [[-Name] <String>] [<CommonParameters>]
+Get-TdSubcategory [[-Name] <string>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -38,9 +38,7 @@ Gets the Subcategory with the name 'Applications'
 ## PARAMETERS
 
 ### -Name
-Name of the subcategory that you want returned.
-Wildcards are supported.
-Default value is '*'
+Name of the subcategory that you want returned. Wildcards are supported. Default value is '*'
 
 ```yaml
 Type: String

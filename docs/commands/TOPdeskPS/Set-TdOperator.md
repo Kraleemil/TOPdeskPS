@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version:
+online version: https://andrewpla.github.io/TOPdeskPS/commands/Set-TdOperator
 schema: 2.0.0
 ---
 
@@ -14,16 +14,12 @@ Update operators
 
 ### Modify
 ```
-Set-TdOperator -Operator <Object> [-SurName <Object>] [-FirstName <String>] [-Gender <String>]
- [-EmployeeNumber <String>] [-Telephone <String>] [-MobileNumber <String>] [-NetworkLoginName <String>]
- [-Email <String>] [-Branch <String>] [-Location <String>] [-Department <String>] [-BudgetHolder <String>]
- [-LoginPermission] [-LoginName <String>] [-Password <SecureString>] [-TasksToAdd <String[]>]
- [-TasksToRemove <String[]>] [-WhatIf] [-Confirm] [<CommonParameters>]
+Set-TdOperator -Operator <Object> [-SurName <Object>] [-FirstName <string>] [-Gender <string>] [-EmployeeNumber <string>] [-Telephone <string>] [-MobileNumber <string>] [-NetworkLoginName <string>] [-Email <string>] [-Branch <string>] [-Location <string>] [-Department <string>] [-BudgetHolder <string>] [-LoginPermission] [-LoginName <string>] [-Password <securestring>] [-TasksToAdd <string[]>] [-TasksToRemove <string[]>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### Archive
 ```
-Set-TdOperator -Operator <Object> [-ArchiveReason <String>] [-WhatIf] [-Confirm] [<CommonParameters>]
+Set-TdOperator -Operator <Object> [-ArchiveReason <string>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### Unarchive
@@ -32,12 +28,7 @@ Set-TdOperator -Operator <Object> [-Unarchive] [-WhatIf] [-Confirm] [<CommonPara
 ```
 
 ## DESCRIPTION
-Update an operator by id.
-You can update the various properties of an operator.
-You can also archive an operator if you provide an archive.
-Same thing goes for Unarchiving a user.
-Due to api limitiations Archive/Unarchive requests may not be combined with updates to other properties of a user.
-They must be sent in seperate requests.
+Update an operator by id. You can update the various properties of an operator. You can also archive an operator if you provide an archive. Same thing goes for Unarchiving a user. Due to api limitiations Archive/Unarchive requests may not be combined with updates to other properties of a user. They must be sent in seperate requests.
 
 ## EXAMPLES
 
@@ -60,10 +51,14 @@ Update the password for the operator stored in the $operator variable
 Get-TdOperator -TOPdeskLoginName 'first.last' | Set-TdOperator -ArchiveReason (Get-TdArchiveReason 'no longer employed').id -LoginPermission:$false
 ```
 
+
+
 ### EXAMPLE 4
 ```
 
 ```
+
+
 
 ## PARAMETERS
 
@@ -77,7 +72,7 @@ Aliases: id
 
 Required: True
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```
@@ -92,7 +87,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -107,7 +102,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -122,7 +117,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -137,7 +132,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -152,7 +147,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -167,7 +162,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -182,7 +177,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -197,7 +192,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -212,7 +207,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -227,7 +222,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -242,7 +237,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -257,7 +252,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -278,7 +273,7 @@ Accept wildcard characters: False
 ```
 
 ### -LoginName
-Login name, operator requires permission "Settings \> Login Settings"
+Login name, operator requires permission “Settings > Login Settings”
 Is mandatory when loginPermission is set to true.
 
 ```yaml
@@ -288,14 +283,14 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -Password
-Password, operator requires permission "Settings \> Login Settings".
-Is mandatory when "Functional Settings \> Login Settings \> Operator's Section \> Password mandatory on Operator card" is set.
+Password, operator requires permission "Settings > Login Settings".
+Is mandatory when “Functional Settings > Login Settings > Operator’s Section > Password mandatory on Operator card” is set.
 
 ```yaml
 Type: SecureString
@@ -304,7 +299,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -319,7 +314,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -334,14 +329,13 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -ArchiveReason
-Id of the archive reason that will be used to archive the operator.
-See Get-TdArchiveReason
+Id of the archive reason that will be used to archive the operator. See Get-TdArchiveReason
 
 ```yaml
 Type: String
@@ -350,7 +344,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -366,36 +360,6 @@ Aliases:
 Required: False
 Position: Named
 Default value: False
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -WhatIf
-If this switch is enabled, no actions are performed but informational messages will be displayed that explain what would happen if the command were to run.
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases: wi
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Confirm
-If this switch is enabled, you will be prompted for confirmation before executing any operations that change state.
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases: cf
-
-Required: False
-Position: Named
-Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

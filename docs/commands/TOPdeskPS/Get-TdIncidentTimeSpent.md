@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version:
+online version: https://andrewpla.github.io/TOPdeskPS/commands/Get-TdIncidentTimeSpent
 schema: 2.0.0
 ---
 
@@ -13,7 +13,7 @@ Retrieves time spent on an incident
 ## SYNTAX
 
 ```
-Get-TdIncidentTimeSpent [[-Number] <String[]>] [<CommonParameters>]
+Get-TdIncidentTimeSpent [[-Number] <string[]>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -47,7 +47,7 @@ Aliases: IncidentNumber
 
 Required: False
 Position: 1
-Default value: None
+Default value:
 Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```

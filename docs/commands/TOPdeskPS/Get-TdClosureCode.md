@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version:
+online version: https://andrewpla.github.io/TOPdeskPS/commands/Get-TdClosureCode
 schema: 2.0.0
 ---
 
@@ -13,7 +13,7 @@ Gets closure codes
 ## SYNTAX
 
 ```
-Get-TdClosureCode [[-Name] <String>] [<CommonParameters>]
+Get-TdClosureCode [[-Name] <string>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -38,9 +38,7 @@ Returns the hardware failure closure code
 ## PARAMETERS
 
 ### -Name
-Name of the closure code that you want returned.
-Wildcards are supported.
-Default value is '*'
+Name of the closure code that you want returned. Wildcards are supported. Default value is '*'
 
 ```yaml
 Type: String

@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version:
+online version: https://andrewpla.github.io/TOPdeskPS/commands/Get-TdServiceWindow
 schema: 2.0.0
 ---
 
@@ -13,7 +13,7 @@ Gets all service windows
 ## SYNTAX
 
 ```
-Get-TdServiceWindow [[-Name] <String>] [<CommonParameters>]
+Get-TdServiceWindow [[-Name] <string>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -38,9 +38,7 @@ Returns the window1 service windows
 ## PARAMETERS
 
 ### -Name
-Name of the service window that you want returned.
-Wildcards are supported.
-Default value is '*'
+Name of the service window that you want returned. Wildcards are supported. Default value is '*'
 
 ```yaml
 Type: String

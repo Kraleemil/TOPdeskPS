@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version:
+online version: https://andrewpla.github.io/TOPdeskPS/commands/Get-TdOperatorFilter
 schema: 2.0.0
 ---
 
@@ -13,7 +13,7 @@ Get list of Operator filters
 ## SYNTAX
 
 ```
-Get-TdOperatorFilter [[-Name] <String>] [-Operator <Object>] [<CommonParameters>]
+Get-TdOperatorFilter [[-Name] <string>] [-Operator <Object>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -45,8 +45,7 @@ Returns all operator filterns with a name starting with test
 ## PARAMETERS
 
 ### -Name
-Filter based on the name.
-Wildcards accepted.
+Filter based on the name. Wildcards accepted.
 
 ```yaml
 Type: String
@@ -61,17 +60,16 @@ Accept wildcard characters: False
 ```
 
 ### -Operator
-ID of the Operator.
-See Get-TdOperator
+ID of the Operator. See Get-TdOperator
 
 ```yaml
 Type: Object
-Parameter Sets: (All)
+Parameter Sets: OperatorId
 Aliases: Id
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```

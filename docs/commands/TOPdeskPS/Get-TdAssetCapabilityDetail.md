@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version:
+online version: https://andrewpla.github.io/TOPdeskPS/commands/Get-TdAssetCapabilityDetail
 schema: 2.0.0
 ---
 
@@ -13,12 +13,11 @@ Returns details about asset capabilities
 ## SYNTAX
 
 ```
-Get-TdAssetCapabilityDetail [-CapabilityId] <String> [<CommonParameters>]
+Get-TdAssetCapabilityDetail [-CapabilityId] <string> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Assets can be linked together with capabilities.
-This command returns all of them.
+Assets can be linked together with capabilities. This command returns all of them.
 
 ## EXAMPLES
 
@@ -32,8 +31,7 @@ Returns additional detail about asset capabilities
 ## PARAMETERS
 
 ### -CapabilityId
-Id of the capability.
-Use Get-TdAssetCapability
+Id of the capability. Use Get-TdAssetCapability
 
 ```yaml
 Type: String
@@ -42,7 +40,7 @@ Aliases: id
 
 Required: True
 Position: 1
-Default value: None
+Default value:
 Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```

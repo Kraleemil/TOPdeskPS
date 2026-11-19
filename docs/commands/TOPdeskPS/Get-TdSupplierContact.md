@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version:
+online version: https://andrewpla.github.io/TOPdeskPS/commands/TOPdeskPS/Get-TdSupplierContact
 schema: 2.0.0
 ---
 
@@ -13,12 +13,13 @@ Gets list of supplier  contacts
 ## SYNTAX
 
 ```
-Get-TdSupplierContact [[-SupplierId] <Object>] [[-PageSize] <Int32>] [[-Start] <Int32>] [-Archived]
- [[-Name] <String>] [<CommonParameters>]
+Get-TdSupplierContact [[-SupplierId] <Object>] [[-PageSize] <int>] [[-Start] <int>] [[-Name] <string>] [[-Query] <string>] [-Archived] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Returns list of supplier contacts
+Returns list of supplier contacts (GET /tas/api/supplierContacts).
+
+When -SupplierId or -Query is used the request is sent as a FIQL query: -SupplierId becomes supplier.id, -Name becomes dynamicName=sw= and archived contacts are left out unless -Archived is used. Otherwise the old filter parameters are sent.
 
 ## EXAMPLES
 
@@ -36,13 +37,10 @@ Get-TdSupplier -Name 'Sample Supplier' | Get-TdSupplierContact
 
 Returns list of Supplier contracts from supplier 'Sample Supplier'
 
-TODO figure out what's going on here
-
 ## PARAMETERS
 
 ### -SupplierId
-ID of the Supplier.
-See Get-TdSupplier
+ID of the Supplier. See Get-TdSupplier
 
 ```yaml
 Type: Object
@@ -51,14 +49,13 @@ Aliases: Id
 
 Required: False
 Position: 1
-Default value: None
+Default value:
 Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```
 
 ### -PageSize
-The amount of suppliers to be returned per request.
-Must be between 1 and 10000, default is 1000.
+The amount of supplier contacts to be returned. The default value is 10 and the maximum value is 10000.
 
 ```yaml
 Type: Int32
@@ -89,7 +86,7 @@ Accept wildcard characters: False
 ```
 
 ### -Archived
-Whether to retrieve archived incidents.
+Whether to retrieve archived supplier contacts.
 
 ```yaml
 Type: SwitchParameter
@@ -104,7 +101,7 @@ Accept wildcard characters: False
 ```
 
 ### -Name
-retrieve only suppliers with names starting with this string
+retrieve only supplier contacts with names starting with this string
 
 ```yaml
 Type: String
@@ -113,7 +110,22 @@ Aliases:
 
 Required: False
 Position: 4
-Default value: None
+Default value:
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Query
+A FIQL expression to select supplier contacts, for example "supplier.forFirstLine==true". See https://developers.topdesk.com/tutorial.html#query
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 5
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

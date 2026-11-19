@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version:
+online version: https://andrewpla.github.io/TOPdeskPS/commands/TOPdeskPS/Send-TdWebDAVFile
 schema: 2.0.0
 ---
 
@@ -13,13 +13,11 @@ Sends a file to your TOPdesk webdav share
 ## SYNTAX
 
 ```
-Send-TdWebDAVFile [[-File] <FileInfo>] [-Credential] <PSCredential> [-Folder] <FileInfo> [[-Url] <String>]
- [<CommonParameters>]
+Send-TdWebDAVFile [[-File] <FileInfo>] [-Credential] <pscredential> [-Folder] <string> [[-Url] <string>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-adds a file to your TOPdesk/webdav/Import folder.
-This can be useful for you to upload files that are imported regularly in your environment.
+adds a file to your TOPdesk/webdav/Import folder. This can be useful for you to upload files that are imported regularly in your environment.
 Common uses could be to regularly upload your users from a csv, or you could upload asset information that is imported.
 
 ## EXAMPLES
@@ -43,14 +41,13 @@ Aliases:
 
 Required: False
 Position: 1
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -Credential
-Credential of the user with webdav permissions.
-This Credential is handled seperately from normal web requests as this doesn't interact with the normal API.
+Credential of the user with webdav permissions. This Credential is handled seperately from normal web requests as this doesn't interact with the normal API.
 
 ```yaml
 Type: PSCredential
@@ -59,7 +56,7 @@ Aliases:
 
 Required: True
 Position: 2
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -77,20 +74,19 @@ upload
 web
 
 ```yaml
-Type: FileInfo
+Type: String
 Parameter Sets: (All)
 Aliases:
 
 Required: True
 Position: 3
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -Url
-This is the url to your TOPdesk instance.
-If you used Connect-TdService -Register then you don't need to specify one.
+This is the url to your TOPdesk instance. If you used Connect-TdService -Register then you don't need to specify one.
 
 ```yaml
 Type: String
@@ -99,8 +95,7 @@ Aliases: TOPdeskUrl
 
 Required: False
 Position: 4
-Default value: (
-            Get-PSFConfigValue -FullName TOPdeskPS.Url -NotNull -ErrorAction Continue)
+Default value: (Get-PSFConfigValue -FullName TOPdeskPS.Url -NotNull -ErrorAction Continue)
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -114,6 +109,5 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 ## OUTPUTS
 
 ## NOTES
-See Help About_TOPdesk_files for more
 
 ## RELATED LINKS

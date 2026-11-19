@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version:
+online version: https://andrewpla.github.io/TOPdeskPS/commands/Get-TdChangeDetail
 schema: 2.0.0
 ---
 
@@ -24,9 +24,8 @@ returns details of a specified change
 ### EXAMPLE 1
 ```
 Get-TdChange | Get-TdChangeDetail
-```
-
 returns details of all changes
+```
 
 TODO add support for change ID
 
@@ -42,7 +41,7 @@ Aliases: number
 
 Required: True
 Position: 1
-Default value: None
+Default value:
 Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```

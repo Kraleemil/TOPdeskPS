@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version:
+online version: https://andrewpla.github.io/TOPdeskPS/commands/TOPdeskPS/Get-TdOperatorGroup
 schema: 2.0.0
 ---
 
@@ -14,12 +14,12 @@ Returns operator groups
 
 ### List (Default)
 ```
-Get-TdOperatorGroup [[-Name] <String>] [-ResultSize <Int32>] [-Archived] [-Start <Int32>] [<CommonParameters>]
+Get-TdOperatorGroup [[-NameFragment] <string>] [-ResultSize <int>] [-Archived] [-Start <int>] [-Query <string>] [-Fields <string[]>] [<CommonParameters>]
 ```
 
 ### Operator
 ```
-Get-TdOperatorGroup [-Operator <Object>] [<CommonParameters>]
+Get-TdOperatorGroup [-OperatorId <Object>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -34,10 +34,17 @@ Get-TdOperatorGroup -resultsize 1000
 
 returns up to 1000 operator groups.
 
+### EXAMPLE 2
+```
+Get-TdOperator | Get-TdOperatorGroup
+```
+
+Returns operator groups for operators
+
 ## PARAMETERS
 
-### -Name
-Retrieve only operator groups with name starting with this.
+### -NameFragment
+Retrieve only operator groups with name starting with this. No wildcards
 
 ```yaml
 Type: String
@@ -46,12 +53,12 @@ Aliases:
 
 Required: False
 Position: 1
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Operator
+### -OperatorId
 Id of the operator that you want to return operator groups for.
 
 ```yaml
@@ -61,7 +68,7 @@ Aliases: id
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```
@@ -76,7 +83,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: 10
+Default value: 100
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -97,8 +104,7 @@ Accept wildcard characters: False
 ```
 
 ### -Start
-The offset at which to start listing the operator groups at.
-Must be greater or equal to 0, default is 0
+The offset at which to start listing the operator groups at. Must be greater or equal to 0, default is 0
 
 ```yaml
 Type: Int32
@@ -108,6 +114,36 @@ Aliases:
 Required: False
 Position: Named
 Default value: 0
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Query
+A FIQL expression to select operator groups, for example "stockManager==true". It is combined with the other filters using AND. See https://developers.topdesk.com/tutorial.html#query
+
+```yaml
+Type: String
+Parameter Sets: List
+Aliases:
+
+Required: False
+Position: Named
+Default value:
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Fields
+Only include these fields in the response, for example 'id','groupName'.
+
+```yaml
+Type: String[]
+Parameter Sets: List
+Aliases:
+
+Required: False
+Position: Named
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

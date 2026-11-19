@@ -18,26 +18,32 @@ TOPdeskPS is published to the PowerShell gallery and can be installed by running
 
 ## Connecting to TOPdesk
 
-### Using TOPdesk login Credentials (not SSO)
+### Using an application password (recommended)
+
+Create an application password in TOPdesk (My settings > Application passwords). The username is the TOPdesk login name of the user who created the application password.
+
 ```powershell
-  Connect-TdService -url 'https://Company.TOPdesk.net' -Register
+  Connect-TdService -Url 'https://company.topdesk.net' -Credential (Get-Credential) -ApplicationPassword -Register
 ```
-Prompts for your TOPdesk credentials.
 Connects to your TOPdesk instance and registers the url. The next time you run Connect-TdService it will remember your TOPdesk Url.
 
-### Using an application password
-
-Use an application password to connect rather than your TOPdesk login credentials. The username should be the topdesk login name of the user who created the application password.
-
+### Using TOPdesk login credentials (deprecated)
 ```powershell
-  Connect-TdService -url 'https://company.topdesk.net' -ApplicationPassword
+  Connect-TdService -Url 'https://Company.TOPdesk.net' -Credential (Get-Credential)
 ```
+Requests a login token with your normal TOPdesk password. TOPdesk has deprecated logging in as an operator this way in favour of application passwords, so the command writes a warning. It keeps working for existing scripts.
 
 ## Get Incidents
 
 Return incidents
 ```powershell
   Get-TdIncident -ResultSize 50
+```
+
+The filter parameters are sent to TOPdesk as a [FIQL query](https://developers.topdesk.com/tutorial.html#query). Add your own FIQL with `-Query`; it is combined with the other filters:
+```powershell
+  Get-TdIncident -Completed:$false -Query 'briefDescription=sw=Printer' -Fields 'id', 'number', 'briefDescription'
+  Get-TdPerson -Query 'department.name==IT' -ResultSize ([int]::MaxValue)
 ```
 
 ## Create Incidents
@@ -79,9 +85,23 @@ $personParams = @{
 Use the task notifications api to send alerts to your operators.
 
 ```powershell
-Send-TdTaskNotification -Title 'TOPdesk notification from PS!' -Body "You've got the power" -OperatorId (Get-TdOperator 'First.Last').id
+Send-TdNotification -Title 'TOPdesk notification from PS!' -Body "You've got the power" -OperatorId (Get-TdOperator 'First.Last').id
 ```
 ![](./images/TOPdesk-Notif.png)
+
+## Supported TOPdesk APIs
+
+TOPdeskPS covers the TOPdesk REST APIs for Incident Management, Change Management, Asset Management, Supporting Files, Knowledge Base, Operations Management, Reservations, Visitor Registration, Services, Settings, SSP Look and Feel, Task Notifications, Access Roles and Custom Action Support. A few examples:
+
+```powershell
+  Get-TdReservation -Query 'status==planned' -ResultSize 20
+  Get-TdVisitor -Id $visitorId
+  Get-TdKnowledgeBaseItem -ResultSize 50
+  Set-TdIncidentArchiveStatus -Number 'I2401-001' -Archive -ReasonId $reasonId
+  Save-TdIncidentAttachment -Id $incidentId -AttachmentId $attachmentId -OutFile .\attachment.pdf
+```
+
+[docs/api-coverage.md](docs/api-coverage.md) lists every operation of the official API specifications with the command that covers it. Most of the commands for the newer APIs are generated from those specifications; see [build/apigen](build/apigen/README.md) for how to update them when TOPdesk publishes a new version.
 
 ## Documentation
 For the full web based documentation visit the [TOPdeskPS site](https://andrewpla.github.io/TOPdeskPS)

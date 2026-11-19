@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version:
+online version: https://andrewpla.github.io/TOPdeskPS/commands/Get-TdAssetAssignment
 schema: 2.0.0
 ---
 
@@ -13,7 +13,7 @@ Gets assignments for an asset
 ## SYNTAX
 
 ```
-Get-TdAssetAssignment [-AssetId] <String> [<CommonParameters>]
+Get-TdAssetAssignment [-AssetId] <string> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -40,7 +40,7 @@ Aliases: id
 
 Required: True
 Position: 1
-Default value: None
+Default value:
 Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```

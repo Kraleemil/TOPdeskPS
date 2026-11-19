@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version:
+online version: https://andrewpla.github.io/TOPdeskPS/commands/Get-TdAssetCapability
 schema: 2.0.0
 ---
 
@@ -17,8 +17,7 @@ Get-TdAssetCapability [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Assets can be linked together with capabilities.
-This command returns all of them.
+Assets can be linked together with capabilities. This command returns all of them.
 
 ## EXAMPLES
 

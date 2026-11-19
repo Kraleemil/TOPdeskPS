@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version:
+online version: https://andrewpla.github.io/TOPdeskPS/commands/Get-TdDuration
 schema: 2.0.0
 ---
 
@@ -13,7 +13,7 @@ Gets durations
 ## SYNTAX
 
 ```
-Get-TdDuration [[-Name] <String>] [<CommonParameters>]
+Get-TdDuration [[-Name] <string>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -31,9 +31,7 @@ Gets list of all durations
 ## PARAMETERS
 
 ### -Name
-Name of the duration that you want returned.
-Wildcards are supported.
-Default value is '*'
+Name of the duration that you want returned. Wildcards are supported. Default value is '*'
 
 ```yaml
 Type: String

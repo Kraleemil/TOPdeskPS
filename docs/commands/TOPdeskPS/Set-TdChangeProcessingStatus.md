@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version:
+online version: https://andrewpla.github.io/TOPdeskPS/commands/Set-TdChangeProcessingStatus
 schema: 2.0.0
 ---
 
@@ -13,8 +13,7 @@ process a change through a phase
 ## SYNTAX
 
 ```
-Set-TdChangeProcessingStatus [-ChangeId] <Object> [-From] <Object> [-Action] <Object> [[-Reason] <String>]
- [[-Comment] <String>] [-WhatIf] [-Confirm] [<CommonParameters>]
+Set-TdChangeProcessingStatus [-ChangeId] <Object> [-From] <Object> [-Action] <Object> [[-Reason] <string>] [[-Comment] <string>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -32,8 +31,7 @@ changes the status of specified change to specfied action
 ## PARAMETERS
 
 ### -ChangeId
-ID of the Change.
-See Get-TdChange
+ID of the Change. See Get-TdChange
 
 ```yaml
 Type: Object
@@ -42,7 +40,7 @@ Aliases: Id
 
 Required: True
 Position: 1
-Default value: None
+Default value:
 Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```
@@ -57,7 +55,7 @@ Aliases: processingStatus
 
 Required: True
 Position: 2
-Default value: None
+Default value:
 Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```
@@ -72,7 +70,7 @@ Aliases:
 
 Required: True
 Position: 3
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -87,7 +85,7 @@ Aliases:
 
 Required: False
 Position: 4
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -102,37 +100,7 @@ Aliases:
 
 Required: False
 Position: 5
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -WhatIf
-If this switch is enabled, no actions are performed but informational messages will be displayed that explain what would happen if the command were to run.
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases: wi
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Confirm
-If this switch is enabled, you will be prompted for confirmation before executing any operations that change state.
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases: cf
-
-Required: False
-Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

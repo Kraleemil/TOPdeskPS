@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version:
+online version: https://andrewpla.github.io/TOPdeskPS/commands/Set-TdAssetCapability
 schema: 2.0.0
 ---
 
@@ -13,12 +13,11 @@ Returns list of capabilities.
 ## SYNTAX
 
 ```
-Set-TdAssetCapability [-CapabilityId] <String> [-Name] <String> [-WhatIf] [-Confirm] [<CommonParameters>]
+Set-TdAssetCapability [-CapabilityId] <string> [-Name] <string> [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Assets can be linked together with capabilities.
-This command returns all of them.
+Assets can be linked together with capabilities. This command returns all of them.
 
 ## EXAMPLES
 
@@ -41,7 +40,7 @@ Aliases: id
 
 Required: True
 Position: 1
-Default value: None
+Default value:
 Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```
@@ -56,37 +55,7 @@ Aliases:
 
 Required: True
 Position: 2
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -WhatIf
-If this switch is enabled, no actions are performed but informational messages will be displayed that explain what would happen if the command were to run.
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases: wi
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Confirm
-If this switch is enabled, you will be prompted for confirmation before executing any operations that change state.
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases: cf
-
-Required: False
-Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version:
+online version: https://andrewpla.github.io/TOPdeskPS/commands/TOPdeskPS/Get-TdProcessingStatus
 schema: 2.0.0
 ---
 
@@ -13,11 +13,12 @@ Gets processing statuses
 ## SYNTAX
 
 ```
-Get-TdProcessingStatus [[-Name] <String>] [<CommonParameters>]
+Get-TdProcessingStatus [[-Name] <string>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Gets processing statuses
+Gets the list of incident processing statuses (GET /tas/api/incidents/statuses).
+The endpoint /tas/api/incidents/processing_status that older versions of this command used is no longer part of the TOPdesk Incident API.
 
 ## EXAMPLES
 
@@ -31,9 +32,7 @@ Gets list of all processing statuses
 ## PARAMETERS
 
 ### -Name
-Name of the processing status that you want returned.
-Wildcards are supported.
-Default value is '*'
+Name of the processing status that you want returned. Wildcards are supported. Default value is '*'
 
 ```yaml
 Type: String

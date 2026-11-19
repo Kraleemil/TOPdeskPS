@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version:
+online version: https://andrewpla.github.io/TOPdeskPS/commands/Set-TdOperatorGroup
 schema: 2.0.0
 ---
 
@@ -14,25 +14,21 @@ Updates operator groups
 
 ### Update
 ```
-Set-TdOperatorGroup [-Branch <Object>] [-GroupName <String>] [-Contact <Hashtable>] -OperatorGroup <String>
- [-WhatIf] [-Confirm] [<CommonParameters>]
+Set-TdOperatorGroup -OperatorGroup <string> [-Branch <Object>] [-GroupName <string>] [-Contact <hashtable>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### Archive
 ```
-Set-TdOperatorGroup -OperatorGroup <String> [-Archive] [-ArchiveReason <String>] [-WhatIf] [-Confirm]
- [<CommonParameters>]
+Set-TdOperatorGroup -OperatorGroup <string> [-Archive] [-ArchiveReason <string>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### UnaArchive
 ```
-Set-TdOperatorGroup -OperatorGroup <String> [-UnArchive] [-WhatIf] [-Confirm] [<CommonParameters>]
+Set-TdOperatorGroup -OperatorGroup <string> [-UnArchive] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Updates a provided operator group.
-Requires write permission on operator groups.
-Can also be used to Archive/Unarchive operator groups.
+Updates a provided operator group. Requires write permission on operator groups. Can also be used to Archive/Unarchive operator groups.
 
 ## EXAMPLES
 
@@ -62,8 +58,7 @@ Archives the operator group and applies the archive reason 'No longer valid'
 Get-TdOperatorGroup 'TechSupport' -Archived | Set-TdOperatorGroup -UnArchive
 ```
 
-UnArchive the operator group.
-Note that we had to specify -Archived on Get-TdOperatorGroup
+UnArchive the operator group. Note that we had to specify -Archived on Get-TdOperatorGroup
 
 ## PARAMETERS
 
@@ -77,7 +72,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -92,14 +87,13 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -Contact
-Hashtable containing the values that you want to set.
-valid properties are telephone, faxNumber, and email.
+Hashtable containing the values that you want to set. valid properties are telephone, faxNumber, and email.
 
 ```yaml
 Type: Hashtable
@@ -108,7 +102,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -123,7 +117,7 @@ Aliases: id
 
 Required: True
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```
@@ -144,8 +138,7 @@ Accept wildcard characters: False
 ```
 
 ### -ArchiveReason
-The archiving reason id.
-Mandatory when no default reason is set.
+The archiving reason id. Mandatory when no default reason is set.
 
 ```yaml
 Type: String
@@ -154,7 +147,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -170,36 +163,6 @@ Aliases:
 Required: False
 Position: Named
 Default value: False
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -WhatIf
-If this switch is enabled, no actions are performed but informational messages will be displayed that explain what would happen if the command were to run.
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases: wi
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Confirm
-If this switch is enabled, you will be prompted for confirmation before executing any operations that change state.
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases: cf
-
-Required: False
-Position: Named
-Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

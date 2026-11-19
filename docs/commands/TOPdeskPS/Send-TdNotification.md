@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version:
+online version: https://andrewpla.github.io/TOPdeskPS/commands/Send-TdNotification
 schema: 2.0.0
 ---
 
@@ -14,19 +14,16 @@ Create custom task notifications
 
 ### Operator
 ```
-Send-TdNotification -Title <String> [-Body <String>] [-Url <String>] -OperatorId <String[]>
- [<CommonParameters>]
+Send-TdNotification -Title <string> -OperatorId <string[]> [-Body <string>] [-Url <string>] [<CommonParameters>]
 ```
 
 ### OperatorGroup
 ```
-Send-TdNotification -Title <String> [-Body <String>] [-Url <String>] -OperatorGroupId <String[]>
- [<CommonParameters>]
+Send-TdNotification -Title <string> -OperatorGroupId <string[]> [-Body <string>] [-Url <string>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Uses the TOPdesk Task Notification api to display task notifications.
-This can display toast notifications through both Chrome and Firefox.
+Uses the TOPdesk Task Notification api to display task notifications. This can display toast notifications through both Chrome and Firefox.
 
 ## EXAMPLES
 
@@ -40,8 +37,7 @@ Sends a notificiation
 ## PARAMETERS
 
 ### -Title
-The title of the custom notification.
-It will be displayed as the first line of the notification.
+The title of the custom notification. It will be displayed as the first line of the notification.
 
 ```yaml
 Type: String
@@ -50,14 +46,13 @@ Aliases:
 
 Required: True
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -Body
-The body of the custom notification.
-It will be displayed as the second line of the notification.
+The body of the custom notification. It will be displayed as the second line of the notification.
 
 ```yaml
 Type: String
@@ -66,14 +61,13 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -Url
-A link that will be opened if the receiver of the notification clicks on the notification.
-It must start with '/tas/secure/'
+A link that will be opened if the receiver of the notification clicks on the notification. It must start with '/tas/secure/’
 
 ```yaml
 Type: String
@@ -82,15 +76,13 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -OperatorId
-List of operator UUIDs to specify which operators this task notification will be sent to.
-Both 'operatorGroupIds' and 'operatorIds can't be empty at the same time.
-Non-existing operators will be silently ignored.
+List of operator UUIDs to specify which operators this task notification will be sent to. Both ‘operatorGroupIds’ and 'operatorIds can’t be empty at the same time. Non-existing operators will be silently ignored.
 
 ```yaml
 Type: String[]
@@ -99,15 +91,13 @@ Aliases:
 
 Required: True
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -OperatorGroupId
-List of operator group UUIDs to specify which operators this task notification will be sent to.
-Both 'operatorGroupIds' and 'operatorIds' can't be empty at the same time.
-Non-existing operator groups will be silently ignored.
+List of operator group UUIDs to specify which operators this task notification will be sent to. Both ‘operatorGroupIds’ and ‘operatorIds’ can’t be empty at the same time. Non-existing operator groups will be silently ignored.
 
 ```yaml
 Type: String[]
@@ -116,7 +106,7 @@ Aliases:
 
 Required: True
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

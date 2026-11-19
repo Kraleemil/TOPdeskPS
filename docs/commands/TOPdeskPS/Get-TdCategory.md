@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version:
+online version: https://andrewpla.github.io/TOPdeskPS/commands/TOPdeskPS/Get-TdCategory
 schema: 2.0.0
 ---
 
@@ -13,7 +13,7 @@ Get categories from TOPdesk
 ## SYNTAX
 
 ```
-Get-TdCategory [[-Name] <String>] [<CommonParameters>]
+Get-TdCategory [[-Name] <string>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -38,8 +38,7 @@ Gets the category with the name 'End User Support'
 ## PARAMETERS
 
 ### -Name
-This is the name of the category that you want.
-Wildcards are supported.
+This is the name of the category that you want. Wildcards are supported.
 
 ```yaml
 Type: String

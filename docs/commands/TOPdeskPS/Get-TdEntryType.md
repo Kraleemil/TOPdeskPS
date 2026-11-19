@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version:
+online version: https://andrewpla.github.io/TOPdeskPS/commands/Get-TdEntryType
 schema: 2.0.0
 ---
 
@@ -13,7 +13,7 @@ Gets entry types
 ## SYNTAX
 
 ```
-Get-TdEntryType [[-Name] <String>] [<CommonParameters>]
+Get-TdEntryType [[-Name] <string>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -31,8 +31,7 @@ Gets list of all entry types
 ## PARAMETERS
 
 ### -Name
-Name of the entry type that you want returned.
-Wildcards are supported.
+Name of the entry type that you want returned. Wildcards are supported.
 
 ```yaml
 Type: String

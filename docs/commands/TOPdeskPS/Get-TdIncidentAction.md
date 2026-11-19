@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version:
+online version: https://andrewpla.github.io/TOPdeskPS/commands/Get-TdIncidentAction
 schema: 2.0.0
 ---
 
@@ -13,7 +13,7 @@ Gets actions from an incident
 ## SYNTAX
 
 ```
-Get-TdIncidentAction [-Number] <String> [[-PageSize] <Int32>] [[-Start] <Int32>] [<CommonParameters>]
+Get-TdIncidentAction [-Number] <string> [[-PageSize] <int>] [[-Start] <int>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -40,14 +40,13 @@ Aliases:
 
 Required: True
 Position: 1
-Default value: None
+Default value:
 Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```
 
 ### -PageSize
-The amount of actions to be returned per request.
-The default value is 10 and the maximum value is 100.
+The amount of actions to be returned per request. The default value is 10 and the maximum value is 100.
 
 ```yaml
 Type: Int32
@@ -62,8 +61,7 @@ Accept wildcard characters: False
 ```
 
 ### -Start
-This is the offset at which you want to start listing actions.
-This is useful if you want to grab more than 100.
+This is the offset at which you want to start listing actions. This is useful if you want to grab more than 100.
 The default value is 0.
 
 ```yaml
