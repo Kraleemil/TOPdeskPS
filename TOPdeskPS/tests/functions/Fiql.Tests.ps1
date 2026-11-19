@@ -53,6 +53,15 @@
             }
         }
 
+        Context "ConvertTo-TdUrlValue" {
+            It "escapes everything except unreserved characters, on every PowerShell version" {
+                ConvertTo-TdUrlValue -Value "a(b)!*'~-_.z" | Should Be 'a%28b%29%21%2A%27~-_.z'
+            }
+            It "encodes non-ASCII as UTF-8" {
+                ConvertTo-TdUrlValue -Value 'Søren' | Should Be 'S%C3%B8ren'
+            }
+        }
+
         Context "ConvertTo-TdQueryString" {
             It "encodes values and repeats arrays" {
                 ConvertTo-TdQueryString -Parameter ([ordered]@{ query = 'a==1;b=in=(x,y)'; id = 'a', 'b'; skip = $null; all = $true }) |

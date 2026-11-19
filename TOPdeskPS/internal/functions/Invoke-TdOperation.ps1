@@ -69,7 +69,7 @@
 
         switch ($kind) {
             'path' {
-                $path = $path.Replace("{$apiName}", [uri]::EscapeDataString("$value"))
+                $path = $path.Replace("{$apiName}", (ConvertTo-TdUrlValue -Value "$value"))
                 if ($null -eq $target) { $target = "$value" }
             }
             'query' {

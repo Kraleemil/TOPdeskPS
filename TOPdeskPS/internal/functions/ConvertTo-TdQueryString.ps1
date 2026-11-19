@@ -35,7 +35,7 @@
             elseif ($value -is [datetime]) { $text = $value.ToString('yyyy-MM-ddTHH:mm:sszzz', [cultureinfo]::InvariantCulture) }
             elseif ($value -is [System.IFormattable]) { $text = $value.ToString($null, [cultureinfo]::InvariantCulture) }
             else { $text = "$value" }
-            '{0}={1}' -f [uri]::EscapeDataString("$key"), [uri]::EscapeDataString($text)
+            '{0}={1}' -f (ConvertTo-TdUrlValue -Value "$key"), (ConvertTo-TdUrlValue -Value $text)
         }
     }
     @($pairs) -join '&'
