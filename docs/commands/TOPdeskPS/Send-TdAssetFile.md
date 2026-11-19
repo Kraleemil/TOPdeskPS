@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version: https://andrewpla.github.io/TOPdeskPS/commands/Send-TdAssetFile
+online version:
 schema: 2.0.0
 ---
 
@@ -13,7 +13,7 @@ Upload a file to an asset
 ## SYNTAX
 
 ```
-Send-TdAssetFile [-AssetId] <string> [-File] <FileInfo> [[-ContentType] <string>] [<CommonParameters>]
+Send-TdAssetFile [-AssetId] <String> [-File] <FileInfo> [[-ContentType] <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -31,7 +31,8 @@ Sends a File to the asset named test-computer.
 ## PARAMETERS
 
 ### -AssetId
-Id of the asset that you want to send a file to. See Get-TdAsset
+Id of the asset that you want to send a file to.
+See Get-TdAsset
 
 ```yaml
 Type: String
@@ -40,7 +41,7 @@ Aliases: Id
 
 Required: True
 Position: 1
-Default value:
+Default value: None
 Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```
@@ -55,13 +56,15 @@ Aliases: InFile
 
 Required: True
 Position: 2
-Default value:
+Default value: None
 Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
 ### -ContentType
-You can manually specify the type of content that it is. This should only be used if you experience issues. This contenttype is passed to Invoke-RestMethod
+You can manually specify the type of content that it is.
+This should only be used if you experience issues.
+This contenttype is passed to Invoke-RestMethod
 
 ```yaml
 Type: String
@@ -70,7 +73,7 @@ Aliases:
 
 Required: False
 Position: 3
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

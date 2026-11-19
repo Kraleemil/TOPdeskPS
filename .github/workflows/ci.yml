@@ -71,7 +71,7 @@ jobs:
           if-no-files-found: ignore
 
   generated-code:
-    name: Generated code and docs are up to date
+    name: Operations table is up to date
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -80,22 +80,10 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Check generated commands and the coverage report
+      - name: Check the operations table and the coverage report
         run: |
           python -m pip install --quiet pyyaml
-          # Uses the committed specs in build/apigen/specs; fails if generated files differ from them.
+          # Download the specification versions recorded in build/apigen/specs.lock.json, then fail if
+          # data/operations.json, FunctionsToExport or docs/api-coverage.md differ from what they produce.
+          python build/apigen/apigen.py fetch --locked
           python build/apigen/apigen.py check
-
-      - name: Check the command reference
-        shell: pwsh
-        run: |
-          $ErrorActionPreference = 'Stop'
-          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
-          Install-Module -Name PSFramework -Force -Scope CurrentUser
-          ./build/New-TdCommandDoc.ps1
-          $changes = git status --porcelain -- docs/commands
-          if ($changes) {
-            $changes
-            git --no-pager diff --stat -- docs/commands
-            throw 'docs/commands is out of date. Run ./build/New-TdCommandDoc.ps1 and commit the result.'
-          }

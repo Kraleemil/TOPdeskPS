@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version: https://andrewpla.github.io/TOPdeskPS/commands/Set-TdChangeActivity
+online version:
 schema: 2.0.0
 ---
 
@@ -13,7 +13,11 @@ creates a new change activity
 ## SYNTAX
 
 ```
-Set-TdChangeActivity -ChangeId <Object> [-ActivityTemplate <Object>] [-BriefDescription <string>] [-ChangePhase <string>] [-ActivityType <string>] [-PlannedStartDate <string>] [-PlannedFinalDate <string>] [-AssigneeId <string>] [-AssigneeGroupId <Object>] [-AssigneeType <string>] [-Status <string>] [-Category <string>] [-Subcategory <string>] [-Request <string>] [-Action <string>] [-OptionalFields1 <hashtable>] [-OptionalFields2 <hashtable>] [-WhatIf] [-Confirm] [<CommonParameters>]
+Set-TdChangeActivity [-ActivityTemplate <Object>] -ChangeId <Object> [-BriefDescription <String>]
+ [-ChangePhase <String>] [-ActivityType <String>] [-PlannedStartDate <String>] [-PlannedFinalDate <String>]
+ [-AssigneeId <String>] [-AssigneeGroupId <Object>] [-AssigneeType <String>] [-Status <String>]
+ [-Category <String>] [-Subcategory <String>] [-Request <String>] [-Action <String>]
+ [-OptionalFields1 <Hashtable>] [-OptionalFields2 <Hashtable>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -24,8 +28,9 @@ creates a new change activity
 ### EXAMPLE 1
 ```
 Set-TdChangeActivity -changeId $changeId -briefDescription 'My Description' -changePhase 'progress' -status 'planned'
-creates a new change with specified fields
 ```
+
+creates a new change with specified fields
 
 TODO add activity template support
 TODO Help params
@@ -37,12 +42,12 @@ ID or AT-XXXX number for activity template
 
 ```yaml
 Type: Object
-Parameter Sets: template
+Parameter Sets: (All)
 Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -57,7 +62,7 @@ Aliases: Id
 
 Required: True
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```
@@ -72,7 +77,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -87,7 +92,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -102,7 +107,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -117,7 +122,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -132,7 +137,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -147,7 +152,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -162,7 +167,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```
@@ -177,13 +182,14 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -Status
-user defined status of activity. accepts name or id
+user defined status of activity.
+accepts name or id
 
 ```yaml
 Type: String
@@ -192,13 +198,14 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -Category
-user defined category of activity. accepts name or id
+user defined category of activity.
+accepts name or id
 
 ```yaml
 Type: String
@@ -207,13 +214,14 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -Subcategory
-user defined subcategory of activity. accepts name or id
+user defined subcategory of activity.
+accepts name or id
 
 ```yaml
 Type: String
@@ -222,7 +230,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -237,7 +245,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -252,7 +260,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -267,7 +275,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -282,7 +290,37 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -WhatIf
+If this switch is enabled, no actions are performed but informational messages will be displayed that explain what would happen if the command were to run.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases: wi
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Confirm
+If this switch is enabled, you will be prompted for confirmation before executing any operations that change state.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases: cf
+
+Required: False
+Position: Named
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -296,5 +334,6 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 ## OUTPUTS
 
 ## NOTES
+https://developers.topdesk.com/explorer/?page=change&version=1.2.0#/Working%20as%20an%20operator/post_operatorChangeActivities
 
 ## RELATED LINKS

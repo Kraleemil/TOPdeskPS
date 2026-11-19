@@ -14,14 +14,14 @@ Compared with the official TOPdesk API specifications on developers.topdesk.com 
 * Invoke-TdMethod has new -Accept and -OutFile parameters.
 
 ### Added
-* 362 commands generated from the official specifications for the operations TOPdeskPS did not cover yet, among them:
+* 362 commands for the operations TOPdeskPS did not cover yet. They are described in one table generated from the official specifications (data/operations.json, one line per command) and created when the module is imported; they share one implementation, Invoke-TdOperation. Among them:
   * Incident Management: progress trail, requests, attachments, images, archive/escalation status, lookups, SLAs, time registrations and the requester (SSP) endpoints.
   * Supporting Files: person v2 (Update-TdPerson, contract, private details, lookups), locations, branches, person groups, extra field entries, archiving, attachments.
   * Change Management: requester changes, manager authorizations, rejection reasons, statuses, time registrations, linked persons.
   * Asset Management: stock quantities, dropdowns, card types, statuses, links, grid fields, history.
   * New areas: Knowledge Base, Operations Management, Reservations, Visitor Registration, Services, Settings, SSP Look and Feel, Access Roles and Custom Action Support.
-* build/apigen: downloads the specifications, generates the commands and the coverage report (see build/apigen/README.md).
-* build/New-TdCommandDoc.ps1 regenerates the command reference in docs/commands.
+* build/apigen: downloads the specifications, generates the operations table and the coverage report (see build/apigen/README.md).
+* build/New-TdCommandDoc.ps1 regenerates pages of the command reference in docs/commands.
 * GitHub Actions: CI on Windows PowerShell 5.1 and PowerShell 7 (Windows and Linux), a weekly TOPdesk API update that opens a pull request, publishing to the PowerShell Gallery on a version tag, and Dependabot for the workflow actions.
 
 ### Fixed

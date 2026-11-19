@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version: https://andrewpla.github.io/TOPdeskPS/commands/Get-TdEscalationReason
+online version:
 schema: 2.0.0
 ---
 
@@ -13,7 +13,7 @@ Gets all EscalationReasons
 ## SYNTAX
 
 ```
-Get-TdEscalationReason [[-Name] <string>] [<CommonParameters>]
+Get-TdEscalationReason [[-Name] <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -31,7 +31,9 @@ Gets list of all EscalationReasons
 ## PARAMETERS
 
 ### -Name
-Name of the escalation reason that you want returned. Wildcards are supported. Default value is '*'
+Name of the escalation reason that you want returned.
+Wildcards are supported.
+Default value is '*'
 
 ```yaml
 Type: String

@@ -1,7 +1,7 @@
 name: TOPdesk API update
 
-# Once a week: download the newest TOPdesk API specifications, regenerate the commands,
-# the coverage report and the docs, test the result and open (or update) a pull request.
+# Once a week: download the newest TOPdesk API specifications, regenerate the operations table
+# and the coverage report, test the result and open (or update) a pull request.
 on:
   schedule:
     - cron: '37 4 * * 1'
@@ -48,10 +48,6 @@ jobs:
           Install-Module -Name Pester -RequiredVersion 4.10.1 -Force -SkipPublisherCheck -Scope CurrentUser
           Install-Module -Name PSFramework -Force -Scope CurrentUser
           Install-Module -Name PSScriptAnalyzer -Force -Scope CurrentUser
-
-      - name: Regenerate the command reference
-        shell: pwsh
-        run: ./build/New-TdCommandDoc.ps1
 
       - name: Detect changes
         id: changes
@@ -103,7 +99,7 @@ jobs:
               echo "Tests: **failed** on PowerShell 7 (Linux). See the run log: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
             fi
             echo
-            echo "Review the generated commands and docs/api-coverage.md before merging. New operations that need a better name or should be skipped go into build/apigen/overrides.yaml."
+            echo "Review TOPdeskPS/data/operations.json and docs/api-coverage.md before merging. New operations that need a better name or should be skipped go into build/apigen/overrides.yaml."
           } > "$RUNNER_TEMP/pr-body.md"
           cat "$RUNNER_TEMP/pr-body.md" >> "$GITHUB_STEP_SUMMARY"
 

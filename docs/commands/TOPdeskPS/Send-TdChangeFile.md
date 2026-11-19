@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version: https://andrewpla.github.io/TOPdeskPS/commands/Send-TdChangeFile
+online version:
 schema: 2.0.0
 ---
 
@@ -13,11 +13,12 @@ Upload a file to a change.
 ## SYNTAX
 
 ```
-Send-TdChangeFile [-ChangeId] <string> [-File] <FileInfo[]> [<CommonParameters>]
+Send-TdChangeFile [-ChangeId] <String> [-File] <FileInfo[]> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Upload a file to an Change. You can make the file invisible to the caller and you can also add a description.
+Upload a file to an Change.
+You can make the file invisible to the caller and you can also add a description.
 
 ## EXAMPLES
 
@@ -47,7 +48,7 @@ Aliases: id
 
 Required: True
 Position: 1
-Default value:
+Default value: None
 Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```
@@ -62,8 +63,8 @@ Aliases:
 
 Required: True
 Position: 2
-Default value:
-Accept pipeline input: True (ByValue, ByPropertyName)
+Default value: None
+Accept pipeline input: True (ByPropertyName, ByValue)
 Accept wildcard characters: False
 ```
 

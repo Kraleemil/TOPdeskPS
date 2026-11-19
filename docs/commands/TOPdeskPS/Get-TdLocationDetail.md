@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version: https://andrewpla.github.io/TOPdeskPS/commands/Get-TdLocationDetail
+online version:
 schema: 2.0.0
 ---
 
@@ -38,7 +38,8 @@ Returns details for the mars location
 ## PARAMETERS
 
 ### -Location
-Id of the location that you want returned. See Get-TdLocation
+Id of the location that you want returned.
+See Get-TdLocation
 
 ```yaml
 Type: Object
@@ -47,7 +48,7 @@ Aliases: Id
 
 Required: True
 Position: 1
-Default value:
+Default value: None
 Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```

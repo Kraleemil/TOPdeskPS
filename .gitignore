@@ -303,3 +303,6 @@ __pycache__/
 *.psprojs
 *.temppoint.ps*
 *.restorepoint.ps*
+
+# TOPdesk API specifications, downloaded by build/apigen/apigen.py fetch
+build/apigen/specs/

@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version: https://andrewpla.github.io/TOPdeskPS/commands/Get-TdChangeTemplate
+online version:
 schema: 2.0.0
 ---
 
@@ -13,7 +13,7 @@ returns list of all templates used to create new requests for changes
 ## SYNTAX
 
 ```
-Get-TdChangeTemplate [[-Name] <string>] [<CommonParameters>]
+Get-TdChangeTemplate [[-Name] <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -31,7 +31,10 @@ returns list of all templates used to create new requests for change
 ## PARAMETERS
 
 ### -Name
-Basic Name/BriefDescription filter. This will filter the results. Wildcards accepted. Default value = '*'
+Basic Name/BriefDescription filter.
+This will filter the results.
+Wildcards accepted.
+Default value = '*'
 
 ```yaml
 Type: String

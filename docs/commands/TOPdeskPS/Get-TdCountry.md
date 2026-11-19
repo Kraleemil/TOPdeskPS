@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version: https://andrewpla.github.io/TOPdeskPS/commands/Get-TdCountry
+online version:
 schema: 2.0.0
 ---
 
@@ -13,7 +13,7 @@ gets list of countries
 ## SYNTAX
 
 ```
-Get-TdCountry [[-Name] <string>] [<CommonParameters>]
+Get-TdCountry [[-Name] <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -38,7 +38,8 @@ Returns the USA country
 ## PARAMETERS
 
 ### -Name
-Filter based on the name. Wildcards accepted.
+Filter based on the name.
+Wildcards accepted.
 
 ```yaml
 Type: String

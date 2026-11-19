@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version: https://andrewpla.github.io/TOPdeskPS/commands/TOPdeskPS/Set-TdIncident
+online version:
 schema: 2.0.0
 ---
 
@@ -13,7 +13,13 @@ Updates an incident
 ## SYNTAX
 
 ```
-Set-TdIncident [-Number] <string> [-Action <string>] [-ActionInvisibleForCaller] [-BriefDescription <string>] [-Request <string>] [-Category <string>] [-Subcategory <string>] [-CallerEmail <string>] [-EntryType <string>] [-ExternalNumber <string>] [-CallerBranch <string>] [-Impact <string>] [-Urgency <string>] [-Priority <string>] [-ObjectId <string>] [-LocationId <string>] [-CallType <string>] [-Operator <string>] [-OperatorGroup <string>] [-Supplier <string>] [-ProcessingStatus <string>] [-Responded] [-Completed] [-Closed] [-ClosureCode <string>] [-Costs <float>] [-Duration <string>] [-TargetDate <datetime>] [-OnHold] [-MajorCall] [-MajorCallObject <string>] [-PublishToSsd] [-WhatIf] [-Confirm] [<CommonParameters>]
+Set-TdIncident [-Number] <String> [-Action <String>] [-ActionInvisibleForCaller] [-BriefDescription <String>]
+ [-Request <String>] [-Category <String>] [-Subcategory <String>] [-CallerEmail <String>] [-EntryType <String>]
+ [-ExternalNumber <String>] [-CallerBranch <String>] [-Impact <String>] [-Urgency <String>]
+ [-Priority <String>] [-ObjectId <String>] [-LocationId <String>] [-CallType <String>] [-Operator <String>]
+ [-OperatorGroup <String>] [-Supplier <String>] [-ProcessingStatus <String>] [-Responded] [-Completed]
+ [-Closed] [-ClosureCode <String>] [-Costs <Single>] [-Duration <String>] [-TargetDate <DateTime>] [-OnHold]
+ [-MajorCall] [-MajorCallObject <String>] [-PublishToSsd] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -40,7 +46,7 @@ Aliases:
 
 Required: True
 Position: 1
-Default value:
+Default value: None
 Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```
@@ -49,17 +55,19 @@ Accept wildcard characters: False
 Add an action.
       The following html tags can be used to format the text:
 
-      <i>
-      <em>
-      <b>
-      <strong>
-      <u>
-      <a>
-      <img> BASE64-encoding has to be used. Only pictures up to the size of 450x450 pixels are supported. Allowed picture-formats:
+      \<i\>
+      \<em\>
+      \<b\>
+      \<strong\>
+      \<u\>
+      \<a\>
+      \<img\> BASE64-encoding has to be used.
+Only pictures up to the size of 450x450 pixels are supported.
+Allowed picture-formats:
       gif, png, bmp, pcx, iff, ras, pnm, psd, jpg
       Example:
-      <img src="data:image/png;base64,iVBORw0KGgoAAA...">
-      Line breaks can be added via <br> tags and are automatically added after a closing <p> or <div>.
+      \<img src="data:image/png;base64,iVBORw0KGgoAAA..."\>
+      Line breaks can be added via \<br\> tags and are automatically added after a closing \<p\> or \<div\>.
       Can be set by operators and persons.
 
 ```yaml
@@ -69,7 +77,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -91,7 +99,8 @@ Accept wildcard characters: False
 ```
 
 ### -BriefDescription
-Brief description for the incident. This can be set by operators.
+Brief description for the incident.
+This can be set by operators.
 For partials, if not provided, will be automatically copied from the main incident.
 Can be set by persons only when the appropriate setting for the new call form is checked.
 
@@ -102,24 +111,27 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -Request
-The initial request for the incident. You will likely want to use a here-string to construct the request of the incident.
+The initial request for the incident.
+You will likely want to use a here-string to construct the request of the incident.
 
-Line breaks can be added via <br> tags and are automatically added after a closing <p> or
+Line breaks can be added via \<br\> tags and are automatically added after a closing \<p\> or
 The following html tags can be used to format the text:
 
-<i>
-<em>
-<b>
-<strong>
-<u>
-<a>
-<img> BASE64-encoding has to be used. Only pictures up to the size of 450x450 pixels are supported. Allowed picture-formats:
+\<i\>
+\<em\>
+\<b\>
+\<strong\>
+\<u\>
+\<a\>
+\<img\> BASE64-encoding has to be used.
+Only pictures up to the size of 450x450 pixels are supported.
+Allowed picture-formats:
 gif, png, bmp, pcx, iff, ras, pnm, psd, jpg
 
 ```yaml
@@ -129,13 +141,15 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -Category
-The name of the category for the incident. Can be set by operators. If not provided to partial incidents, the category will be automatically copied from the main incident.
+The name of the category for the incident.
+Can be set by operators.
+If not provided to partial incidents, the category will be automatically copied from the main incident.
 
 ```yaml
 Type: String
@@ -144,13 +158,14 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -Subcategory
-The name of the category for the incident. Can be set by operators.
+The name of the category for the incident.
+Can be set by operators.
 If a subcategory is provided without a category, the corresponding category will be filledi n automatically, unless there are multiple matching categories, in which case the request will fail.
 If not provided to partial incidents, the category will be automatically copied from the main incident.
 
@@ -161,13 +176,14 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -CallerEmail
-This is the email of the incident's caller. TOPdesk will fill the caller's details into the incident automatically.
+This is the email of the incident's caller.
+TOPdesk will fill the caller's details into the incident automatically.
 
 ```yaml
 Type: String
@@ -176,7 +192,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -192,7 +208,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -208,7 +224,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -224,7 +240,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -241,7 +257,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -258,7 +274,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -267,7 +283,8 @@ Accept wildcard characters: False
 Priority by id.
 Can only be set by operators.
 For partial incidents, this field is determined by the main incident and will give an error if provided in the request.
-Will be automatically filled in if you provide impact and/or urgency leading to a unique priority according to your priority matrix, and the same request doesn't provide a priority. For incidents with a linked SLA, if the priority provided cannot be found in the Service Level Priority List, the duration field of the incident will be emptied.
+Will be automatically filled in if you provide impact and/or urgency leading to a unique priority according to your priority matrix, and the same request doesn't provide a priority.
+For incidents with a linked SLA, if the priority provided cannot be found in the Service Level Priority List, the duration field of the incident will be emptied.
 
 ```yaml
 Type: String
@@ -276,7 +293,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -293,7 +310,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -310,7 +327,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -327,7 +344,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -343,7 +360,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -359,7 +376,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -376,7 +393,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -392,7 +409,7 @@ Aliases: Status
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -400,7 +417,8 @@ Accept wildcard characters: False
 ### -Responded
 Whether the incident is responded.
 SLM-licence is needed.
-Can only be set by operators. When the setting "Status determines responded" is on, this will be filled automatically (manual setting is prohibited).
+Can only be set by operators.
+When the setting "Status determines responded" is on, this will be filled automatically (manual setting is prohibited).
 
 ```yaml
 Type: SwitchParameter
@@ -447,7 +465,7 @@ Accept wildcard characters: False
 ```
 
 ### -ClosureCode
-Closure code by id or name.
+Closure code by id.
 Can only be set by operators.
 
 ```yaml
@@ -457,7 +475,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -490,13 +508,14 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -TargetDate
-Target date. This includes the timezone information from the provided object.
+Target date.
+This includes the timezone information from the provided object.
 Can only be set by operators.
 Cannot be filled in if the incident has a supplier service linked.
 
@@ -507,7 +526,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -555,7 +574,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -572,6 +591,36 @@ Aliases:
 Required: False
 Position: Named
 Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -WhatIf
+If this switch is enabled, no actions are performed but informational messages will be displayed that explain what would happen if the command were to run.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases: wi
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Confirm
+If this switch is enabled, you will be prompted for confirmation before executing any operations that change state.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases: cf
+
+Required: False
+Position: Named
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

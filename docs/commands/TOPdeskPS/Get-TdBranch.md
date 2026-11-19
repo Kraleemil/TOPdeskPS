@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version: https://andrewpla.github.io/TOPdeskPS/commands/Get-TdBranch
+online version:
 schema: 2.0.0
 ---
 
@@ -13,7 +13,7 @@ Gets Branches
 ## SYNTAX
 
 ```
-Get-TdBranch [[-Name] <string>] [-Archived] [<CommonParameters>]
+Get-TdBranch [[-Name] <String>] [-Archived] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -38,7 +38,8 @@ Returns the 'Main Office' branch
 ## PARAMETERS
 
 ### -Name
-Name of the branch that you want returned.Wildcards are supported. Default value is '*'
+Name of the branch that you want returned.Wildcards are supported.
+Default value is '*'
 
 ```yaml
 Type: String
@@ -53,7 +54,8 @@ Accept wildcard characters: False
 ```
 
 ### -Archived
-Whether to retrieve archived incidents. Doesn't return archived branches by default.
+Whether to retrieve archived incidents.
+Doesn't return archived branches by default.
 
 ```yaml
 Type: SwitchParameter

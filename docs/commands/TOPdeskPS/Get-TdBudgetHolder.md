@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version: https://andrewpla.github.io/TOPdeskPS/commands/Get-TdBudgetHolder
+online version:
 schema: 2.0.0
 ---
 
@@ -17,7 +17,8 @@ Get-TdBudgetHolder [[-Name] <Object>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Gets a list of budgetholders. Use the Name parameter to  filter.
+Gets a list of budgetholders.
+Use the Name parameter to  filter.
 
 ## EXAMPLES
 
@@ -31,7 +32,9 @@ returns a list of budget holders
 ## PARAMETERS
 
 ### -Name
-Filter based on Names. Wildcards accepted. Default Value = '*'
+Filter based on Names.
+Wildcards accepted.
+Default Value = '*'
 
 ```yaml
 Type: Object

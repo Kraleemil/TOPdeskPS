@@ -50,7 +50,9 @@ Describe "Generated functions send the expected requests" {
         }
 
         It "merges -Body with the other parameters" {
-            New-TdKnowledgeBaseItem -Body @{ translation = @{ language = 'nl' }; extra = 1 } -TranslationContentTitle 'X' -Confirm:$false
+            $extra = @{ translation = @{ language = 'nl' }; extra = 1 }
+            New-TdKnowledgeBaseItem -Body $extra -TranslationContentTitle 'X' -Confirm:$false
+            $extra.translation.ContainsKey('content') | Should Be $false
             $body = $script:call.Body | ConvertFrom-Json
             $body.translation.language | Should Be 'nl'
             $body.translation.content.title | Should Be 'X'

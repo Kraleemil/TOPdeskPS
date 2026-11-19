@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version: https://andrewpla.github.io/TOPdeskPS/commands/Get-TdPriority
+online version:
 schema: 2.0.0
 ---
 
@@ -13,7 +13,7 @@ Gets priorities
 ## SYNTAX
 
 ```
-Get-TdPriority [[-Name] <string>] [<CommonParameters>]
+Get-TdPriority [[-Name] <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -31,7 +31,9 @@ Gets list of all priorities
 ## PARAMETERS
 
 ### -Name
-Name of the priority that you want returned. Wildcards are supported. Default value is '*'
+Name of the priority that you want returned.
+Wildcards are supported.
+Default value is '*'
 
 ```yaml
 Type: String

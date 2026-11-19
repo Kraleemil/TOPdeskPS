@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version: https://andrewpla.github.io/TOPdeskPS/commands/Get-TdCategoryFilter
+online version:
 schema: 2.0.0
 ---
 
@@ -13,7 +13,7 @@ Get list of category filters
 ## SYNTAX
 
 ```
-Get-TdCategoryFilter [[-Name] <string>] [-Operator <Object>] [<CommonParameters>]
+Get-TdCategoryFilter [[-Name] <String>] [-Operator <Object>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -40,12 +40,11 @@ Returns category filters for 'First.Last'
 Get-TdCategoryFilter -name
 ```
 
-
-
 ## PARAMETERS
 
 ### -Name
-Filter based on the name. Wildcards accepted.
+Filter based on the name.
+Wildcards accepted.
 
 ```yaml
 Type: String
@@ -60,16 +59,17 @@ Accept wildcard characters: False
 ```
 
 ### -Operator
-ID of the Operator. See Get-TdOperator
+ID of the Operator.
+See Get-TdOperator
 
 ```yaml
 Type: Object
-Parameter Sets: OperatorId
+Parameter Sets: (All)
 Aliases: Id
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```

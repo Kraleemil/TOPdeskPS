@@ -2,6 +2,9 @@
 
 # Reminder: $dc is the directory separating character for X-Plat compatibility
 
+# Create the commands from the TOPdesk operations table (data/operations.json)
+. Import-ModuleFile -Path "$ModuleRoot$($dc)internal$($dc)scripts$($dc)operations.ps1"
+
 # Load Configurations
 foreach ($file in (Get-ChildItem "$ModuleRoot$($dc)internal$($dc)configurations$($dc)*.ps1" -ErrorAction Ignore)) {
     . Import-ModuleFile -Path $file.FullName

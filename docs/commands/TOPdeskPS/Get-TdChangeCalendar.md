@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version: https://andrewpla.github.io/TOPdeskPS/commands/Get-TdChangeCalendar
+online version:
 schema: 2.0.0
 ---
 
@@ -13,11 +13,15 @@ returns list of changes and activities in specified date range
 ## SYNTAX
 
 ```
-Get-TdChangeCalendar [[-Start] <datetime>] [[-End] <datetime>] [[-CardType] <string[]>] [[-Branch] <string[]>] [[-Category] <string[]>] [[-Subcategory] <string[]>] [[-Status] <string[]>] [[-Type] <string[]>] [[-CurrentState] <string[]>] [<CommonParameters>]
+Get-TdChangeCalendar [[-Start] <DateTime>] [[-End] <DateTime>] [[-CardType] <String[]>] [[-Branch] <String[]>]
+ [[-Category] <String[]>] [[-Status] <String[]>] [[-Type] <String[]>] [[-CurrentState] <String[]>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-returns list of changes and activities in specified date range. For activities to appear in this endpoint the option “Display in Calendar” under “Planning” on the activity card has to be set. Start and end date are mandatory.
+returns list of changes and activities in specified date range.
+For activities to appear in this endpoint the option "Display in Calendar" under "Planning" on the activity card has to be set.
+Start and end date are mandatory.
 
 ## EXAMPLES
 
@@ -45,7 +49,8 @@ Returns all 'done' change cards
 ## PARAMETERS
 
 ### -Start
-start of range to return changes. Default value = 90 days
+start of range to return changes.
+Default value = 90 days
 
 ```yaml
 Type: DateTime
@@ -60,7 +65,8 @@ Accept wildcard characters: False
 ```
 
 ### -End
-end of range to return changes. Default value = 90 days
+end of range to return changes.
+Default value = 90 days
 
 ```yaml
 Type: DateTime
@@ -75,7 +81,8 @@ Accept wildcard characters: False
 ```
 
 ### -CardType
-Type of card to filter results by. Accepted options 'change_simple', 'change_extensive', 'undefined', 'activity_authorization', 'activity_normal'
+Type of card to filter results by.
+Accepted options 'change_simple', 'change_extensive', 'undefined', 'activity_authorization', 'activity_normal'
 
 ```yaml
 Type: String[]
@@ -84,7 +91,7 @@ Aliases:
 
 Required: False
 Position: 3
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -99,7 +106,7 @@ Aliases:
 
 Required: False
 Position: 4
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -114,22 +121,7 @@ Aliases:
 
 Required: False
 Position: 5
-Default value:
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Subcategory
-Subcategory of cards to obtain
-
-```yaml
-Type: String[]
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 6
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -143,8 +135,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 7
-Default value:
+Position: 6
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -158,8 +150,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 8
-Default value:
+Position: 7
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -173,8 +165,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 9
-Default value:
+Position: 8
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

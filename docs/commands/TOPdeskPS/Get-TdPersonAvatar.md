@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version: https://andrewpla.github.io/TOPdeskPS/commands/Get-TdPersonAvatar
+online version:
 schema: 2.0.0
 ---
 
@@ -35,12 +35,12 @@ Gets the image used as an avatar by person id
 
 ```yaml
 Type: Object
-Parameter Sets: PersonId
+Parameter Sets: (All)
 Aliases: Id
 
 Required: True
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```

@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version: https://andrewpla.github.io/TOPdeskPS/commands/New-TdDepartment
+online version:
 schema: 2.0.0
 ---
 
@@ -14,12 +14,12 @@ Creates a new Department
 
 ### Name
 ```
-New-TdDepartment -Name <string> [-WhatIf] [-Confirm] [<CommonParameters>]
+New-TdDepartment -Name <String> [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### ExternalLink
 ```
-New-TdDepartment -externalLinkId <string> [-WhatIf] [-Confirm] [<CommonParameters>]
+New-TdDepartment -externalLinkId <String> [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -46,7 +46,7 @@ Aliases:
 
 Required: True
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -61,7 +61,37 @@ Aliases:
 
 Required: True
 Position: Named
-Default value:
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -WhatIf
+If this switch is enabled, no actions are performed but informational messages will be displayed that explain what would happen if the command were to run.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases: wi
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Confirm
+If this switch is enabled, you will be prompted for confirmation before executing any operations that change state.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases: cf
+
+Required: False
+Position: Named
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

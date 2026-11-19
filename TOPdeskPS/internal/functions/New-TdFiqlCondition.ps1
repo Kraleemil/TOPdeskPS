@@ -22,6 +22,7 @@
 
         Returns operator.id=in=(<id1>,<id2>)
     #>
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Justification = 'Only builds a value in memory; nothing is changed.')]
     [CmdletBinding(HelpUri = 'https://andrewpla.github.io/TOPdeskPS/commands/TOPdeskPS/New-TdFiqlCondition')]
     [OutputType([string])]
     param (

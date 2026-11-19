@@ -50,6 +50,8 @@ if ($SkipTest) {
 . $ExceptionsFile
 
 $includedNames = (Get-ChildItem $CommandPath -Recurse -File | Where-Object Name -like "*.ps1").BaseName
+# Commands created at import from the TOPdesk operations table.
+$includedNames += (Get-Content "$PSScriptRoot\..\..\data\operations.json" -Raw -Encoding UTF8 | ConvertFrom-Json) | ForEach-Object name
 $commands = Get-Command -Module (Get-Module $ModuleName) -CommandType Cmdlet, Function | Where-Object Name -in $includedNames
 
 ## When testing help, remember that help is cached at the beginning of each session.

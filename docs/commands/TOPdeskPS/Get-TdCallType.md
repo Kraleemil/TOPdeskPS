@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version: https://andrewpla.github.io/TOPdeskPS/commands/Get-TdCallType
+online version:
 schema: 2.0.0
 ---
 
@@ -13,7 +13,7 @@ Gets call types
 ## SYNTAX
 
 ```
-Get-TdCallType [[-Name] <string>] [<CommonParameters>]
+Get-TdCallType [[-Name] <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -38,7 +38,9 @@ Returns the alert call type
 ## PARAMETERS
 
 ### -Name
-Name of the call type that you want returned. Wildcards are supported. Default value is '*'
+Name of the call type that you want returned.
+Wildcards are supported.
+Default value is '*'
 
 ```yaml
 Type: String

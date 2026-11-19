@@ -17,16 +17,9 @@ Get-TdLoggedInPerson [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Get Logged in person
+
 
 ## EXAMPLES
-
-### EXAMPLE 1
-```
-Get-TdLoggedInPerson
-```
-
-returns the logged in person.
 
 ## PARAMETERS
 

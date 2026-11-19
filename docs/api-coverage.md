@@ -296,8 +296,8 @@ TOPdesk API specifications from [developers.topdesk.com](https://developers.topd
 | GET | `/tas/api/persons/{id}/contract` | Get-TdPersonContract |  |
 | PATCH | `/tas/api/persons/{id}/contract` | Set-TdPersonContract |  |
 | GET | `/tas/api/persons/{id}/persongroups` | Get-TdPersonPersonGroup |  |
-| GET | `/tas/api/persons/{id}/privateDetails` | Get-TdPersonPrivateDetails |  |
-| PATCH | `/tas/api/persons/{id}/privateDetails` | Set-TdPersonPrivateDetails |  |
+| GET | `/tas/api/persons/{id}/privateDetails` | Get-TdPersonPrivateDetail |  |
+| PATCH | `/tas/api/persons/{id}/privateDetails` | Set-TdPersonPrivateDetail |  |
 | POST | `/tas/api/picture` | Send-TdPicture |  |
 | GET | `/tas/api/picture/{id}` | Get-TdPicture |  |
 | GET | `/tas/api/requester/avatars/operator/{id}` | Get-TdRequesterOperatorAvatar |  |
@@ -331,7 +331,7 @@ TOPdesk API specifications from [developers.topdesk.com](https://developers.topd
 | GET | `/tas/api/changes/changeStatuses` | Get-TdChangeStatus |  |
 | GET | `/tas/api/changes/impacts` | Get-TdChangeImpact |  |
 | GET | `/tas/api/changes/priorities` | Get-TdChangePriority |  |
-| GET | `/tas/api/changes/settings` | Get-TdChangeSettings |  |
+| GET | `/tas/api/changes/settings` | Get-TdChangeSetting |  |
 | GET | `/tas/api/changes/types` | Get-TdChangeType |  |
 | GET | `/tas/api/managerAuthorizableActivities/{entityId}/attachments/{attachmentId}` | Save-TdManagerAuthorizableActivityAttachment |  |
 | GET | `/tas/api/managerAuthorizableActivities/{id}` | Get-TdManagerAuthorizableActivity |  |
@@ -534,7 +534,7 @@ TOPdesk API specifications from [developers.topdesk.com](https://developers.topd
 | GET | `/tas/api/operationalActivities/reasonsForAnomaly` | Get-TdOperationalActivityAnomalyReason |  |
 | GET | `/tas/api/operationalActivities/reasonsForSkipping` | Get-TdOperationalActivitySkipReason |  |
 | GET | `/tas/api/operationalActivities/schemas` | Get-TdOperationalActivitySchema |  |
-| GET | `/tas/api/operationalActivities/settings` | Get-TdOperationalActivitySettings |  |
+| GET | `/tas/api/operationalActivities/settings` | Get-TdOperationalActivitySetting |  |
 | GET | `/tas/api/operationalActivities/statuses` | Get-TdOperationalActivityStatus |  |
 | GET | `/tas/api/operationalActivities/types` | Get-TdOperationalActivityType |  |
 | GET | `/tas/api/operationalActivities/{identifier}` |  | Deprecated by TOPdesk, not generated. |

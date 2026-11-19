@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version: https://andrewpla.github.io/TOPdeskPS/commands/Get-TdOperatorAvatar
+online version:
 schema: 2.0.0
 ---
 
@@ -31,7 +31,8 @@ Returns the Avatar for 'User@company.com'
 ## PARAMETERS
 
 ### -OperatorId
-ID of the operator. See Get-TdOperator
+ID of the operator.
+See Get-TdOperator
 
 ```yaml
 Type: Object
@@ -40,7 +41,7 @@ Aliases: Id
 
 Required: True
 Position: 1
-Default value:
+Default value: None
 Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```

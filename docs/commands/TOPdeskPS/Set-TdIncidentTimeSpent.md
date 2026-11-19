@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version: https://andrewpla.github.io/TOPdeskPS/commands/Set-TdIncidentTimeSpent
+online version:
 schema: 2.0.0
 ---
 
@@ -13,11 +13,14 @@ Register time spent on an incident
 ## SYNTAX
 
 ```
-Set-TdIncidentTimeSpent [[-Number] <string>] [-TimeSpent] <int> [[-Notes] <string>] [-EntryDate <string>] [-ReasonId <string>] [-OperatorId <string>] [-OperatorGroupId <string>] [-WhatIf] [-Confirm] [<CommonParameters>]
+Set-TdIncidentTimeSpent [[-Number] <String>] [-TimeSpent] <Int32> [-EntryDate <String>] [[-Notes] <String>]
+ [-ReasonId <String>] [-OperatorId <String>] [-OperatorGroupId <String>] [-WhatIf] [-Confirm]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Update the timespent on an incident. Can also add a note/reason and you can register time for another operator.
+Update the timespent on an incident.
+Can also add a note/reason and you can register time for another operator.
 
 ## EXAMPLES
 
@@ -40,13 +43,15 @@ Aliases: IncidentNumber
 
 Required: False
 Position: 1
-Default value:
+Default value: None
 Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```
 
 ### -TimeSpent
-Time spent in minutes. Can be negative as long as the total registered time on the incident does not go below 0. Can not be 0.
+Time spent in minutes.
+Can be negative as long as the total registered time on the incident does not go below 0.
+Can not be 0.
 
 ```yaml
 Type: Int32
@@ -61,9 +66,13 @@ Accept wildcard characters: False
 ```
 
 ### -EntryDate
-Date for when the time spent should be registered. If not set, will be set to the current time.
+Date for when the time spent should be registered.
+If not set, will be set to the current time.
 "2015-11-15T14:00:00.000+0200"
-The given time offset will be used. Without a given offset Zulu/UTC time will be assumed. E.g. 2015-10-28T10:30:00.000 is equivalent to 2015-10-28T10:30:00.000+0000
+The given time offset will be used.
+Without a given offset Zulu/UTC time will be assumed.
+E.g.
+2015-10-28T10:30:00.000 is equivalent to 2015-10-28T10:30:00.000+0000
 
 ```yaml
 Type: String
@@ -72,7 +81,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -87,7 +96,7 @@ Aliases:
 
 Required: False
 Position: 3
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -102,13 +111,14 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -OperatorId
-Operator by id. If not set, currently logged in operator will be used.
+Operator by id.
+If not set, currently logged in operator will be used.
 
 ```yaml
 Type: String
@@ -117,13 +127,15 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -OperatorGroupId
-Operator group by id. Must match with the specified operator. If no operator specified, operator group will also be set as the operator.
+Operator group by id.
+Must match with the specified operator.
+If no operator specified, operator group will also be set as the operator.
 
 ```yaml
 Type: String
@@ -132,7 +144,37 @@ Aliases:
 
 Required: False
 Position: Named
-Default value:
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -WhatIf
+If this switch is enabled, no actions are performed but informational messages will be displayed that explain what would happen if the command were to run.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases: wi
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Confirm
+If this switch is enabled, you will be prompted for confirmation before executing any operations that change state.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases: cf
+
+Required: False
+Position: Named
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

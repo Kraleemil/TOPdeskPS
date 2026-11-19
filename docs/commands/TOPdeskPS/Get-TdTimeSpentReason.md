@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version: https://andrewpla.github.io/TOPdeskPS/commands/Get-TdTimeSpentReason
+online version:
 schema: 2.0.0
 ---
 
@@ -13,7 +13,7 @@ Gets all time spent reasons
 ## SYNTAX
 
 ```
-Get-TdTimeSpentReason [[-Name] <string>] [<CommonParameters>]
+Get-TdTimeSpentReason [[-Name] <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -31,7 +31,9 @@ Gets all time spent reasons
 ## PARAMETERS
 
 ### -Name
-Name of the time spent reason that you want returned. Wildcards are supported. Default value is '*'
+Name of the time spent reason that you want returned.
+Wildcards are supported.
+Default value is '*'
 
 ```yaml
 Type: String

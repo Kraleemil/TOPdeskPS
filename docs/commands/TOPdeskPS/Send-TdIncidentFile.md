@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version: https://andrewpla.github.io/TOPdeskPS/commands/Send-TdIncidentFile
+online version:
 schema: 2.0.0
 ---
 
@@ -13,11 +13,13 @@ Upload a file to an incident identified
 ## SYNTAX
 
 ```
-Send-TdIncidentFile [-Number] <string> [-File] <FileInfo[]> [[-Description] <string>] [-InvisibleForCaller] [<CommonParameters>]
+Send-TdIncidentFile [-Number] <String> [-File] <FileInfo[]> [-InvisibleForCaller] [[-Description] <String>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Upload a file to an incident. You can make the file invisible to the caller and you can also add a description.
+Upload a file to an incident.
+You can make the file invisible to the caller and you can also add a description.
 
 ## EXAMPLES
 
@@ -26,7 +28,8 @@ Upload a file to an incident. You can make the file invisible to the caller and 
 Send-TdIncidentFile -File 'C:\TestFile.txt' -Number 'I1911-123' -InvisibleforCaller
 ```
 
-Uploads a file to an incident. and makes it invisible for caller.
+Uploads a file to an incident.
+and makes it invisible for caller.
 
 ### EXAMPLE 2
 ```
@@ -47,7 +50,7 @@ Aliases:
 
 Required: True
 Position: 1
-Default value:
+Default value: None
 Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```
@@ -62,13 +65,14 @@ Aliases:
 
 Required: True
 Position: 2
-Default value:
-Accept pipeline input: True (ByValue, ByPropertyName)
+Default value: None
+Accept pipeline input: True (ByPropertyName, ByValue)
 Accept wildcard characters: False
 ```
 
 ### -InvisibleForCaller
-Whether you want to make this invisible to caller or not. The default is no.
+Whether you want to make this invisible to caller or not.
+The default is no.
 
 ```yaml
 Type: SwitchParameter
@@ -92,7 +96,7 @@ Aliases:
 
 Required: False
 Position: 3
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

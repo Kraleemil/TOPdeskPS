@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version: https://andrewpla.github.io/TOPdeskPS/commands/Get-TdAssetTemplate
+online version:
 schema: 2.0.0
 ---
 
@@ -13,7 +13,7 @@ Gets Asset Templates
 ## SYNTAX
 
 ```
-Get-TdAssetTemplate [[-Name] <string>] [-Archived] [<CommonParameters>]
+Get-TdAssetTemplate [[-Name] <String>] [-Archived] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -27,12 +27,15 @@ You will need the ID when creating a new asset for that type or when filtering t
 Get-TdAssetTemplate -Name 'Work*'
 ```
 
-Returns all templates with a name matching 'work*'. In this instance it would return a 'Workstation' template.
+Returns all templates with a name matching 'work*'.
+In this instance it would return a 'Workstation' template.
 
 ## PARAMETERS
 
 ### -Name
-Name of the AssetTemplate that you want returned. Wildcards are supported. Default value is '*'
+Name of the AssetTemplate that you want returned.
+Wildcards are supported.
+Default value is '*'
 
 ```yaml
 Type: String
@@ -47,7 +50,8 @@ Accept wildcard characters: False
 ```
 
 ### -Archived
-Whether to retrieve archived asset templates.  Leave out for all, or specify true/false for only archived, or only active templates, respectively.
+Whether to retrieve archived asset templates. 
+Leave out for all, or specify true/false for only archived, or only active templates, respectively.
 
 ```yaml
 Type: SwitchParameter

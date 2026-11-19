@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version: https://andrewpla.github.io/TOPdeskPS/commands/Get-TdUrgency
+online version:
 schema: 2.0.0
 ---
 
@@ -13,7 +13,7 @@ Gets list of all urgencies
 ## SYNTAX
 
 ```
-Get-TdUrgency [[-Name] <string>] [<CommonParameters>]
+Get-TdUrgency [[-Name] <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -38,7 +38,9 @@ Returns the requested urgency
 ## PARAMETERS
 
 ### -Name
-Name of the urgency that you want returned. Wildcards are supported. Default value is '*'
+Name of the urgency that you want returned.
+Wildcards are supported.
+Default value is '*'
 
 ```yaml
 Type: String

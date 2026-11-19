@@ -1,19 +1,26 @@
-<#
+﻿<#
 .SYNOPSIS
     Writes the markdown command reference in docs/commands from the comment-based help.
 
 .DESCRIPTION
-    Produces one markdown file per exported command in the same layout platyPS uses
-    (docs/commands/TOPdeskPS/<Command>.md) and the index docs/commands/TOPdeskPS.md.
-    Use this when platyPS is not available; New-MarkdownHelp produces equivalent files.
+    Produces one markdown file per command in TOPdeskPS/functions, in the same layout platyPS uses
+    (docs/commands/TOPdeskPS/<Command>.md), and the index docs/commands/TOPdeskPS.md.
+    The commands created from the TOPdesk operations table (data/operations.json) get no page;
+    their help is in the module (Get-Help) and docs/api-coverage.md lists them.
+
+.PARAMETER Name
+    Only write the pages of these commands. The index is always rewritten.
 
 .EXAMPLE
-    PS C:\> ./build/New-TdCommandDoc.ps1
+    PS C:\> ./build/New-TdCommandDoc.ps1 -Name Get-TdIncident
 
-    Regenerates the command reference.
+    Rewrites the page of Get-TdIncident and the index.
 #>
 [CmdletBinding()]
 param (
+    [string[]]
+    $Name,
+
     [string]
     $ModulePath = (Join-Path $PSScriptRoot '..\TOPdeskPS\TOPdeskPS.psd1'),
 
@@ -31,10 +38,12 @@ function ConvertTo-DocText {
     (($Text | Out-String) -split "`r?`n" | ForEach-Object { $_.TrimEnd() }) -join "`n" -replace "(`n){3,}", "`n`n" | ForEach-Object { $_.Trim() }
 }
 
-$names = $module.ExportedCommands.Keys | Sort-Object
-foreach ($name in $names) {
-    $command = Get-Command $name
-    $help = Get-Help $name -Full
+$fileCommands = Get-ChildItem (Join-Path $module.ModuleBase 'functions') -Recurse -Filter '*.ps1' | ForEach-Object BaseName
+$names = $module.ExportedCommands.Keys | Where-Object { $_ -in $fileCommands } | Sort-Object
+foreach ($commandName in $names) {
+    if ($Name -and $commandName -notin $Name) { continue }
+    $command = Get-Command $commandName
+    $help = Get-Help $commandName -Full
     $sb = [System.Text.StringBuilder]::new()
     $null = $sb.AppendLine('---')
     $null = $sb.AppendLine('external help file: TOPdeskPS-help.xml')
@@ -43,7 +52,7 @@ foreach ($name in $names) {
     $null = $sb.AppendLine('schema: 2.0.0')
     $null = $sb.AppendLine('---')
     $null = $sb.AppendLine()
-    $null = $sb.AppendLine("# $name")
+    $null = $sb.AppendLine("# $commandName")
     $null = $sb.AppendLine()
     $null = $sb.AppendLine('## SYNOPSIS')
     $null = $sb.AppendLine((ConvertTo-DocText $help.Synopsis))
@@ -55,7 +64,7 @@ foreach ($name in $names) {
             $null = $sb.AppendLine("### $($set.Name)$(if ($set.IsDefault) { ' (Default)' })")
         }
         $null = $sb.AppendLine('```')
-        $null = $sb.AppendLine(("$name $($set.ToString())" -replace '\s+', ' ').Trim())
+        $null = $sb.AppendLine(("$commandName $($set.ToString())" -replace '\s+', ' ').Trim())
         $null = $sb.AppendLine('```')
     }
     $null = $sb.AppendLine()
@@ -125,11 +134,12 @@ foreach ($name in $names) {
         $null = $sb.AppendLine("[$link]($link)")
     }
     $text = ($sb.ToString() -split "`r?`n" | ForEach-Object { $_.TrimEnd() }) -join "`n"
-    [System.IO.File]::WriteAllText((Join-Path $commandFolder "$name.md"), $text.TrimEnd() + "`n", [System.Text.UTF8Encoding]::new($false))
+    [System.IO.File]::WriteAllText((Join-Path $commandFolder "$commandName.md"), $text.TrimEnd() + "`n", [System.Text.UTF8Encoding]::new($false))
 }
 
 # Remove pages of commands that no longer exist.
 Get-ChildItem $commandFolder -Filter '*.md' | Where-Object BaseName -NotIn $names | Remove-Item
 
-$index = @('# TOPdeskPS Command Reference', '') + ($names | ForEach-Object { " - [$_](TOPdeskPS/$_.html)" })
+$index = @('# TOPdeskPS Command Reference', '') + ($names | ForEach-Object { " - [$_](TOPdeskPS/$_.html)" }) + @(
+    '', 'The commands for the other TOPdesk API operations are created from the official API specifications; [api-coverage.md](../api-coverage.md) lists them. Use `Get-Help <command>` for their help.')
 [System.IO.File]::WriteAllText((Join-Path $OutputPath 'TOPdeskPS.md'), (($index -join "`n") + "`n"), [System.Text.UTF8Encoding]::new($false))

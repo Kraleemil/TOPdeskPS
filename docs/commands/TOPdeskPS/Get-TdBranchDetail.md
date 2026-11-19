@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version: https://andrewpla.github.io/TOPdeskPS/commands/Get-TdBranchDetail
+online version:
 schema: 2.0.0
 ---
 
@@ -31,16 +31,17 @@ Returns details about 'examplebranch'
 ## PARAMETERS
 
 ### -Branch
-ID of the branch. See Get-TdBranch
+ID of the branch.
+See Get-TdBranch
 
 ```yaml
 Type: Object
-Parameter Sets: BranchId
+Parameter Sets: (All)
 Aliases: Id
 
 Required: True
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```

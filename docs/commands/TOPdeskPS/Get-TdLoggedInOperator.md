@@ -17,19 +17,9 @@ Get-TdLoggedInOperator [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Get Logged in Operator
 
-Get-TdLoggedInOperator
-returns the logged in Operator.
 
 ## EXAMPLES
-
-### EXAMPLE 1
-```
-Get-TdLoggedInOperator
-```
-
-Returns the current operator
 
 ## PARAMETERS
 

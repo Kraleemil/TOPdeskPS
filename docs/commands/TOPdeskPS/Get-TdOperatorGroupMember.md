@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version: https://andrewpla.github.io/TOPdeskPS/commands/Get-TdOperatorGroupMember
+online version:
 schema: 2.0.0
 ---
 
@@ -13,7 +13,7 @@ get the operators of an operator group
 ## SYNTAX
 
 ```
-Get-TdOperatorGroupMember [-OperatorGroup] <string> [<CommonParameters>]
+Get-TdOperatorGroupMember [-OperatorGroup] <String> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -40,7 +40,7 @@ Aliases: id
 
 Required: True
 Position: 1
-Default value:
+Default value: None
 Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```

@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version: https://andrewpla.github.io/TOPdeskPS/commands/Get-TdPermissionGroup
+online version:
 schema: 2.0.0
 ---
 
@@ -13,7 +13,7 @@ returns list of permission groups
 ## SYNTAX
 
 ```
-Get-TdPermissionGroup [[-Name] <string>] [-Operator <string>] [<CommonParameters>]
+Get-TdPermissionGroup [[-Name] <String>] [-Operator <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -38,7 +38,9 @@ returns permission groups for Juanita Smith
 ## PARAMETERS
 
 ### -Name
-Name of the operator group that you want returned. Wildcards are supported. Default value is '*'
+Name of the operator group that you want returned.
+Wildcards are supported.
+Default value is '*'
 
 ```yaml
 Type: String
@@ -57,12 +59,12 @@ Id of the operator that you want to return the permission groups for
 
 ```yaml
 Type: String
-Parameter Sets: Operator
+Parameter Sets: (All)
 Aliases: id
 
 Required: False
 Position: Named
-Default value:
+Default value: None
 Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```

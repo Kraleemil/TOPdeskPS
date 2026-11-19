@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version: https://andrewpla.github.io/TOPdeskPS/commands/Get-TdImpact
+online version:
 schema: 2.0.0
 ---
 
@@ -38,7 +38,9 @@ Returns the 'person' impact
 ## PARAMETERS
 
 ### -Name
-Name of the impact that you want returned. Wildcards are supported. Default value is '*'
+Name of the impact that you want returned.
+Wildcards are supported.
+Default value is '*'
 
 ```yaml
 Type: Object

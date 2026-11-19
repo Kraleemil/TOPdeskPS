@@ -8,7 +8,7 @@ schema: 2.0.0
 # Get-TdKnowledgeItem
 
 ## SYNOPSIS
-Returns Knowledge Items
+
 
 ## SYNTAX
 
@@ -17,24 +17,14 @@ Get-TdKnowledgeItem [[-Term] <string>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Retrieve a list of knowledge items available to users of the Self-Service Portal. This is a GraphQL endpoint, which means the response object is fully determined by a user-provided string that describes:
-- which attributes to retrieve
-- which filters to apply
-This currently only works for person accounts, this will not work for Operator accounts.
+
 
 ## EXAMPLES
-
-### EXAMPLE 1
-```
-Get-TdKnowledgeItem -Term 'printer'
-```
-
-Gets list of all priorities
 
 ## PARAMETERS
 
 ### -Term
-This is the search term that you want to filter KIs on.
+
 
 ```yaml
 Type: String

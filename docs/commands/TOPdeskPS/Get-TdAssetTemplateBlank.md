@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version: https://andrewpla.github.io/TOPdeskPS/commands/Get-TdAssetTemplateBlank
+online version:
 schema: 2.0.0
 ---
 
@@ -13,13 +13,17 @@ Returns blank asset cards
 ## SYNTAX
 
 ```
-Get-TdAssetTemplateBlank [-TemplateName] <string> [<CommonParameters>]
+Get-TdAssetTemplateBlank [-TemplateName] <String> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-This API returns a blank asset card based on a specific template. You can add the id or name of the specific template as a parameter to the endpoint (templateid / templateName). The result will show all the fields on the card, and their properties.
-You can use this endpoint to see the mandatory fields of the asset, and with that, create new assets of that type.    .PARAMETER NameFragment
-To filter assets by their name-fragment use this parameter. It’s case-insensitive.
+This API returns a blank asset card based on a specific template.
+You can add the id or name of the specific template as a parameter to the endpoint (templateid / templateName).
+The result will show all the fields on the card, and their properties.
+You can use this endpoint to see the mandatory fields of the asset, and with that, create new assets of that type. 
+.PARAMETER NameFragment
+To filter assets by their name-fragment use this parameter.
+It's case-insensitive.
 
 ## EXAMPLES
 
@@ -42,7 +46,7 @@ Aliases:
 
 Required: True
 Position: 1
-Default value:
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

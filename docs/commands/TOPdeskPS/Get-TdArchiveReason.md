@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version: https://andrewpla.github.io/TOPdeskPS/commands/Get-TdArchiveReason
+online version:
 schema: 2.0.0
 ---
 
@@ -13,7 +13,7 @@ Gets archive reasons
 ## SYNTAX
 
 ```
-Get-TdArchiveReason [[-Name] <string>] [<CommonParameters>]
+Get-TdArchiveReason [[-Name] <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -38,7 +38,8 @@ Returns all archive reasons that begin with "phased"
 ## PARAMETERS
 
 ### -Name
-Name of the branch that you want returned. Wildcards are supported.
+Name of the branch that you want returned.
+Wildcards are supported.
 
 ```yaml
 Type: String
