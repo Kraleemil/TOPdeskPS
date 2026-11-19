@@ -1,0 +1,85 @@
+---
+swagger: "2.0"
+info:
+  description: "Task Notifications API. Attention: This feature is currently only available if you enabled it in Labs."
+  version: "1.0.0"
+  title: "Task Notifications API (Labs)"
+  contact:
+    name: "TOPdesk"
+    url: "http://www.topdesk.com"
+    email: "info@topdesk.com"
+basePath: "/tas/api"
+tags:
+  - name: Task Notifications
+paths:
+  /tasknotifications/custom:
+    post:
+      tags:
+        - Task Notifications
+      summary: "Create a custom task notification"
+      description: "Creates a custom notification that will be sent to the specified operators and operator groups. In order to use this API, you need to authenticate as an operator"
+      operationId: "sendNotification"
+      consumes:
+      - "application/json"
+      parameters:
+      - name: "body"
+        in: "body"
+        required: true
+        schema:
+          $ref: "#/definitions/CustomNotificationDto"
+      responses:
+        201:
+          description: "The custom notification was sent successfully."
+        400:
+          description: >
+            There were errors in the request. This could because one of the following reasons:
+
+            - The 'title' field is empty or missing.
+
+            - Both the 'operatorIds' and 'operatorGroupIds' fields are empty or missing at the same time.
+
+            - The url doesn't start with '/tas/secure/'.
+
+            - The request is not valid JSON or does not adhere to the format that is expected.
+        403:
+          description: "The user creating the task notification is not an operator."
+        404:
+          description: "The feature has been disabled in Labs."
+definitions:
+  CustomNotificationDto:
+    type: "object"
+    title: "Custom Notification"
+    properties:
+      title:
+        type: "string"
+        description: "The title of the custom notification. It will be displayed as the first line of the notification."
+        example: "Dawn Meadows has made a new reservation for you"
+        minLength: 1
+      body:
+        type: "string"
+        description: "The body of the custom notification. It will be displayed as the second line of the notification."
+        example: "Registation number: R 123 221"
+      url:
+        type: "string"
+        description: "A link that will be opened if the receiver of the notification clicks on the notification. It must start with '/tas/secure/'."
+        example: "/tas/secure/mango/reservationsplanner?unid=5ea7526cc354449db4a65a1f0d38efda"
+      operatorIds:
+        type: "array"
+        items:
+          type: "string"
+          format: "uuid"
+          description: "A UUID of an operator that this task notification will be sent to."
+          example: "8c98c0c2-088e-429a-a4bb-30b76db61267"
+        description: "List of operator UUIDs to specify which operators this task notification will be sent to. Both 'operatorGroupIds' and 'operatorIds can't be empty at the same time. Non-existing operators will be silently ignored."
+        example: ["8c98c0c2-088e-429a-a4bb-30b76db61267", "6c9ba447-ec6d-490f-b645-a1107809d6c9"]
+      operatorGroupIds:
+        type: "array"
+        items:
+          type: "string"
+          format: "uuid"
+          description: "A UUID of an operator group which members this task notification will be sent to."
+          example: "ebb4c4a5-e2b2-46f5-a881-d79f2ca203bf"
+        description: "List of operator group UUIDs to specify which operators this task notification will be sent to. Both 'operatorGroupIds' and 'operatorIds' can't be empty at the same time. Non-existing operator groups will be silently ignored."
+        example: ["ebb4c4a5-e2b2-46f5-a881-d79f2ca203bf", "42611dca-745d-4415-b5f9-6f56a5367801"]
+    required:
+      - "title"

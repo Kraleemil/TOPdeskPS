@@ -1,0 +1,448 @@
+---
+swagger: "2.0"
+info:
+  description: "Services API"
+  version: "1.4.0"
+  title: "Services API"
+  contact:
+    name: "TOPdesk"
+    url: "http://www.topdesk.com"
+    email: "info@topdesk.com"
+basePath: "/tas/api"
+tags:
+  - name: Services
+    description: "This API is meant for services, excluding supplier services."
+paths:
+  /services:
+    get:
+      tags:
+        - Services
+      summary: "Get a list of services, optionally filtered by linked object or published state"
+      description: >
+        Returns a list of services, sorted alphabetically by name. The list can optionally be filtered to only retrieve
+        services linked to a specific object, or only (un)published services. Archived services are not included.
+      operationId: "getAllServices"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "objectId"
+          description: >
+            The id of an object to filter on. If present, only services linked to this object are returned. Only one object
+            can be filtered on at the same time. It is not allowed to use both objectId and assetId in the same query.
+            Example value: 8e4efa62-2980-446e-9734-4f8d47e5de9b
+          in: "query"
+          required: false
+          type: "string"
+        - name: "assetId"
+          description: >
+            The assetId of an object to filter on. If present, only services linked to this object are returned. Only one object
+            can be filtered on at the same time. It is not allowed to use both objectId and assetId in the same query.
+            Example value: ed0e8000-a990-4c6c-8966-8b5af68bb6b7
+          in: "query"
+          required: false
+          type: "string"
+        - name: "$top"
+          description: >
+            The maximum number of results to return. This should be a number between 1 and 10000 inclusive.
+          default: 1000
+          in: "query"
+          required: false
+          type: "integer"
+          format: "int32"
+        - name: "published"
+          description: >
+            If present, only services that are published in the Self-Service Portal (true) or only services that are
+            not published (false) are returned. If absent, services are returned regardless of their published state.
+          in: "query"
+          required: false
+          type: "boolean"
+        - name: "language"
+          description: >
+            The language in which to return the name and brief description of the services, as a language tag.
+            Example values: nl, en-GB. If a service is translated in this language, that translation is returned.
+            Otherwise the translation in the default content language is returned, and if that does not exist either,
+            the untranslated name and brief description of the service. If absent, the untranslated name and brief
+            description are returned.
+          in: "query"
+          required: false
+          type: "string"
+      responses:
+        200:
+          description: "The list of services was returned successfully"
+          schema:
+            $ref: "#/definitions/ServiceEnvelope"
+        400:
+          description: "The request was not properly formatted"
+        403:
+          description: "You don't have the correct permissions to use this endpoint"
+    post:
+      tags:
+        - Services
+      summary: "Create a service"
+      description: "Creates a non-reservable service with the provided name."
+      operationId: "createService"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "body"
+          in: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/ServiceCreateDto"
+      responses:
+        201:
+          description: "The service was created successfully."
+          schema:
+            $ref: "#/definitions/ServiceDetailsDto"
+        400:
+          description: "The request was not properly formatted"
+        403:
+          description: "You don't have the correct permissions to use this endpoint"
+  /services/{id}:
+    get:
+      tags:
+        - Services
+      summary: "Get a service by id"
+      description: "Returns the service with the provided id."
+      operationId: "getServiceById"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          type: "string"
+          format: "uuid"
+      responses:
+        200:
+          description: "The service was returned successfully"
+          schema:
+            $ref: "#/definitions/ServiceDetailsDto"
+        403:
+          description: "You don't have the correct permissions to use this endpoint"
+        404:
+          description: "No service with the provided id could be found"
+  /services/{id}/linkedAssets:
+    get:
+      tags:
+        - Services
+      summary: "Get linked assets of a service"
+      description: "Returns the assets linked to the service with the provided id."
+      operationId: "getLinkedAssetsOfServiceById"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          type: "string"
+          format: "uuid"
+      responses:
+        200:
+          description: "The list was returned successfully"
+          schema:
+            $ref: "#/definitions/ObjectEnvelope"
+        403:
+          description: "You don't have the correct permissions to use this endpoint"
+        404:
+          description: "No service with the provided id could be found"
+    post:
+      tags:
+        - Services
+      summary: "Link assets to a service"
+      description: |
+        Links assets to the service with the provided id. You can't link an asset to a service if:
+        - Either of them is archived.
+        - The asset is already linked to this service.
+      operationId: "linkAssetsToService"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "id"
+          description: "The id of the service"
+          in: "path"
+          required: true
+          type: "string"
+          format: "uuid"
+        - name: "body"
+          in: "body"
+          required: true
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/AssetToBeLinked"
+          description: "Provide a list of assets specified by either their id or their assetId property."
+      responses:
+        200:
+          description: "The assets were linked successfully, the new list of linked assets is returned"
+          schema:
+            $ref: "#/definitions/ObjectEnvelope"
+        400:
+          description: "The service or one of the provided assets is archived, one of the provided assets could not be found, or an asset was already linked"
+        403:
+          description: "You don't have the correct permissions to use this endpoint"
+        404:
+          description: "No service with the provided id could be found"
+  /services/{id}/linkedAssets/{objectId}:
+    put:
+      tags:
+        - Services
+      summary: "Update properties of a link between an asset and a service."
+      description: >
+        "Update properties of a link between an asset and a service. You can't update the link if either or both cards are archived."
+      operationId: "updateServiceToAssetLink"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "id"
+          description: "The id of the service"
+          in: "path"
+          required: true
+          type: "string"
+          format: "uuid"
+        - name: "objectId"
+          description: "The (object) id of the asset"
+          in: "path"
+          required: true
+          type: "string"
+          format: "uuid"
+        - name: "body"
+          in: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/ServiceObjectLinkDto"
+      responses:
+        204:
+          description: "The link was successfully updated"
+        400:
+          description: "The asset or service was archived, and the link could not be updated"
+        403:
+          description: "You don't have the correct permissions to use this endpoint"
+        404:
+          description: "The link between the service and asset could not be found"
+    delete:
+      tags:
+        - Services
+      summary: "Unlink an asset from a service."
+      description: >
+        Removes the link between an asset and a service. You can't unlink an asset from a service if either or both cards are archived.
+      operationId: "unlinkAssetFromService"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "id"
+          description: "The id of the service"
+          in: "path"
+          required: true
+          type: "string"
+          format: "uuid"
+        - name: "objectId"
+          description: "The (object) id of the asset"
+          in: "path"
+          required: true
+          type: "string"
+          format: "uuid"
+      responses:
+        204:
+          description: "The asset was unlinked successfully"
+        400:
+          description: "The asset or service was archived, and the link could not be removed"
+        403:
+          description: "You don't have the correct permissions to use this endpoint"
+        404:
+          description: "The service or asset could not be found"
+definitions:
+  ServiceDetailsDto:
+    type: "object"
+    title: "ServiceDetails"
+    properties:
+      id:
+        type: "string"
+        format: "uuid"
+        description: "The id of the service."
+        example: "c9e9453d-ca0d-410a-828d-17c92bf6792c"
+      name:
+        type: "string"
+        description: "The name of the service. If the service has a name in multiple languages, this will be its name in the default language."
+        example: "HP Printer Repairs"
+      archived:
+        type: "boolean"
+        description: "Whether the service is archived."
+        example: "true"
+      type:
+        type: "string"
+        description: "Type of the service."
+        enum:
+          - "service"
+          - "supplierService"
+      defaultFirstLineOperator:
+        type: "string"
+        format: "uuid"
+        description: "The default value for the first line operator when using this service"
+        example: "c9e9453d-ca0d-410a-828d-17c92bf6792c"
+      defaultSecondLineOperator:
+        type: "string"
+        format: "uuid"
+        description: "The default value for the second line operator when using this service"
+        example: "c9e9453d-ca0d-410a-828d-17c92bf6792c"
+      defaultReservationsOperator:
+        type: "string"
+        format: "uuid"
+        description: "The default value for the standard operator when using this service"
+        example: "c9e9453d-ca0d-410a-828d-17c92bf6792c"
+      manager:
+        type: "string"
+        format: "uuid"
+        description: "The default value for the operator group when using this service"
+        example: "c9e9453d-ca0d-410a-828d-17c92bf6792c"
+      serviceType:
+        $ref: "#/definitions/SearchlistDto"
+      availableForIncidents:
+        type: "boolean"
+        description: "Boolean indicating if the service is available in SLA contracts."
+        example: "true"
+      availableForReservations:
+          type: "boolean"
+          description: "Boolean indicating if the service is available for Reservations."
+          example: "false"
+  ServiceListEntryDto:
+    type: "object"
+    title: "ServiceListEntry"
+    properties:
+      id:
+        type: "string"
+        format: "uuid"
+        description: "The id of the service."
+        example: "c9e9453d-ca0d-410a-828d-17c92bf6792c"
+      name:
+        type: "string"
+        description: "The name of the service, translated when a language is requested. See the language parameter."
+        example: "HP Printer Repairs"
+      briefDescription:
+        type: "string"
+        description: "The brief description of the service, translated when a language is requested. See the language parameter."
+        example: "Repair of HP printers"
+      availableForIncidents:
+        type: "boolean"
+        description: "Boolean indicating if the service is available in SLA contracts."
+        example: "true"
+      availableForReservations:
+        type: "boolean"
+        description: "Boolean indicating if the service is available for Reservations."
+        example: "false"
+      published:
+        type: "boolean"
+        description: "Boolean indicating if the service is published in the Self-Service Portal."
+        example: "true"
+  ServiceCreateDto:
+    type: "object"
+    title: "ServiceCreate"
+    properties:
+      name:
+        type: "string"
+        description: "The name of the service that will be created. Must have between 1 and 100 characters."
+        example: "HP Printer Repairs"
+        minLength: 1
+        maxLength: 100
+      defaultFirstLineOperator:
+        type: "string"
+        format: "uuid"
+        description: "The default value for the first line operator when using this service"
+        example: "c9e9453d-ca0d-410a-828d-17c92bf6792c"
+      defaultSecondLineOperator:
+        type: "string"
+        format: "uuid"
+        description: "The default value for the second line operator when using this service"
+        example: "c9e9453d-ca0d-410a-828d-17c92bf6792c"
+      defaultReservationsOperator:
+        type: "string"
+        format: "uuid"
+        description: "The default value for the standard operator when using this service"
+        example: "c9e9453d-ca0d-410a-828d-17c92bf6792c"
+      manager:
+        type: "string"
+        format: "uuid"
+        description: "The default value for the operator group when using this service"
+        example: "c9e9453d-ca0d-410a-828d-17c92bf6792c"
+    required:
+      - "name"
+  ObjectDto:
+    type: "object"
+    title: "Object"
+    properties:
+      id:
+        type: "string"
+        format: "uuid"
+        description: "The id of the object."
+        example: "8e4efa62-2980-446e-9734-4f8d47e5de9b"
+      name:
+        type: "string"
+        description: "The name of the object."
+        example: "PRIN-003"
+      assetId:
+        type: "string"
+        description: "The asset id of the object."
+        example: "ed0e8000-a990-4c6c-8966-8b5af68bb6b7"
+      linkId:
+        type: "string"
+        format: "uuid"
+        description: "The id of the created link."
+        example: "b448081e-671c-4aab-8b41-082f084da937"
+  ObjectEnvelope:
+    type: "object"
+    title: "ObjectEnvelope"
+    properties:
+      results:
+        type: "array"
+        items:
+          $ref: "#/definitions/ObjectDto"
+        description: "The actual objects"
+  ServiceEnvelope:
+    type: "object"
+    title: "ServiceEnvelope"
+    properties:
+      results:
+        type: "array"
+        items:
+          $ref: "#/definitions/ServiceListEntryDto"
+        description: "The actual services"
+  AssetToBeLinked:
+    type: "object"
+    title: "Asset to be linked"
+    properties:
+      id:
+        type: "string"
+        format: "uuid"
+        description: "The (object) id of the asset. Specify either id or assetId, not both."
+        example: "8e4efa62-2980-446e-9734-4f8d47e5de9b"
+      assetId:
+        type: "string"
+        description: "The asset id of the asset. Specify either id or assetId, not both."
+        example: "ed0e8000-a990-4c6c-8966-8b5af68bb6b7"
+  ServiceObjectLinkDto:
+    type: "object"
+    title: "Link between Service and Asset"
+    properties:
+      standard:
+        type: "boolean"
+        description: "Whether the linked service is a Standard Service for the asset."
+        example: true
+  SearchlistDto:
+    type: "object"
+    title: "Service Type"
+    properties:
+      id:
+        type: "string"
+        format: "uuid"
+        description: "The (object) id of the service type."
+        example: "3e4efa62-2980-446e-9734-4f8d47e5de9b"
+      name:
+        type: "string"
+        description: "The name of the service type"
+        example: "TOPdesk"

@@ -1,0 +1,2278 @@
+openapi: '3.0.0'
+info:
+  title: Operations Management API
+  description: Web interface for the TOPdesk Operations Management
+  version: v1.10.1
+  contact:
+    name: TOPdesk
+    url: 'http://www.topdesk.com'
+    email: info@topdesk.com
+servers:
+  - url: https://{tenant}.topdesk.net/tas/api
+    description: Production instance
+    variables:
+      tenant:
+        default: demo
+paths:
+  /operationalActivities:
+    get:
+      tags:
+        - Operational Activities
+      summary: Get operational activities.
+      operationId: getList
+      description: |
+        ```Deprecation```:
+        _application/x.topdesk-om-activity-v0+json_ and _application/x.topdesk-om-activity-v1+json_ are deprecated.
+        
+        It is adviced to use the newly introduced _application/x.topdesk-collection-om-activity-v1+json_
+        
+        Default behavior:
+          - Returns both archived and non-archived items. To retrieve only non-archived/archived items use the `query` parameter to specify a query for them.
+        
+        Specific behaviour of deprecated _application/x.topdesk-om-activity-v1+json_
+          - Returns only non-archived items by default. To retrieve archived items or all items, use the `query` parameter to specify a query for them
+          - Fields with empty value will not be included in the response, even if the field is listed in the `fields`
+            parameter. If only fields having empty values are requested from an object, an empty object is returned.
+        
+        
+        
+        **Default version and Accept header**
+
+        The response version depends on the `Accept` header of the request:
+          - No `Accept` header, a wildcard (`*/*`) or `application/json`: the deprecated _application/x.topdesk-om-activity-v0+json_ response is returned.
+          - `Accept: application/x.topdesk-collection-om-activity-v1+json`: the latest (v1) response is returned. This header is **required** to get the latest version of this endpoint.
+
+        *Always send an explicit Accept header to the request, otherwise the deprecated v0 response is returned.*
+      parameters:
+        - name: query
+          in: query
+          description: |
+            A FIQL search expression to filter the result. The FIQL query syntax is documented in the
+            <a href="https://developers.topdesk.com/tutorial.html#show-collapse-query-overview">tutorial</a>. 
+            
+            **Linked Objects** 
+            
+            - Filtering on linkedBranches is not allowed without read permission for branches.
+            - Filtering on linkedLocations is not allowed without read permission for locations.
+            - it is possible to test if any `linkedLocations` or `linkedBranches` or `linkedAssets` exist like `linkedLocations!=[]`
+            
+            Behavior differences for former content-type: _application/x.topdesk-om-activity-v1+json_
+              - **linkedBranches**: `=contains=` operator is supported. It filters for activities which is linked to the
+            specified branch.
+              - **linkedLocations**: `=contains=` operator is supported for properties of
+            '#/components/schemas/operationalActivityLinkedLocation'. It is property based filtering like
+            `(propertyName, '==', value)` (double quotes are also supported, `(propertyName, "==", value)`)  
+            of the linkedLocation objects. The following syntax is expected, **linkedLocations=contains=(branchId,'==',{branchId})**.
+              - Filtering for null value is not supported.
+              - examples:
+                - linkedBranches=contains={uuid}
+                - linkedLocations=contains=(branchId,'==',{uuid})
+
+          example:
+            - skipped.value==false
+            - skipped==null
+            - linkedBranches.id=={uuid}
+            - linkedLocations.branch.id=={uuid}
+          required: false
+          schema:
+            type: string
+        - name: fields
+          in: query
+          description: |
+            The fields or objects to include in the response. By using `all` or `*` all supported fields, for which 
+            the user has permissions, are returned.
+            When toplevel field is specified all sub fields will be returned as well. example: `fields=operator` will also return 
+            `operator.id` and `operator.name` field.
+
+            _NOTES_:
+              - The following fields require additional permissions:
+                - linkedBranches - requires read permission on `branches`
+                - linkedLocations - requires read permission on `locations`
+                - linkedAssets - requires read permission on any `asset type`
+              - The following fields might have performance impacts and should only be requested when they are really required or
+                when the resulting amount of activities is reasonable small.
+                - linkedBranches
+                - linkedLocations
+                - linkedAssets
+                - nextInSeries
+              - differences in behaviour for former `application/x.topdesk-om-activity-v1` content-type:
+                - `nextInSeries` was not supported for this endpoint
+                - `*` was not supported to return all fields
+          example: id,operator,skipped.value,skipped.reason.id
+          required: false
+          schema:
+            type: string
+            default: id,number
+        - name: sort
+          in: query
+          description: |
+            The returned objects are sorted by the given field names, and by the given ascending/descending directions.
+            When no direction is given `asc` will be used by default.
+            
+            When no sorting information is provided items will be sorted by `creationDate:desc` by default.
+            
+            most of the fields can be used for sorting. For best performance only the following fields are recommend to be used for sorting:
+              - anomaly.reason.id
+              - type.id
+              - operator.id
+              - skipped.reason.id
+              - operatorGroup.id
+              - resolved.dateTime
+              - supplier.id
+              - status.id
+              - schema.id
+              - modifier.id
+              - creator.id
+              - status.id
+              - grouping.id
+              - plannedStartDate
+              - plannedEndDate
+              - archived.reason.id
+              - category.id
+              - subcategory.id
+              - series.id
+              - creationDate
+              - modificationDate
+              - optionalFields1.searchlist1.id (also supported for searchlist2-5, both `.id` and `.name`, and for optionalFields2 the same way, e.g. optionalFields2.searchlist3.name)
+
+            _NOTE_: different behaviour for former `application/x.topdesk-om-activity-v1` content:
+              - the direction is expected as a suffix of the field name in form of `:asc` or `:desc`. One of them is mandatory, and it is case-sensitive. In case of multiple fields are given, then a comma `,` separator is mandatory between the fields. Each sorting will apply in the given order.
+              - If no sorting is specified the items will be returned unsorted in arbitrary order.
+              - Null values will be sorted at the end independently of the direction of sorting.
+              - only following fields are supported
+                - plannedStartDate
+                - plannedEndDate
+                - number
+                - id
+                - creationDate
+                - modificationDate
+                - estimatedCosts
+                - estimatedTime
+          example: plannedEndDate,plannedStartDate:asc,number:desc,id
+          required: false
+          schema:
+            type: string
+        - name: pageSize
+          in: query
+          description: The value of this parameter determines the maximum number of operational activities that will be returned in one page.
+          required: false
+          schema:
+            type: integer
+            default: 100
+            format: int32
+        - name: pageStart
+          in: query
+          description: The value of this parameter determines the index of the item within the collection which will be used as the first item of the page that will be retrieved. A value of 0 indicates the first item of the collection.
+          required: false
+          schema:
+            type: integer
+            default: 0
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            application/x.topdesk-collection-om-activity-v1+json:
+              schema:
+                $ref: '#/components/schemas/OperationalActivityCollection'
+            application/x.topdesk-om-activity-v1+json:
+              schema:
+                deprecated: true
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/operationalActivityInList'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+    post:
+      tags:
+        - Operational Activities
+      summary: Create a new operational activity
+      description: |
+        Creates a new operational activity.
+        
+        The following fields may be set by ```UUID``` or ```name```, when setting by name Bad Request is returned if the ```name``` is not unique:
+          * type
+          * category
+          * subcategory
+          * operatorGroup
+          * operator
+          * supplier
+          * status
+          * searchlist
+      requestBody:
+        required: true
+        content:
+          application/x.topdesk-om-activity-v1+json:
+            schema:
+              $ref: '#/components/schemas/createOperationalActivity'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createOperationalActivity'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/operationalActivity'
+        400:
+          description: Bad Request
+        401:
+          description: No Authentification
+        403:
+          description: Forbidden
+        500:
+          description: Internal Server Error
+  /operationalActivities/settings:
+    get:
+      tags:
+        - Operational Activities
+      summary: Get settings for operational activities
+      description: This endpoint returns whether fields that could be set as mandatory on operational activities are currently mandatory or not
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/settings'
+        '403':
+          description: Forbidden
+  /operationalActivities/{identifier}:
+    get:
+      tags:
+        - Operational Activities
+      summary: Get operational activity by id or number.
+      description: |
+        ```Deprecation```:
+        _application/x.topdesk-om-activity-v0+json_ is deprecated.
+        
+        It is advised to use "application/x.topdesk-om-activity-v1+json"
+        
+        **Default version and Accept header**
+
+        The response version depends on the `Accept` header of the request:
+          - No `Accept` header, a wildcard (`*/*`) or `application/json`: the deprecated _application/x.topdesk-om-activity-v0+json_ response is returned.
+          - `Accept: application/x.topdesk-om-activity-v1+json`: the latest (v1) response is returned. This header is **required** to get the latest version of this endpoint.
+
+        *Always send an explicit Accept header to the request, otherwise the deprecated v0 response is returned.*
+
+        Optional support of caching is enabled for the endpoint. Each single GET response contains the ETag header
+        parameter. ETag represents the latest state of the resource. Calling the endpoint with `If-none-match` header
+        parameter will check the current state of the resource against the provided ETag value. Its response status code
+        is 304 (with empty body) when it matches, otherwise the response body contains the latest state of the resource
+        and new ETag is provided.
+
+      operationId: get
+      parameters:
+        - name: identifier
+          in: path
+          description: The id or number of the operational activity
+          required: true
+          schema:
+            type: string
+        - name: fields
+          in: query
+          description: |
+            The fields or objects to include in the response. By using `all` or `*` the whole object is returned. By default all fields
+            are being returned.  
+            The following fields require additional permissions and are only returned if the user has those:
+            - linkedBranches
+            - linkedLocations
+            - linkedAssets
+          example: id,operator,skipped.value,skipped.reason.id
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/x.topdesk-om-activity-v1+json:
+              schema:
+                $ref: '#/components/schemas/OperationalActivityWithAllFields'
+        '304':
+          description: Not Modified
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    post:
+      deprecated: true
+      tags:
+        - Operational Activities
+      summary: Updates an existing operational activity.
+      description: |
+        This endpoint can still be used but we advise to use the new PATCH endpoint for updating an operational activity.
+      parameters:
+        - name: identifier
+          in: path
+          description: The id of the operational activity
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        description: |
+          This endpoint provides update functionality for simple fields of existing Operational Activities.
+          
+          **How to use this endpoint**
+          - The fields listed in the example/model can be updated by sending in a new value for them.
+          - Only send in value for fields that need to be updated. Sending in fields with empty or null value will clear their value if the property is optional or result in a Bad Request response if it is mandatory.
+          - Optionally providing an ETag value (which is returned by the GET single endpoint) in the If-Match header can prevent concurrent updates. ETag represents the latest known state of the resource. When the provided version in the header is not the latest version, none of the updates are applied, and a 412 (Precondition Failed) is returned.
+          - Actions triggered by the update event and require user interaction like "Confirm before sending" or "Confirm before saving" will not be executed.
+          
+          **Special Fields**
+          - ```operator``` and ```operatorGroup```
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/updateOperationalActivity'
+          application/x.topdesk-om-activity-v1+json:
+            schema:
+              $ref: '#/components/schemas/updateOperationalActivity'
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '412':
+          description: Precondition Failed
+        '415':
+          description: Unsupported Media Type
+    patch:
+      tags:
+        - Operational Activities
+      summary: Updates an existing operational activity
+      parameters:
+        - name: identifier
+          in: path
+          description: The id or number of the operational activity
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        description: |
+          This endpoint provides update functionality for simple fields of existing Operational Activities.
+          
+          **How to use this endpoint**
+          - The fields listed in the example/model can be updated by sending in a new value for them.
+          - Only send in value for fields that need to be updated. Sending in fields with empty or null value will clear their value.
+          - Optionally providing an ETag value (which is returned by the GET single endpoint) in the If-Match header can prevent concurrent updates. ETag represents the latest known state of the resource. When the provided version in the header is not the latest version, none of the updates are applied, and a 412 (Precondition Failed) is returned.
+          - Actions triggered by the update event and require user interaction like "Confirm before sending" or "Confirm before saving" will not be executed.
+          
+          **Special Fields**
+          - ```operator```: If this field is sent it is required to also sent ```operatorGroup``` in the same request.
+          - ```operatorGroup```: If this field is sent it is required to also sent ```operator``` in the same request.
+          - ```category```: If this field is sent it is required to also sent ```subcategory``` in the same request.
+          - ```subcategory```: If this field is sent it is required to also sent ```category```in the same request.
+          - ```grouping```: If this field is sent it is required to also sent ```schema``` in the same request.
+        content:
+          application/x.topdesk-merge-patch+json; content-type="application/x.topdesk-om-activity-v1+json":
+            schema:
+              $ref: '#/components/schemas/updateOperationalActivityPATCH'
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '412':
+          description: Precondition Failed
+        '415':
+          description: Unsupported Media Type
+  /operationalActivities/{identifier}/linkedObjects:
+    get:
+      tags:
+        - Operational Activities
+      summary: Retrieves the list of linked objects of an operational activity.
+      description: |
+        This endpoint only returns configuration management objects.
+        
+        To access linked assets please use either:
+        
+        the details endpoint (operationalActivits/{identifier})
+        and specify the ```accept-header as: application/x.topdesk-om-activity-v1+json```
+        
+        or:
+        
+        the list endpoint (/operationalActivities)
+        with the ```accept-header: application/x.topdesk-collection-om-activity-v1+json```
+      parameters:
+        - name: identifier
+          in: path
+          description: The id of the operational activity
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: fields
+          in: query
+          description: The fields or objects to include in the response. All properties of '#/components/schemas/linkWithProperties' are available. They are separated by comma. By using `all` the whole object is returned.
+          required: false
+          schema:
+            type: string
+            default: id,name
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/linkWithProperties'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /operationalActivities/{identifier}/linkedAssets:
+    post:
+      tags:
+        - Operational Activities
+      summary: Link assets to an operational activity.
+
+      parameters:
+        - name: identifier
+          in: path
+          description: The id or the name of the operational activity
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: |
+          The assets sent in the body will be linked to the operational activity specified by the identifier.
+          A asset should only be specified by ```either``` *id* ```or``` *name*.
+          It is possible to sent multiple assets at once.
+          It is not possible to link archived assets.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LinkBody'
+      responses:
+        201:
+          description: Created
+        400:
+          description: Bad Request
+        403:
+          description: Forbidden
+        404:
+          description: Not Found
+  /operationalActivities/{identifier}/linkedLocations:
+    get:
+      deprecated: true
+      tags:
+        - Operational Activities
+      summary: Retrieves the list of linked locations of an operational activity.
+      description: |
+        This endpoint is deprecated but can still be used.
+        
+        We advise to use the details endpoint (/operationalActivities/{identifier})
+        with the ```accept-header: application/x.topdesk-om-activity-v1+json```.
+        
+        The Information is also available in the list endpoint (/operationalActivities)
+        with the ```accept-header: application/x.topdesk-collection-om-activity-v1+json```
+      parameters:
+        - name: identifier
+          in: path
+          description: The id of the operational activity
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: fields
+          in: query
+          description: The fields or objects to include in the response. All properties of '#/components/schemas/idAndName' are available. They are separated by comma. By using `all` the whole object is returned.
+          required: false
+          schema:
+            type: string
+            default: id,name
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/IdAndName'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    post:
+      tags:
+        - Operational Activities
+      summary: Link locations to an operational activity.
+      parameters:
+        - name: identifier
+          in: path
+          description: The id or the name of the operational activity
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: |
+          The locations sent in the body will be linked to the operational activity specified by the identifier.
+          A location should only be specified by ```either``` *id* ```or``` *name*.
+          It is possible to sent multiple locations at once.
+          It is not possible to link archived locations.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LinkBody'
+      responses:
+        201:
+          description: Created
+        400:
+          description: Bad Request
+        403:
+          description: Forbidden
+        404:
+          description: Not Found
+  /operationalActivities/{identifier}/linkedBranches:
+    get:
+      deprecated: true
+      tags:
+        - Operational Activities
+      summary: Retrieves the list of linked branches of an operational activity.
+      description: |
+        This endpoint is deprecated but can still be used.
+
+        We advise to use the details endpoint (/operationalActivities/{identifier})
+        with the ```accept-header: application/x.topdesk-om-activity-v1+json```.
+
+        The Information is also available in the list endpoint (/operationalActivities)
+        with the ```accept-header: application/x.topdesk-collection-om-activity-v1+json```
+      parameters:
+        - name: identifier
+          in: path
+          description: The id of the operational activity
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: fields
+          in: query
+          description: The fields or objects to include in the response. All properties of '#/components/schemas/idAndName' are available. They are separated by comma. By using `all` the whole object is returned.
+          required: false
+          schema:
+            type: string
+            default: id,name
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/IdAndName'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    post:
+      tags:
+        - Operational Activities
+      summary: Link branches to an operational activity.
+      parameters:
+        - name: identifier
+          in: path
+          description: The id or the name of the operational activity
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: |
+          The branches sent in the body will be linked to the operational activity specified by the identifier.
+          A branch should only be specified by ```either``` *id* ```or``` *name*.
+          It is possible to sent multiple branches at once.
+          It is not possible to link archived branches.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LinkBody'
+      responses:
+        201:
+          description: Created
+        400:
+          description: Bad Request
+        403:
+          description: Forbidden
+        404:
+          description: Not Found
+  /operationalActivities/{identifier}/timeRegistrations:
+    post:
+      tags:
+        - Operational Activities
+      summary: Register time for operational activity
+      description: Register time for operational activity
+      parameters:
+        - name: identifier
+          in: path
+          description: The id of the operational activity
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/timeRegistrationCreate'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: No operational activity with given id was found
+        '415':
+          description: Unsupported Media Type
+        '419':
+          description: Conflict. Failed to register time due to concurrent modification of operation activity.
+    get:
+      tags:
+        - Operational Activities
+      summary: Retrieves the list of time registrations of an operational activity.
+      description: Time registrations are sorted by the entry date descending primarily and creation date ascending secondarily.
+      parameters:
+        - name: identifier
+          in: path
+          description: The id of the operational activity
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: fields
+          in: query
+          description: The fields or objects to include in the response. All properties of '#/components/schemas/timeRegistration' are available. They are separated by comma. By using `all` the whole object is returned.
+          required: false
+          schema:
+            type: string
+            default: id,timeSpent
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/timeRegistration'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /operationalActivities/{identifier}/requests:
+    get:
+      tags:
+        - Operational Activities
+      summary: Retrieves the list of requests of an operational activity.
+      description: Requests are sorted by entry date descending.
+      parameters:
+        - name: identifier
+          in: path
+          description: The id of the operational activity
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: fields
+          in: query
+          description: The fields or objects to include in the response. All properties of '#/components/schemas/memoHistory' are available. They are separated by comma. By using `all` the whole object is returned.
+          required: false
+          schema:
+            type: string
+            default: id,memoText
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/memoHistory'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /operationalActivities/{identifier}/requests/{requestId}:
+    post:
+      tags:
+        - Operational Activities
+      summary: Updates an existing request of an operational activity.
+      parameters:
+        - name: identifier
+          in: path
+          description: The id of the operational activity
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: requestId
+          in: path
+          description: The id of the request
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        description: |
+          This endpoint provides update functionality for simple fields of existing Request of an Operational Activity.
+          
+          **How to use this endpoint**
+          - The fields listed in the example/model can be updated by sending in a new value for them.
+          - Only send in value for fields that need to be updated. Sending in fields with empty or null value will clear their value if the property is optional or result in a Bad Request response if it is mandatory.
+          - Actions triggered by the update event and require user interaction like "Confirm before sending" or "Confirm before saving" will not be executed.
+
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/updateMemoHistory'
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '415':
+          description: Unsupported Media Type
+  /operationalActivities/{identifier}/actions:
+    get:
+      tags:
+        - Operational Activities
+      summary: Retrieves the list of actions of an operational activity.
+      description: |
+        Actions are sorted by entry date descending.
+        
+        Handling of inline images depends on its size. Only small and medium size images can be inlined, and the API returns them this way:
+          - small image: their contents are embedded in the memotext in image source tags (\<img src="...">) as base64 encoded string, by indicating the image type
+          - medium size image: thumbnail image contents are embedded in the memotext in image source tags (\<img src="...">) as base64 encoded string, and a link reference (\<a href="...">) to the OM API url of the full size image is provided
+      parameters:
+        - name: identifier
+          in: path
+          description: The id of the operational activity
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: fields
+          in: query
+          description: The fields or objects to include in the response. All properties of '#/components/schemas/memoHistory' are available. They are separated by comma. By using `all` the whole object is returned.
+          required: false
+          schema:
+            type: string
+            default: id,memoText
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/memoHistory'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    post:
+      tags:
+        - Operational Activities
+      summary: Creates a new action for an operational activity.
+      parameters:
+        - name: identifier
+          in: path
+          description: The id or number of the operational activity
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: |
+          This endpoint provides create functionality for an Action of an Operational Activity.
+          
+          **How to use this endpoint**
+          - The fields listed in the example/model can be added by sending in a value for them. Default value for `flag` is 0.
+          - Sending in fields with empty or null might result in a Bad Request response if it is mandatory.
+          - Actions triggered by the creation event and require user interaction like "Confirm before sending" or "Confirm before saving" will not be executed.
+
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createMemoHistory'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '406':
+          description: Not Acceptable
+        '415':
+          description: Unsupported Media Type
+  /operationalActivities/{identifier}/attachments:
+    get:
+      tags:
+        - Operational Activities
+      summary: Retrieves the list of attachments of an operational activity.
+      description: Attachments are sorted by entry date descending. Inline images are not returned.
+      parameters:
+        - name: identifier
+          in: path
+          description: The id of the operational activity
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: fields
+          in: query
+          description: The fields or objects to include in the response. All properties of '#/components/schemas/attachment' are available. They are separated by comma. By using `all` the whole object is returned.
+          required: false
+          schema:
+            type: string
+            default: id,name,type
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/attachment'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /operationalActivities/{identifier}/attachments/upload:
+    post:
+      tags:
+        - Operational Activities
+      summary: Uploads a file attachment to the operational activity.
+      description: Suitable for adding files, but not for links. See the `type` attribute of `#/components/schemas/attachment`.
+      parameters:
+        - name: identifier
+          in: path
+          description: The id of the operational activity
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+                description:
+                  type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/attachment'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '415':
+          description: Unsupported Media Type
+  /operationalActivities/{identifier}/attachments/{attachmentId}/download:
+    get:
+      tags:
+        - Operational Activities
+      summary: Downloads the file attachment of the operational activity.
+      description: Suitable for retrieving files, but not for links. See the `type` attribute of `#/components/schemas/attachment`.
+      parameters:
+        - name: identifier
+          in: path
+          description: The id of the operational activity
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: attachmentId
+          in: path
+          description: The id of the attachment of the operational activity
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: |
+            OK.
+            
+            The media type of the response is based of the mime type of the attachment if it could be defined. Otherwise it is application/octet-stream
+          headers:
+            Content-Disposition:
+              schema:
+                type: string
+              description: Indicating file type for the browser. In this endpoint it is always attachment. Original file name is also included.
+            Content-Length:
+              schema:
+                type: integer
+              description: Length of the file in bytes
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /operationalActivities/{identifier}/emails:
+    get:
+      tags:
+        - Operational Activities
+      summary: Retrieves the list of emails of an operational activity.
+      description: Emails are sorted by send date descending. Archived emails are not returned.
+      parameters:
+        - name: identifier
+          in: path
+          description: The id of the operational activity
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: fields
+          in: query
+          description: The fields or objects to include in the response. All properties of '#/components/schemas/emailInList' are available. They are separated by comma. By using `all` the whole object is returned.
+          required: false
+          schema:
+            type: string
+            default: id,subject,actionName
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/emailInList'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /operationalActivities/{identifier}/emails/{emailId}:
+    get:
+      tags:
+        - Operational Activities
+      summary: Retrieves an email of an operational activity by id.
+      description: Archived emails are also returned by this endpoint.
+      parameters:
+        - name: identifier
+          in: path
+          description: The id of the operational activity
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: emailId
+          in: path
+          description: The id of the email
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: fields
+          in: query
+          description: The fields or objects to include in the response. All properties of '#/components/schemas/email' are available. They are separated by comma. By using `all` the whole object is returned.
+          required: false
+          schema:
+            type: string
+            default: id,subject,content
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/email'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /operationalActivities/statuses:
+    get:
+      tags:
+        - Searchlists
+      summary: Lists non-archived statuses for activites.
+      description: This endpoint returns non-archived statuses for operational activities.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listOfIdAndName'
+        '403':
+          description: Forbidden
+  /operationalActivities/reasonsForSkipping:
+    get:
+      tags:
+        - Searchlists
+      summary: Lists non-archived reasons for skipping for activites.
+      description: This endpoint returns non-archived reasons for skipping for operational activities.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listOfIdAndName'
+        '403':
+          description: Forbidden
+  /operationalActivities/reasonsForAnomaly:
+    get:
+      tags:
+        - Searchlists
+      summary: Lists non-archived reasons for anomaly for activites.
+      description: This endpoint returns non-archived reasons for anomaly for operational activities.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listOfIdAndName'
+        '403':
+          description: Forbidden
+
+  /operationalActivities/types:
+    get:
+      summary: Get list of types for operational activities
+      description: |
+        Returns list of types for operational activities. Client has to have read permission for operational activities
+      tags:
+        - Searchlists
+      parameters:
+        - name: query
+          in: query
+          description: |
+            A FIQL search expression to filter the result. The FIQL query syntax is documented in the
+            <a href="https://developers.topdesk.com/tutorial.html#show-collapse-query-overview">tutorial</a>.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  item:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Types'
+
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+  /operationalSeries/{identifier}:
+    get:
+      tags:
+        - Operational Series
+      summary: Get operational series by id.
+      parameters:
+        - name: identifier
+          in: path
+          description: The id of the operational series.
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/series'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  /operationalActivities/schemas:
+    get:
+      summary: Get list of schemas for operational activities
+      description: |
+        Returns list of schemas for operational activities. Client has to have read permission for operational activities or
+        read permission for schemas.
+      tags:
+        - Searchlists
+      parameters:
+        - name: query
+          in: query
+          description: |
+            A FIQL search expression to filter the result. The FIQL query syntax is documented in the
+            <a href="https://developers.topdesk.com/tutorial.html#show-collapse-query-overview">tutorial</a>.
+          schema:
+            type: string
+        - name: fields
+          in: query
+          description: |
+            The fields or objects to include in the response. By using `all` or `*` the all supported fields are returned.
+          schema:
+            type: string
+        - name: sort
+          in: query
+          description: |
+            The returned objects are sorted by the given field names, and by the given ascending/descending directions.
+            When no direction is given `asc` will be used by default.
+            
+            When no sorting information is provided items will be sorted by `name:asc` by default.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  item:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/schemas'
+
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+  /operationalActivities/groupings:
+    get:
+      summary: Get list of groupings for operational activities
+      description: |
+        Returns list of groupings for operational activities. Client has to have read permission for operational activities.
+      tags:
+        - Searchlists
+      parameters:
+        - name: query
+          in: query
+          description: |
+            A FIQL search expression to filter the result. The FIQL query syntax is documented in the
+            <a href="https://developers.topdesk.com/tutorial.html#show-collapse-query-overview">tutorial</a>.
+          schema:
+            type: string
+        - name: fields
+          in: query
+          description: |
+            The fields or objects to include in the response. By using `all` or `*` the all supported fields are returned.
+          schema:
+            type: string
+        - name: sort
+          in: query
+          description: |
+            The returned objects are sorted by the given field names, and by the given ascending/descending directions.
+            When no direction is given `asc` will be used by default.
+
+            When no sorting information is provided items will be sorted by `name:asc` by default.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  item:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/grouping'
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+components:
+  schemas:
+    operationalActivityCommon:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: UUID of the operational activity.
+        number:
+          type: string
+          description: Number of the operational activity.
+        briefDescription:
+          type: string
+          description: Brief description of the operational activity.
+        plannedStartDate:
+          type: string
+          format: date-time
+          description: Planned start date of the operational activity. Conforms to ISO-8601.
+        plannedEndDate:
+          type: string
+          format: date-time
+          description: Planned end date of the operational activity. Conforms to ISO-8601.
+        creationDate:
+          type: string
+          format: date-time
+          description: Creation date of operational activity
+        modificationDate:
+          type: string
+          format: date-time
+          description: Modification date of operational activity
+        category:
+          $ref: '#/components/schemas/IdAndName'
+        subcategory:
+          $ref: '#/components/schemas/IdAndName'
+        type:
+          $ref: '#/components/schemas/IdAndName'
+        operator:
+          $ref: '#/components/schemas/operator'
+        operatorGroup:
+          $ref: '#/components/schemas/IdAndName'
+        status:
+          $ref: '#/components/schemas/IdAndName'
+        resolved:
+          allOf:
+            - $ref: '#/components/schemas/booleanAndDateTime'
+            - description: When the operational activity is resolved this contains date and time when it was resolved.
+        skipped:
+          allOf:
+            - $ref: '#/components/schemas/booleanAndReason'
+            - description: Whether the operational activity is skipped and the reason for skipping.
+        anomaly:
+          allOf:
+            - $ref: '#/components/schemas/booleanAndReason'
+            - description: Whether an anomaly occured related to the operational activity and the reason for the anomany.
+        archived:
+          allOf:
+            - $ref: '#/components/schemas/booleanAndReason'
+            - description: Whether the operational activity is archived and the reason for archiving.
+        supplier:
+          $ref: '#/components/schemas/IdAndName'
+        series:
+          $ref: '#/components/schemas/series'
+        grouping:
+          $ref: '#/components/schemas/IdAndName'
+        schema:
+          $ref: '#/components/schemas/IdAndName'
+        estimatedCosts:
+          type: number
+          format: double
+          example: 12.22
+        costs:
+          type: number
+          format: double
+          example: 12.22
+        estimatedTime:
+          type: integer
+          example: 62
+          description: returns the estimated time in minutes.
+        requests:
+          type: string
+          description: link to the list of requests for given operational activity
+        actions:
+          type: string
+          description: link to the list of actions for given operational activity
+        optionalFields1:
+          $ref: '#/components/schemas/OptionalFields'
+        optionalFields2:
+          $ref: '#/components/schemas/OptionalFields'
+        bookmarked:
+          type: boolean
+          description: |
+            Warning: This shows whether the current operator has bookmarked the operational activity. Please note that calling it with different operators can show different results.
+            Deprecated: This is a temporary field that will be removed in a future release.
+
+    operationalActivityInList:
+      allOf:
+        - $ref: '#/components/schemas/operationalActivityCommon'
+        - type: object
+          properties:
+            linkedBranches:
+              type: array
+              items:
+                $ref: '#/components/schemas/IdAndName'
+              description: list of ids of linked branches
+            linkedAssets:
+              type: array
+              items:
+                $ref: '#/components/schemas/IdOnly'
+              description: |
+                Ids of all linked assets.  
+                Note: Database filters might prevent you from accessing some of the assets included in this list.
+            linkedLocations:
+              type: array
+              items:
+                $ref: '#/components/schemas/IdAndName'
+    OperationalActivityCollection:
+      type: object
+      properties:
+        item:
+          type: array
+          items:
+            $ref: '#/components/schemas/OperationalActivityWithAllFields'
+        next:
+          type: string
+          description: |
+            In case there are more items this fields contains link to a next page, otherwise is null.
+
+    OperationalActivityWithAllFields:
+      allOf:
+        - $ref: '#/components/schemas/operationalActivityCommon'
+        - type: object
+          properties:
+            linkedLocations:
+              type: array
+              items:
+                $ref: '#/components/schemas/LinkedLocation'
+            linkedAssets:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+              description: |
+                Ids of all linked assets.  
+                Note: Database filters might prevent you from accessing some of the assets included in this list.
+            linkedBranches:
+              type: array
+              items:
+                $ref: '#/components/schemas/IdAndName'
+            nextInSeries:
+              type: object
+              description: The next operational activity in the series, if the current one is part of a series, and the next is generated. Operational activities in series are ordered by their plannedStartDate. If the next operational activity is not generated yet, but it is expected to be generated in the future based on the settings of the series, then a calculated plannedStartDate field is returned, and only that within nextInSeries. If next activity in the series is not expected, then nextInSeries is not included in the response.
+              properties:
+                id:
+                  type: string
+                  format: uuid
+                  description: UUID of the operational activity.
+                number:
+                  type: string
+                  description: Number of the operational activity.
+                plannedStartDate:
+                  type: string
+                  format: date-time
+                  description: |
+                    Planned start date of the operational activity, or, if the next operational activity is not generated yet, 
+                    but it is expected in the future, a calculated expected start date. The calculated value is based
+                    on the configured recurrence pattern and the start date of the series. Conforms to ISO-8601.
+                    
+                    _NOTE_: a calculated expected start date is only available for detail endpoint (single operational activity endpoint)
+                resolved:
+                  allOf:
+                    - $ref: '#/components/schemas/booleanAndDateTime'
+                    - description: Whether the operational activity is resolved and the date and time of resolution.
+                skipped:
+                  allOf:
+                    - $ref: '#/components/schemas/booleanAndReason'
+                    - description: Whether the operational activity is skipped and the reason for skipping.
+
+    LinkedLocation:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        branch:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            name:
+              type: string
+
+    listOfIdAndName:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/IdAndName'
+    operationalActivity:
+      allOf:
+        - $ref: '#/components/schemas/operationalActivityCommon'
+        - type: object
+          properties:
+            nextInSeries:
+              type: object
+              description: The next operational activity in the series, if the current one is part of a series, and the next is generated. Operational activities in series are ordered by their plannedStartDate. If the next operational activity is not generated yet, but it is expected to be generated in the future based on the settings of the series, then a calculated plannedStartDate field is returned, and only that within nextInSeries. If next activity in the series is not expected, then nextInSeries is not included in the response.
+              properties:
+                id:
+                  type: string
+                  format: uuid
+                  description: UUID of the operational activity.
+                number:
+                  type: string
+                  description: Number of the operational activity.
+                plannedStartDate:
+                  type: string
+                  format: date-time
+                  description: Planned start date of the operational activity, or, if the next operational activity is not generated yet, but it is expected in the future, a calculated expected start date. The calculated value is based on the configured recurrence pattern and the start date of the series. Conforms to ISO-8601.
+                resolved:
+                  allOf:
+                    - $ref: '#/components/schemas/booleanAndDateTime'
+                    - description: Whether the operational activity is resolved and the date and time of resolution.
+                skipped:
+                  allOf:
+                    - $ref: '#/components/schemas/booleanAndReason'
+                    - description: Whether the operational activity is skipped and the reason for skipping.
+            costs:
+              type: number
+              format: long
+    createOperationalActivity:
+      type: object
+      properties:
+        briefDescription:
+          type: string
+          minLength: 1
+          maxLength: 80
+        plannedStartDate:
+          type: string
+          format: date-time
+        plannedEndDate:
+          type: string
+          format: date-time
+        request:
+          description: |
+            Initial request (description).
+            The following html tags can be used to format the text:
+            * \<i\>
+            * \<em\>
+            * \<b\>
+            * \<strong\>
+            * \<br\>
+            * \<u\>
+            * \<h5\>
+            * \<h6\>
+            * \<ul\>
+            * \<ol\>
+            * \<li\>
+          type: string
+        action:
+          description: |
+            Initial action.
+            The following html tags can be used to format the text:
+            * \<i\>
+            * \<em\>
+            * \<b\>
+            * \<strong\>
+            * \<br\>
+            * \<u\>
+            * \<h5\>
+            * \<h6\>
+            * \<ul\>
+            * \<ol\>
+            * \<li\>
+          type: string
+        type:
+          $ref: '#/components/schemas/IdAndName'
+        category:
+          $ref: '#/components/schemas/CategoryForCreation'
+        subcategory:
+          $ref: '#/components/schemas/SubcategoryForCreation'
+        operator:
+          $ref: '#/components/schemas/OperatorForCreation'
+        operatorGroup:
+          $ref: '#/components/schemas/OperatorGroupForCreation'
+        status:
+          $ref: '#/components/schemas/IdAndName'
+        supplier:
+          $ref: '#/components/schemas/IdAndName'
+        estimatedCosts:
+          type: number
+        costs:
+          type: number
+          format: double
+        estimatedTime:
+          type: number
+        optionalFields1:
+          $ref: "#/components/schemas/OptionalFields"
+        optionalFields2:
+          $ref: "#/components/schemas/OptionalFields"
+      required: ["briefDescription", "plannedStartDate", "plannedEndDate"]
+    IdOnly:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: UUID of the object.
+    IdAndName:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: UUID of the object.
+        name:
+          type: string
+          description: The name of the object.
+          example: "Name of item"
+    IdAndNameOrNull:
+      allOf:
+        - $ref: '#/components/schemas/IdAndName'
+      nullable: true
+    CategoryForCreation:
+      allOf:
+        - $ref: '#/components/schemas/IdAndName'
+        - type: object
+          description: |
+            Needs to be used together with `subcategory`.
+    SubcategoryForCreation:
+      allOf:
+        - $ref: '#/components/schemas/IdAndNameOrNull'
+        - type: object
+          description: |
+            Needs to be used together with `category`.
+          properties:
+            id:
+              type: string
+              format: uuid
+              description: |
+                Must represent existing *subcategory* id.
+            name:
+              description: |
+                Must represent existing and unique *subcategory* name.
+    OperatorForCreation:
+      allOf:
+        - $ref: '#/components/schemas/IdAndNameOrNull'
+        - type: object
+          description: |
+            Needs to be used together with `operatorGroup`.
+          properties:
+            id:
+              type: string
+              format: uuid
+              description: |
+                Must represent existing *operator* or *operatorGroup* id.
+            name:
+              description: |
+                Must represent existing *operator* or *operatorGroup* name.
+    OperatorGroupForCreation:
+      allOf:
+        - $ref: '#/components/schemas/IdAndNameOrNull'
+        - type: object
+          description: |
+            Needs to be used together with `operator`.
+          properties:
+            id:
+              type: string
+              format: uuid
+              description: |
+                Must represent existing *operator group* id.
+            name:
+              description: |
+                Must represent existing *operator group* name.
+    operator:
+      allOf:
+        - $ref: '#/components/schemas/IdAndName'
+        - type: object
+          properties:
+            type:
+              type: string
+              example: operator
+              description: Type of the operator is either `operator` or `operatorGroup`.
+    series:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: UUID of the series.
+        briefDescription:
+          type: string
+          description: Brief description of the series.
+        number:
+          type: string
+          description: Number of the series.
+    booleanAndDateTime:
+      type: object
+      properties:
+        value:
+          type: boolean
+        dateTime:
+          type: string
+          format: date-time
+          description: Conforms to ISO-8601.
+    booleanAndReason:
+      type: object
+      properties:
+        value:
+          type: boolean
+        reason:
+          $ref: '#/components/schemas/IdAndName'
+    linkWithProperties:
+      allOf:
+        - $ref: '#/components/schemas/IdAndName'
+        - type: object
+          properties:
+            branch:
+              $ref: '#/components/schemas/IdAndName'
+            location:
+              $ref: '#/components/schemas/IdAndName'
+            type:
+              $ref: '#/components/schemas/IdAndName'
+    editableFieldsOfOperationalActivity:
+      type: object
+      properties:
+        status:
+          type: string
+          format: uuid
+        anomaly:
+          type: object
+          description: Non-null or empty reason is accepted only when value is true
+          properties:
+            value:
+              type: boolean
+              example: true
+            reason:
+              type: string
+              format: uuid
+        skipped:
+          type: object
+          description: Non-null or empty reason is accepted only when value is true. Skipped value can be true only when resolved is false.
+          properties:
+            value:
+              type: boolean
+              example: true
+            reason:
+              type: string
+              format: uuid
+        resolved:
+          type: object
+          description: Non-null or empty dateTime is accepted when value is true. Resolved value can be true only when skipped is false.
+          properties:
+            value:
+              type: boolean
+              example: true
+            dateTime:
+              type: string
+              format: date-time
+              description: Conforms to ISO-8601.
+        operator:
+          type: string
+          format: uuid
+        operatorGroup:
+          type: string
+          format: uuid
+    updatableFieldsOfOperationalActivity:
+      type: object
+      properties:
+        briefDescription:
+          type: string
+          example: "This is a description"
+        plannedStartDate:
+          type: string
+          format: date-time
+          description: Conforms to ISO-8601.
+        plannedEndDate:
+          type: string
+          format: date-time
+          description: Conforms to ISO-8601.
+        category:
+          $ref: '#/components/schemas/CategoryForCreation'
+        subcategory:
+          $ref: '#/components/schemas/SubcategoryForCreation'
+        type:
+          $ref: '#/components/schemas/IdAndName'
+        status:
+          $ref: '#/components/schemas/IdAndNameOrNull'
+        anomaly:
+          $ref: '#/components/schemas/booleanAndReason'
+        skipped:
+          $ref: '#/components/schemas/booleanAndReason'
+        resolved:
+          $ref: '#/components/schemas/booleanAndDateTime'
+        operator:
+          $ref: '#/components/schemas/OperatorForCreation'
+        operatorGroup:
+          $ref: '#/components/schemas/OperatorGroupForCreation'
+        supplier:
+          $ref: '#/components/schemas/IdAndNameOrNull'
+        schema:
+          $ref: '#/components/schemas/IdAndNameOrNull'
+        grouping:
+          $ref: '#/components/schemas/IdAndNameOrNull'
+        estimatedCosts:
+          type: number
+          format: double
+          example: 12.22
+        costs:
+          type: number
+          format: double
+          example: 12.22
+        estimatedTime:
+          type: integer
+          example: 62
+          description: returns the estimated time in minutes.
+        budgetHolder:
+          $ref: '#/components/schemas/IdAndNameOrNull'
+        optionalFields1:
+          $ref: '#/components/schemas/OptionalFields'
+        optionalFields2:
+          $ref: '#/components/schemas/OptionalFields'
+    updateOperationalActivity:
+      allOf:
+        - $ref: '#/components/schemas/editableFieldsOfOperationalActivity'
+        - type: object
+    updateOperationalActivityPATCH:
+      allOf:
+        - $ref: '#/components/schemas/updatableFieldsOfOperationalActivity'
+    timeRegistration:
+      type: object
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+              description: UUID of the object.
+        - $ref: '#/components/schemas/timeRegistrationCreate'
+        - type: object
+          properties:
+            timeSpent:
+              type: integer
+              format: int64
+              description: registered time in seconds
+              example: 60
+
+    timeRegistrationCreate:
+      type: object
+      properties:
+        timeSpent:
+          type: integer
+          format: int64
+          description: The unit of the time registration is minutes.
+          example: 3600
+        note:
+          type: string
+          maxLength: 250
+          description: Note for the time registration.
+        entryDate:
+          type: string
+          format: date-time
+          description: Entry date of the time registration. Conforms to ISO-8601.
+        reason:
+          $ref: '#/components/schemas/IdOnly'
+        operator:
+          $ref: '#/components/schemas/IdOnly'
+        operatorGroup:
+          $ref: '#/components/schemas/IdOnly'
+    memoHistory:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: UUID of the request.
+        memoText:
+          $ref: '#/components/schemas/memoText'
+        entryDate:
+          type: string
+          format: date-time
+          description: Conforms to ISO-8601.
+        creationDate:
+          type: string
+          format: date-time
+          description: Conforms to ISO-8601.
+        modificationDate:
+          type: string
+          format: date-time
+          description: Conforms to ISO-8601.
+        flag:
+          type: integer
+          description: Can have only `0` (false) or `1` (true) value
+        operator:
+          $ref: '#/components/schemas/IdAndName'
+    updateMemoHistory:
+      type: object
+      properties:
+        memoText:
+          $ref: '#/components/schemas/memoText'
+    createMemoHistory:
+      type: object
+      properties:
+        memoText:
+          $ref: '#/components/schemas/memoText'
+        flag:
+          type: integer
+          description: Can have only `0` (false) or `1` (true) value
+    attachment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: UUID of the attachment.
+        type:
+          type: string
+          description: Type of the attachment is either `file` or `link`. `file` attachments have a downloadable content, but `link` attachments have just a name representing a url.
+        name:
+          type: string
+          description: Name of the `file` or text of the `link`.
+        size:
+          type: integer
+          default: 42
+          format: int64
+          description: File size in bytes, empty for `link` type.
+        downloadUrl:
+          type: string
+          description: OM API url of the file attachment, empty for `link` type.
+        description:
+          type: string
+          description: Description of the attachment.
+        entryDate:
+          type: string
+          format: date-time
+          description: Conforms to ISO-8601.
+        operator:
+          $ref: '#/components/schemas/IdAndName'
+    emailInList:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: UUID of the email
+        sender:
+          type: string
+          format: email
+          description: Email address of the sender
+        subject:
+          type: string
+          description: Subject of the email
+        to:
+          type: array
+          items:
+            type: string
+            format: email
+          description: list of email addresses
+        cc:
+          type: array
+          items:
+            type: string
+            format: email
+          description: list of email addresses
+        bcc:
+          type: array
+          items:
+            type: string
+            format: email
+          description: list of email addresses
+        replyTo:
+          type: array
+          items:
+            type: string
+            format: email
+          description: list of email addresses
+        sendDate:
+          type: string
+          format: date-time
+          description: Conforms to ISO-8601.
+        actionName:
+          type: string
+          description: Name of the action which triggered the email
+        isRemoved:
+          type: boolean
+          example: true
+        content:
+          type: string
+          description: The content of the email. Html tags are included if the content is html formatted
+        html:
+          type: boolean
+          description: Whether the content is html formatted
+        copyToSender:
+          type: boolean
+          description: Whether a copy to sender
+        deliveryReceipt:
+          type: boolean
+          description: Whether a delivery receipt was requested
+        readReceipt:
+          type: boolean
+          description: Whether a read receipt was requested
+        suppressAutoReply:
+          type: boolean
+          description: Whether suppressed auto replies
+        priority:
+          type: string
+          example: normal
+          description: Priority of the email. Possible values are `highest`, `high`, `normal`, `low`, `lowest`
+    email:
+      allOf:
+        - $ref: '#/components/schemas/emailInList'
+        - type: object
+          properties:
+            isArchived:
+              type: boolean
+              description: Whether the email is archived
+            operator:
+              $ref: '#/components/schemas/IdAndName'
+    memoText:
+      type: string
+      example: <strong>This is formatted memo text</strong>
+      description: |
+        HTML formatted text of the request.
+        
+        The following html tags can be used to format the text:
+          - \<i\> - Italic
+          - \<em\> - Emphasized
+          - \<b\> - Bold
+          - \<strong\> - Important
+          - \<u\> - Underline
+          - \<a\> - Link reference
+          - \<br\> - Line break
+          - \<h5\> - Header size 5
+          - \<h6\> - Header size 6
+          - \<ul\> - Bulletted list
+          - \<ol\> - Numbered list
+          - \<li\> - List item
+    settings:
+      type: object
+      properties:
+        isOperatorRequired:
+          type: boolean
+          example: false
+        isStatusRequired:
+          type: boolean
+          example: true
+        isReasonForSkippingRequired:
+          type: boolean
+          example: false
+        isReasonForAnomalyRequired:
+          type: boolean
+          example: true
+        isTimeRegistrationEnabled:
+          type: boolean
+          example: true
+        isReasonForTimeRegistrationRequired:
+          type: boolean
+          example: false
+        isNoteForTimeRegistrationRequired:
+          type: boolean
+          example: true
+        isTimeRegistrationRequiredWhenResolving:
+          type: boolean
+          example: false
+    OptionalFields:
+      description: The enabled optional fields.
+      type: object
+      properties:
+        boolean1:
+          description: One of five possible boolean fields
+          type: boolean
+          example: true
+        boolean2:
+          description: One of five possible boolean fields
+          type: boolean
+          example: true
+        boolean3:
+          description: One of five possible boolean fields
+          type: boolean
+          example: true
+        boolean4:
+          description: One of five possible boolean fields
+          type: boolean
+          example: true
+        boolean5:
+          description: One of five possible boolean fields
+          type: boolean
+          example: true
+        number1:
+          description: One of five possible number fields
+          type: number
+          example: 54
+        number2:
+          description: One of five possible number fields
+          type: number
+          example: 54
+        number3:
+          description: One of five possible number fields
+          type: number
+          example: 54
+        number4:
+          description: One of five possible number fields
+          type: number
+          example: 54
+        number5:
+          description: One of five possible number fields
+          type: number
+          example: 54
+        text1:
+          description: One of five possible text fields
+          type: string
+          example: "this is some text"
+        text2:
+          description: One of five possible text fields
+          type: string
+          example: "this is some text"
+        text3:
+          description: One of five possible text fields
+          type: string
+          example: "this is some text"
+        text4:
+          description: One of five possible text fields
+          type: string
+          example: "this is some text"
+        text5:
+          description: One of five possible text fields
+          type: string
+          example: "this is some text"
+        memo1:
+          description: One of five possible memo fields
+          type: string
+          example: "26-02-2016 08:44 [GMT +1:00] Meadows, D. Sr.: \nMemo1"
+        memo2:
+          description: One of five possible memo fields
+          type: string
+          example: "26-02-2016 08:44 [GMT +1:00] Meadows, D. Sr.: \nMemo2"
+        memo3:
+          description: One of five possible memo fields
+          type: string
+          example: "26-02-2016 08:44 [GMT +1:00] Meadows, D. Sr.: \nMemo3"
+        memo4:
+          description: One of five possible memo fields
+          type: string
+          example: "26-02-2016 08:44 [GMT +1:00] Meadows, D. Sr.: \nMemo4"
+        memo5:
+          description: One of five possible memo fields
+          type: string
+          example: "26-02-2016 08:44 [GMT +1:00] Meadows, D. Sr.: \nMemo5"
+        date1:
+          description: One of five possible date fields
+          type: string
+          format: 'date-time'
+          example: "2015-11-25T08:58:47Z"
+        date2:
+          description: One of five possible date fields
+          type: string
+          format: 'date-time'
+          example: "2015-11-25T08:58:47Z"
+        date3:
+          description: One of five possible date fields
+          type: string
+          format: 'date-time'
+          example: "2015-11-25T08:58:47Z"
+        date4:
+          description: One of five possible date fields
+          type: string
+          format: 'date-time'
+          example: "2015-11-25T08:58:47Z"
+        date5:
+          description: One of five possible date fields
+          type: string
+          format: 'date-time'
+          example: "2015-11-25T08:58:47Z"
+        searchlist1:
+          description: One of five possible searchlist fields.
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            name:
+              type: string
+        searchlist2:
+          description: One of five possible searchlist fields.
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            name:
+              type: string
+        searchlist3:
+          description: One of five possible searchlist fields.
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            name:
+              type: string
+        searchlist4:
+          description: One of five possible searchlist fields.
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            name:
+              type: string
+        searchlist5:
+          description: One of five possible searchlist fields.
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            name:
+              type: string
+    LinkBody:
+      type: array
+      items:
+        oneOf:
+          - properties:
+              id:
+                type: string
+                format: uuid
+          - properties:
+              name:
+                type: string
+    schemas:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        archived:
+          type: boolean
+    grouping:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        archived:
+          type: boolean
+        schema:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            name:
+              type: string
+
+    Types:
+      description: Type for an operational activity
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        archived:
+          type: boolean

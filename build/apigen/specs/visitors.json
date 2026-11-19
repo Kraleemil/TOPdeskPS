@@ -1,0 +1,2002 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "version" : "1.2.0",
+    "title" : "Visitor Registration API",
+    "contact" : {
+      "name" : "TOPdesk",
+      "url" : "http://www.topdesk.com",
+      "email" : "info@topdesk.com"
+    }
+  },
+  "basePath" : "/tas/api",
+  "tags" : [ {
+    "name" : "Visitors"
+  }, {
+    "name" : "Requester Visitors"
+  }, {
+    "name" : "Visitor searchlists"
+  } ],
+  "paths" : {
+    "/badges" : {
+      "get" : {
+        "tags" : [ "Visitor searchlists" ],
+        "summary" : "Get badges",
+        "description" : "",
+        "operationId" : "getBadges",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "archived",
+          "in" : "query",
+          "description" : "Specify true for archived only, false for unarchived only, or nothing for both",
+          "required" : false,
+          "type" : "boolean"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Badges retrieved successfully",
+            "schema" : {
+              "$ref" : "#/definitions/GetSearchlistsDto"
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "Visitor searchlists" ],
+        "summary" : "Create badge",
+        "description" : "",
+        "operationId" : "createBadge",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/CreateSearchlistDto"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Badge created successfully",
+            "schema" : {
+              "$ref" : "#/definitions/FullSearchlistDto"
+            }
+          },
+          "400" : {
+            "description" : "Duplicate name",
+            "schema" : {
+              "$ref" : "#/definitions/ErrorResponseEntity"
+            }
+          }
+        }
+      }
+    },
+    "/badges/{identifier}" : {
+      "patch" : {
+        "tags" : [ "Visitor searchlists" ],
+        "summary" : "Update badge",
+        "description" : "",
+        "operationId" : "updateBadge",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "identifier",
+          "in" : "path",
+          "description" : "The id or name of the entry to change",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "in" : "body",
+          "name" : "body",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/UpdateSearchlistDto"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Badge updated successfully"
+          },
+          "400" : {
+            "description" : "Duplicate name",
+            "schema" : {
+              "$ref" : "#/definitions/ErrorResponseEntity"
+            }
+          },
+          "404" : {
+            "description" : "Id or name does not exist",
+            "schema" : {
+              "$ref" : "#/definitions/ErrorResponseEntity"
+            }
+          }
+        }
+      }
+    },
+    "/badges/{identifier}/archive" : {
+      "post" : {
+        "tags" : [ "Visitor searchlists" ],
+        "summary" : "Archive badge",
+        "description" : "",
+        "operationId" : "archiveBadge",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "identifier",
+          "in" : "path",
+          "description" : "The id or name of the entry to change",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Badge archived successfully"
+          },
+          "404" : {
+            "description" : "Id or name does not exist",
+            "schema" : {
+              "$ref" : "#/definitions/ErrorResponseEntity"
+            }
+          }
+        }
+      }
+    },
+    "/badges/{identifier}/unarchive" : {
+      "post" : {
+        "tags" : [ "Visitor searchlists" ],
+        "summary" : "Unarchive badge",
+        "description" : "",
+        "operationId" : "unarchiveBadge",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "identifier",
+          "in" : "path",
+          "description" : "The id or name of the entry to change",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Badge unarchived successfully"
+          },
+          "404" : {
+            "description" : "Id or name does not exist",
+            "schema" : {
+              "$ref" : "#/definitions/ErrorResponseEntity"
+            }
+          }
+        }
+      }
+    },
+    "/carParks" : {
+      "get" : {
+        "tags" : [ "Visitor searchlists" ],
+        "summary" : "Get car parks",
+        "description" : "",
+        "operationId" : "getCarParks",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "archived",
+          "in" : "query",
+          "description" : "Specify true for archived only, false for unarchived only, or nothing for both",
+          "required" : false,
+          "type" : "boolean"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Car parks retrieved successfully",
+            "schema" : {
+              "$ref" : "#/definitions/GetSearchlistsDto"
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "Visitor searchlists" ],
+        "summary" : "Create car park",
+        "description" : "",
+        "operationId" : "createCarPark",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/CreateSearchlistDto"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Car park created successfully",
+            "schema" : {
+              "$ref" : "#/definitions/FullSearchlistDto"
+            }
+          },
+          "400" : {
+            "description" : "Duplicate name",
+            "schema" : {
+              "$ref" : "#/definitions/ErrorResponseEntity"
+            }
+          }
+        }
+      }
+    },
+    "/carParks/{identifier}" : {
+      "patch" : {
+        "tags" : [ "Visitor searchlists" ],
+        "summary" : "Update car park",
+        "description" : "",
+        "operationId" : "updateCarPark",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "identifier",
+          "in" : "path",
+          "description" : "The id or name of the entry to change",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "in" : "body",
+          "name" : "body",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/UpdateSearchlistDto"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Car park updated successfully"
+          },
+          "400" : {
+            "description" : "Duplicate name",
+            "schema" : {
+              "$ref" : "#/definitions/ErrorResponseEntity"
+            }
+          },
+          "404" : {
+            "description" : "Id or name does not exist",
+            "schema" : {
+              "$ref" : "#/definitions/ErrorResponseEntity"
+            }
+          }
+        }
+      }
+    },
+    "/carParks/{identifier}/archive" : {
+      "post" : {
+        "tags" : [ "Visitor searchlists" ],
+        "summary" : "Archive car park",
+        "description" : "",
+        "operationId" : "archiveCarPark",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "identifier",
+          "in" : "path",
+          "description" : "The id or name of the entry to change",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Car park archived successfully"
+          },
+          "404" : {
+            "description" : "Id or name does not exist",
+            "schema" : {
+              "$ref" : "#/definitions/ErrorResponseEntity"
+            }
+          }
+        }
+      }
+    },
+    "/carParks/{identifier}/unarchive" : {
+      "post" : {
+        "tags" : [ "Visitor searchlists" ],
+        "summary" : "Unarchive car park",
+        "description" : "",
+        "operationId" : "unarchiveCarPark",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "identifier",
+          "in" : "path",
+          "description" : "The id or name of the entry to change",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Car park unarchived successfully"
+          },
+          "404" : {
+            "description" : "Id or name does not exist",
+            "schema" : {
+              "$ref" : "#/definitions/ErrorResponseEntity"
+            }
+          }
+        }
+      }
+    },
+    "/identificationTypes" : {
+      "get" : {
+        "tags" : [ "Visitor searchlists" ],
+        "summary" : "Get identification types",
+        "description" : "",
+        "operationId" : "getIdTypes",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "archived",
+          "in" : "query",
+          "description" : "Specify true for archived only, false for unarchived only, or nothing for both",
+          "required" : false,
+          "type" : "boolean"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Identification types retrieved successfully",
+            "schema" : {
+              "$ref" : "#/definitions/GetSearchlistsDto"
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "Visitor searchlists" ],
+        "summary" : "Create identification type",
+        "description" : "",
+        "operationId" : "createIdType",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/CreateSearchlistDto"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Identification type created successfully",
+            "schema" : {
+              "$ref" : "#/definitions/FullSearchlistDto"
+            }
+          },
+          "400" : {
+            "description" : "Duplicate name",
+            "schema" : {
+              "$ref" : "#/definitions/ErrorResponseEntity"
+            }
+          }
+        }
+      }
+    },
+    "/identificationTypes/{identifier}" : {
+      "patch" : {
+        "tags" : [ "Visitor searchlists" ],
+        "summary" : "Update identification type",
+        "description" : "",
+        "operationId" : "updateIdType",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "identifier",
+          "in" : "path",
+          "description" : "The id or name of the entry to change",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "in" : "body",
+          "name" : "body",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/UpdateSearchlistDto"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Identification type updated successfully"
+          },
+          "400" : {
+            "description" : "Duplicate name",
+            "schema" : {
+              "$ref" : "#/definitions/ErrorResponseEntity"
+            }
+          },
+          "404" : {
+            "description" : "Id or name does not exist",
+            "schema" : {
+              "$ref" : "#/definitions/ErrorResponseEntity"
+            }
+          }
+        }
+      }
+    },
+    "/identificationTypes/{identifier}/archive" : {
+      "post" : {
+        "tags" : [ "Visitor searchlists" ],
+        "summary" : "Archive identification type",
+        "description" : "",
+        "operationId" : "archiveIdType",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "identifier",
+          "in" : "path",
+          "description" : "The id or name of the entry to change",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Identification type archived successfully"
+          },
+          "404" : {
+            "description" : "Id or name does not exist",
+            "schema" : {
+              "$ref" : "#/definitions/ErrorResponseEntity"
+            }
+          }
+        }
+      }
+    },
+    "/identificationTypes/{identifier}/unarchive" : {
+      "post" : {
+        "tags" : [ "Visitor searchlists" ],
+        "summary" : "Unarchive identification type",
+        "description" : "",
+        "operationId" : "unarchiveIdType",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "identifier",
+          "in" : "path",
+          "description" : "The id or name of the entry to change",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Identification type unarchived successfully"
+          },
+          "404" : {
+            "description" : "Id or name does not exist",
+            "schema" : {
+              "$ref" : "#/definitions/ErrorResponseEntity"
+            }
+          }
+        }
+      }
+    },
+    "/visitorOptionalSearchlist/{tab}/{searchlist}" : {
+      "get" : {
+        "tags" : [ "Visitor searchlists" ],
+        "summary" : "Get optional searchlists",
+        "description" : "",
+        "operationId" : "getOptionalSearchlists",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "archived",
+          "in" : "query",
+          "description" : "Specify true for archived only, false for unarchived only, or nothing for both",
+          "required" : false,
+          "type" : "boolean"
+        }, {
+          "name" : "tab",
+          "in" : "path",
+          "description" : "tab index, 1 or 2",
+          "required" : true,
+          "type" : "integer",
+          "maximum" : 2,
+          "minimum" : 1
+        }, {
+          "name" : "searchlist",
+          "in" : "path",
+          "description" : "searchlist index on this tab, from 1 to 5",
+          "required" : true,
+          "type" : "integer",
+          "maximum" : 5,
+          "minimum" : 1
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Optional searchlists retrieved successfully",
+            "schema" : {
+              "$ref" : "#/definitions/GetSearchlistsWithExternalLinkDto"
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "Visitor searchlists" ],
+        "summary" : "Create optional searchlist",
+        "description" : "",
+        "operationId" : "createOptionalSearchlist",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/CreateSearchlistWithExternalLinkDto"
+          }
+        }, {
+          "name" : "tab",
+          "in" : "path",
+          "description" : "tab index, 1 or 2",
+          "required" : true,
+          "type" : "integer",
+          "maximum" : 2,
+          "minimum" : 1
+        }, {
+          "name" : "searchlist",
+          "in" : "path",
+          "description" : "searchlist index on this tab, from 1 to 5",
+          "required" : true,
+          "type" : "integer",
+          "maximum" : 5,
+          "minimum" : 1
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Optional searchlist created successfully",
+            "schema" : {
+              "$ref" : "#/definitions/SearchlistWithExternalLinkDto"
+            }
+          },
+          "400" : {
+            "description" : "Duplicate name",
+            "schema" : {
+              "$ref" : "#/definitions/ErrorResponseEntity"
+            }
+          }
+        }
+      }
+    },
+    "/visitorOptionalSearchlist/{tab}/{searchlist}/{identifier}" : {
+      "patch" : {
+        "tags" : [ "Visitor searchlists" ],
+        "summary" : "Update optional searchlist",
+        "description" : "",
+        "operationId" : "updateOptionalSearchlist",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "identifier",
+          "in" : "path",
+          "description" : "The id or name of the entry to change",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "in" : "body",
+          "name" : "body",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/UpdateSearchlistWithExternalLinkDto"
+          }
+        }, {
+          "name" : "tab",
+          "in" : "path",
+          "description" : "tab index, 1 or 2",
+          "required" : true,
+          "type" : "integer",
+          "maximum" : 2,
+          "minimum" : 1
+        }, {
+          "name" : "searchlist",
+          "in" : "path",
+          "description" : "searchlist index on this tab, from 1 to 5",
+          "required" : true,
+          "type" : "integer",
+          "maximum" : 5,
+          "minimum" : 1
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Optional searchlist updated successfully"
+          },
+          "400" : {
+            "description" : "Duplicate name, or tab or searchlist out of range",
+            "schema" : {
+              "$ref" : "#/definitions/ErrorResponseEntity"
+            }
+          },
+          "404" : {
+            "description" : "Id or name does not exist",
+            "schema" : {
+              "$ref" : "#/definitions/ErrorResponseEntity"
+            }
+          }
+        }
+      }
+    },
+    "/visitorOptionalSearchlist/{tab}/{searchlist}/{identifier}/archive" : {
+      "post" : {
+        "tags" : [ "Visitor searchlists" ],
+        "summary" : "Archive optional searchlist",
+        "description" : "",
+        "operationId" : "archiveOptionalSearchlist",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "identifier",
+          "in" : "path",
+          "description" : "The id or name of the entry to change",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "tab",
+          "in" : "path",
+          "description" : "tab index, 1 or 2",
+          "required" : true,
+          "type" : "integer",
+          "maximum" : 2,
+          "minimum" : 1
+        }, {
+          "name" : "searchlist",
+          "in" : "path",
+          "description" : "searchlist index on this tab, from 1 to 5",
+          "required" : true,
+          "type" : "integer",
+          "maximum" : 5,
+          "minimum" : 1
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Optional searchlist archived successfully"
+          },
+          "404" : {
+            "description" : "Id or name does not exist",
+            "schema" : {
+              "$ref" : "#/definitions/ErrorResponseEntity"
+            }
+          }
+        }
+      }
+    },
+    "/visitorOptionalSearchlist/{tab}/{searchlist}/{identifier}/unarchive" : {
+      "post" : {
+        "tags" : [ "Visitor searchlists" ],
+        "summary" : "Unarchive optional searchlist",
+        "description" : "",
+        "operationId" : "unarchiveOptionalSearchlist",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "identifier",
+          "in" : "path",
+          "description" : "The id or name of the entry to change",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "tab",
+          "in" : "path",
+          "description" : "tab index, 1 or 2",
+          "required" : true,
+          "type" : "integer",
+          "maximum" : 2,
+          "minimum" : 1
+        }, {
+          "name" : "searchlist",
+          "in" : "path",
+          "description" : "searchlist index on this tab, from 1 to 5",
+          "required" : true,
+          "type" : "integer",
+          "maximum" : 5,
+          "minimum" : 1
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Optional searchlist unarchived successfully"
+          },
+          "404" : {
+            "description" : "Id or name does not exist",
+            "schema" : {
+              "$ref" : "#/definitions/ErrorResponseEntity"
+            }
+          }
+        }
+      }
+    },
+    "/visitors" : {
+      "get" : {
+        "tags" : [ "Visitors" ],
+        "summary" : "Get visitors",
+        "description" : "Fields with a `null` or otherwise empty value will not be included in the response at all, even if they are included in the `fields` parameter. Only allowed for operators, for SSP users use /requester/visitors instead.",
+        "operationId" : "getList",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/hal+json" ],
+        "parameters" : [ {
+          "name" : "query",
+          "in" : "query",
+          "description" : "A FIQL search expression to filter the result. The FIQL query syntax is documented in the <a href=\"../tutorial.html#show-collapse-query-overview\">tutorial</a>.<br/><br/>The fields available for filtering are: <ul><li>All top-level fields in the returned dto, and the visitor, visit and host sub-dtos. Additionally, you can filter by archived, which is a boolean, and by arrivalStatus, which can be either 'expected', 'arrived', 'departed' or 'cancelled'. </li><li>For visitor.phoneNumber, host.phoneNumber and host.mobileNumber, a special <tt>=phone=</tt> operator is available. This operator ignores dashes and spaces in both the query and the database, and performs an 'ends with' check.</li></ul>",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "fields",
+          "in" : "query",
+          "description" : "The fields to include in the returned object(s). Sub-objects can be included as a whole ('visitor') or per sub-field ('visitor.name'). All fields defined in the GET single endpoint can be added here, and are relative to the 'results' property. One additional property 'total' can be included, which will add a field to the parent object (next to 'results') with the total count of visitors after applying any relevant filters. If you want the arrivalStatus displayed, you can add 'visit.arrivalStatus' in the fields. In that case, the whole visit object will be returned.",
+          "required" : false,
+          "type" : "string",
+          "default" : "id,number"
+        }, {
+          "name" : "order",
+          "in" : "query",
+          "description" : "The order in which to return in the object(s). Supports all field types except id and arrivalStatus.",
+          "required" : false,
+          "type" : "string",
+          "default" : "visit.expectedArrival,number"
+        }, {
+          "name" : "pageSize",
+          "in" : "query",
+          "description" : "The number of visitors to return. Max 1.000.000. Please request only data you really need (via the fields parameter) when querying large numbers of visitors.",
+          "required" : false,
+          "type" : "integer",
+          "default" : 10,
+          "format" : "int32"
+        }, {
+          "name" : "offset",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "default" : 0,
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Visitors retrieved successfully",
+            "schema" : {
+              "$ref" : "#/definitions/ListOfVisitorsDto"
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "Visitors" ],
+        "summary" : "Create visitors",
+        "description" : "Creates one or more visitor cards by specifying persons and visits. A visitor card is created for each combination of person and visit. Only available for operators. For SSP Users, use /requester/visitors instead.",
+        "operationId" : "create",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/hal+json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "description" : "The `host` field supports most features from the caller block in the UI: You can specify either a person or an unregistered caller name. It is an error to specify both or neither. When specifying an unregistered caller, the branch field becomes mandatory. You can supply custom values for all other fields. If you don't, those values will be taken from the person or branch. When updating a caller block, all unspecified values will be taken from the new person and/or branch. If you want to keep the current values instead, explicitly specify them along with your update. This also means that if you want to change only the email field, you will have to specify the current values for all other fields, or they will be changed back to the value from the person or branch.",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/CreateVisitorsDto"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Visitors created successfully. Only returns id and number for created visitors.",
+            "schema" : {
+              "$ref" : "#/definitions/ListOfVisitorsDto"
+            }
+          }
+        }
+      }
+    },
+    "/visitors/{identifier}" : {
+      "get" : {
+        "tags" : [ "Visitors" ],
+        "summary" : "Get visitor by id or number",
+        "description" : "Fields with a `null` or otherwise empty value will not be included in the response at all, even if they are included in the `fields` parameter. Only available for operators. For SSP Users, use /requester/visitors/{identifier} instead.",
+        "operationId" : "get",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/hal+json" ],
+        "parameters" : [ {
+          "name" : "identifier",
+          "in" : "path",
+          "description" : "The id or number of the visitor",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "fields",
+          "in" : "query",
+          "description" : "The fields to include in the returned object(s). Sub-objects can be included as a whole ('visitor') or per sub-field ('visitor.name'). If you want the arrivalStatus displayed, you can add 'visit.arrivalStatus' in the fields. In that case, the whole visit object will be returned.",
+          "required" : false,
+          "type" : "string",
+          "default" : "all fields"
+        }, {
+          "name" : "If-None-Match",
+          "in" : "header",
+          "description" : "A hash value as returned earlier by this endpoint. If the resource hasn't changed, this endpoint will return a status 304 Not Modified and no body.",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Visitor retrieved successfully",
+            "schema" : {
+              "$ref" : "#/definitions/GetSingleVisitorDto"
+            },
+            "headers" : {
+              "ETag" : {
+                "type" : "string",
+                "description" : "A hash value describing the current state of this resource. Can be passed back into the get and update endpoints for version checks."
+              }
+            }
+          },
+          "304" : {
+            "description" : "Visitor not changed since last request"
+          }
+        }
+      },
+      "patch" : {
+        "tags" : [ "Visitors" ],
+        "summary" : "Update visitor",
+        "description" : "Only available for operators. For SSP Users, use /requester/visitors/{identifier} instead.",
+        "operationId" : "update",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/hal+json" ],
+        "parameters" : [ {
+          "name" : "identifier",
+          "in" : "path",
+          "description" : "The id or number of the visitor",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "If-Match",
+          "in" : "header",
+          "description" : "A hash value as returned earlier by the GET single endpoint. If the resource has changed, this endpoint will return with status 412 Precondition Failed.",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "in" : "body",
+          "name" : "body",
+          "description" : "The `host` field supports most features from the caller block in the UI: You can specify either a person or an unregistered caller name. It is an error to specify both or neither. When specifying an unregistered caller, the branch field becomes mandatory. You can supply custom values for all other fields. If you don't, those values will be taken from the person or branch. When updating a caller block, all unspecified values will be taken from the new person and/or branch. If you want to keep the current values instead, explicitly specify them along with your update. This also means that if you want to change only the email field, you will have to specify the current values for all other fields, or they will be changed back to the value from the person or branch.",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/UpdateVisitorDto"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Visitor updated"
+          },
+          "404" : {
+            "description" : "Visitor not found or not visible in filters"
+          },
+          "412" : {
+            "description" : "ETag is passed, but does not match. Requery the entity before updating, to make sure you don't accidentally overwrite changed fields."
+          }
+        }
+      }
+    },
+    "/visitors/{identifier}/archive" : {
+      "post" : {
+        "tags" : [ "Visitors" ],
+        "summary" : "Archive visitor",
+        "description" : "Only available for operators.",
+        "operationId" : "archive",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/hal+json" ],
+        "parameters" : [ {
+          "name" : "identifier",
+          "in" : "path",
+          "description" : "The id or number of the visitor",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Visitor archived"
+          },
+          "404" : {
+            "description" : "Visitor not found or not visible in filters"
+          }
+        }
+      }
+    },
+    "/visitors/{identifier}/attachments" : {
+      "get" : {
+        "tags" : [ "Visitors" ],
+        "summary" : "Get files attached to a visitor",
+        "description" : "Only available for operators. For SSP Users, use /requester/visitors/{identifier}/attachments instead.",
+        "operationId" : "getFiles",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/hal+json" ],
+        "parameters" : [ {
+          "name" : "identifier",
+          "in" : "path",
+          "description" : "The id or number of the visitor",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Attachments retrieved successfully"
+          },
+          "404" : {
+            "description" : "Visitor not found or not visible in filters"
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "Visitors" ],
+        "summary" : "Upload a file and attach it to a visitor",
+        "description" : "Only available for operators. For SSP Users, use /requester/visitors/{identifier}/attachments instead.",
+        "operationId" : "uploadFile",
+        "consumes" : [ "multipart/form-data" ],
+        "produces" : [ "application/hal+json" ],
+        "parameters" : [ {
+          "name" : "identifier",
+          "in" : "path",
+          "description" : "The id or number of the visitor",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "file",
+          "in" : "formData",
+          "description" : "The attachment to upload",
+          "required" : true,
+          "type" : "file"
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Attachment uploaded successfully"
+          },
+          "404" : {
+            "description" : "Visitor not found or not visible in filters"
+          }
+        }
+      }
+    },
+    "/visitors/{identifier}/attachments/{id}" : {
+      "delete" : {
+        "tags" : [ "Visitors" ],
+        "summary" : "Delete attachment from visitor",
+        "description" : "Only available for operators. For SSP Users, use /requester/visitors/{identifier}/attachments/{id} instead.",
+        "operationId" : "deleteFile",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/hal+json" ],
+        "parameters" : [ {
+          "name" : "identifier",
+          "in" : "path",
+          "description" : "The id or number of the visitor",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "id",
+          "in" : "path",
+          "description" : "id of the attachment",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Attachment deleted successfully"
+          },
+          "404" : {
+            "description" : "Visitor not found or not visible in filters"
+          }
+        }
+      }
+    },
+    "/visitors/{identifier}/unarchive" : {
+      "post" : {
+        "tags" : [ "Visitors" ],
+        "summary" : "Unarchive visitor",
+        "description" : "Only available for operators.",
+        "operationId" : "unarchive",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/hal+json" ],
+        "parameters" : [ {
+          "name" : "identifier",
+          "in" : "path",
+          "description" : "The id or number of the visitor",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Visitor retrieved from archive"
+          },
+          "404" : {
+            "description" : "Visitor not found or not visible in filters"
+          }
+        }
+      }
+    },
+    "/requester/visitors" : {
+      "get" : {
+        "tags" : [ "Requester Visitors" ],
+        "summary" : "Get visitors for SSP user",
+        "description" : "Fields with a `null` or otherwise empty value will not be included in the response at all, even if they are included in the `fields` parameter. The result is only available if SSP users can view visitors in the SSP. This endpoint is not available for operators.",
+        "operationId" : "getListForRequester",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/hal+json" ],
+        "parameters" : [ {
+          "name" : "query",
+          "in" : "query",
+          "description" : "A FIQL search expression to filter the result. The FIQL query syntax is documented in the <a href=\"../tutorial.html#show-collapse-query-overview\">tutorial</a>.<br/><br/>The fields available for filtering are: <ul><li>All top-level fields in the returned dto, and the visitor, visit and host sub-dtos. Additionally, you can filter by archived, which is a boolean, and by arrivalStatus, which can be either 'expected', 'arrived', 'departed' or 'cancelled'. </li><li>For visitor.phoneNumber, host.phoneNumber and host.mobileNumber, a special <tt>=phone=</tt> operator is available. This operator ignores dashes and spaces in both the query and the database, and performs an 'ends with' check.</li></ul>",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "fields",
+          "in" : "query",
+          "description" : "The fields to include in the returned object(s). Sub-objects can be included as a whole ('visitor') or per sub-field ('visitor.name'). All fields defined in the GET single endpoint can be added here, and are relative to the 'results' property. One additional property 'total' can be included, which will add a field to the parent object (next to 'results') with the total count of visitors after applying any relevant filters. If you want the arrivalStatus displayed, you can add 'visit.arrivalStatus' in the fields. In that case, the whole visit object will be returned.",
+          "required" : false,
+          "type" : "string",
+          "default" : "id,number"
+        }, {
+          "name" : "order",
+          "in" : "query",
+          "description" : "The order in which to return in the object(s). Supports all field types except id and arrivalStatus.",
+          "required" : false,
+          "type" : "string",
+          "default" : "visit.expectedArrival,number"
+        }, {
+          "name" : "pageSize",
+          "in" : "query",
+          "description" : "The number of visitors to return. Max 1.000.000. Please request only data you really need (via the fields parameter) when querying large numbers of visitors.",
+          "required" : false,
+          "type" : "integer",
+          "default" : 10,
+          "format" : "int32"
+        }, {
+          "name" : "offset",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer",
+          "default" : 0,
+          "format" : "int32"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Visitors retrieved successfully",
+            "schema" : {
+              "$ref" : "#/definitions/ListOfVisitorsDto"
+            }
+          },
+          "403" : {
+            "description" : "No access to requester endpoints"
+          }
+        }
+      }
+    },
+    "/requester/visitors/{identifier}" : {
+      "get" : {
+        "tags" : [ "Requester Visitors" ],
+        "summary" : "Get visitor by id or number for SSP user",
+        "description" : "Fields with a `null` or otherwise empty value will not be included in the response at all, even if they are included in the `fields` parameter. The result is only available if SSP users can view visitors. This endpoint is not available for operators.",
+        "operationId" : "getForRequester",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/hal+json" ],
+        "parameters" : [ {
+          "name" : "identifier",
+          "in" : "path",
+          "description" : "The id or number of the visitor",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "fields",
+          "in" : "query",
+          "description" : "The fields to include in the returned object(s). Sub-objects can be included as a whole ('visitor') or per sub-field ('visitor.name'). If you want the arrivalStatus displayed, you can add 'visit.arrivalStatus' in the fields. In that case, the whole visit object will be returned.",
+          "required" : false,
+          "type" : "string",
+          "default" : "all fields"
+        }, {
+          "name" : "If-None-Match",
+          "in" : "header",
+          "description" : "A hash value as returned earlier by this endpoint. If the resource hasn't changed, this endpoint will return a status 304 Not Modified and no body.",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Visitor retrieved successfully",
+            "schema" : {
+              "$ref" : "#/definitions/GetSingleVisitorDto"
+            },
+            "headers" : {
+              "ETag" : {
+                "type" : "string",
+                "description" : "A hash value describing the current state of this resource. Can be passed back into the get and update endpoints for version checks."
+              }
+            }
+          },
+          "304" : {
+            "description" : "Visitor not changed since last request"
+          },
+          "403" : {
+            "description" : "No access to requester endpoints"
+          },
+          "404" : {
+            "description" : "Visitor not found"
+          }
+        }
+      },
+      "patch" : {
+        "tags" : [ "Requester Visitors" ],
+        "summary" : "Update visitor for SSP user",
+        "description" : "This is only available if SSP users can view visitors. This endpoint is not available for operators.",
+        "operationId" : "updateForRequester",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/hal+json" ],
+        "parameters" : [ {
+          "name" : "identifier",
+          "in" : "path",
+          "description" : "The id or number of the visitor",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "If-Match",
+          "in" : "header",
+          "description" : "A hash value as returned earlier by the GET single endpoint. If the resource has changed, this endpoint will return with status 412 Precondition Failed.",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "in" : "body",
+          "name" : "body",
+          "description" : "The `host` field supports most features from the caller block in the UI: You can specify either a person or an unregistered caller name. It is an error to specify both or neither. When specifying an unregistered caller, the branch field becomes mandatory. You can supply custom values for all other fields. If you don't, those values will be taken from the person or branch. When updating a caller block, all unspecified values will be taken from the new person and/or branch. If you want to keep the current values instead, explicitly specify them along with your update. This also means that if you want to change only the email field, you will have to specify the current values for all other fields, or they will be changed back to the value from the person or branch.",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/UpdateVisitorDto"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Visitor updated"
+          },
+          "403" : {
+            "description" : "No access to requester endpoints"
+          },
+          "404" : {
+            "description" : "Visitor not found"
+          },
+          "412" : {
+            "description" : "ETag is passed, but does not match. Requery the entity before updating, to make sure you don't accidentally overwrite changed fields."
+          }
+        }
+      }
+    },
+    "/requester/visitors/{identifier}/attachments" : {
+      "get" : {
+        "tags" : [ "Requester Visitors" ],
+        "summary" : "Get files attached to a visitor for SSP user",
+        "description" : "The result is only available if SSP users can view visitors. This endpoint is not available for operators.",
+        "operationId" : "getFilesForRequester",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/hal+json" ],
+        "parameters" : [ {
+          "name" : "identifier",
+          "in" : "path",
+          "description" : "The id or number of the visitor",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Attachments retrieved successfully"
+          },
+          "403" : {
+            "description" : "No access to requester endpoints"
+          },
+          "404" : {
+            "description" : "Visitor not found"
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "Requester Visitors" ],
+        "summary" : "Upload a file and attach it to a visitor for SSP user",
+        "description" : "This is only available if SSP users can view visitors. This endpoint is not available for operators.",
+        "operationId" : "uploadFileForRequester",
+        "consumes" : [ "multipart/form-data" ],
+        "produces" : [ "application/hal+json" ],
+        "parameters" : [ {
+          "name" : "identifier",
+          "in" : "path",
+          "description" : "The id or number of the visitor",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "file",
+          "in" : "formData",
+          "description" : "The attachment to upload",
+          "required" : true,
+          "type" : "file"
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Attachment uploaded successfully"
+          },
+          "403" : {
+            "description" : "No access to requester endpoints"
+          },
+          "404" : {
+            "description" : "Visitor not found"
+          }
+        }
+      }
+    },
+    "/requester/visitors/{identifier}/attachments/{id}" : {
+      "delete" : {
+        "tags" : [ "Requester Visitors" ],
+        "summary" : "Delete attachment from visitor for SSP user",
+        "description" : "This is only available if SSP users can view visitors. This endpoint is not available for operators.",
+        "operationId" : "deleteFileForRequester",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/hal+json" ],
+        "parameters" : [ {
+          "name" : "identifier",
+          "in" : "path",
+          "description" : "The id or number of the visitor",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "id",
+          "in" : "path",
+          "description" : "id of the attachment",
+          "required" : true,
+          "type" : "string",
+          "format" : "uuid"
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "Attachment deleted successfully"
+          },
+          "403" : {
+            "description" : "No access to requester endpoints"
+          },
+          "404" : {
+            "description" : "Visitor not found"
+          }
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "CallerBlockReadDto" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "format" : "uuid"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "branch" : {
+          "$ref" : "#/definitions/SearchlistDto"
+        },
+        "phoneNumber" : {
+          "type" : "string"
+        },
+        "mobileNumber" : {
+          "type" : "string"
+        },
+        "email" : {
+          "type" : "string"
+        },
+        "location" : {
+          "$ref" : "#/definitions/SearchlistDto"
+        },
+        "department" : {
+          "$ref" : "#/definitions/SearchlistDto"
+        },
+        "budgetHolder" : {
+          "$ref" : "#/definitions/SearchlistDto"
+        },
+        "branchExtraA" : {
+          "$ref" : "#/definitions/SearchlistDto"
+        },
+        "branchExtraB" : {
+          "$ref" : "#/definitions/SearchlistDto"
+        },
+        "personExtraA" : {
+          "$ref" : "#/definitions/SearchlistDto"
+        },
+        "personExtraB" : {
+          "$ref" : "#/definitions/SearchlistDto"
+        }
+      }
+    },
+    "CallerBlockWriteDto" : {
+      "type" : "object",
+      "properties" : {
+        "person" : {
+          "$ref" : "#/definitions/Lookup"
+        },
+        "unregisteredCallerName" : {
+          "type" : "string"
+        },
+        "phoneNumber" : {
+          "type" : "string"
+        },
+        "mobileNumber" : {
+          "type" : "string"
+        },
+        "email" : {
+          "type" : "string"
+        },
+        "branch" : {
+          "$ref" : "#/definitions/Lookup"
+        },
+        "location" : {
+          "$ref" : "#/definitions/Lookup"
+        },
+        "department" : {
+          "$ref" : "#/definitions/LookupByName"
+        },
+        "budgetHolder" : {
+          "$ref" : "#/definitions/LookupByName"
+        },
+        "personExtraA" : {
+          "$ref" : "#/definitions/LookupByName"
+        },
+        "personExtraB" : {
+          "$ref" : "#/definitions/LookupByName"
+        },
+        "branchExtraA" : {
+          "$ref" : "#/definitions/LookupByName"
+        },
+        "branchExtraB" : {
+          "$ref" : "#/definitions/LookupByName"
+        }
+      }
+    },
+    "CreateSearchlistDto" : {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "archived" : {
+          "type" : "boolean"
+        }
+      }
+    },
+    "CreateSearchlistWithExternalLinkDto" : {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "archived" : {
+          "type" : "boolean"
+        },
+        "externalLink" : {
+          "$ref" : "#/definitions/ExternalLinkDto"
+        }
+      }
+    },
+    "CreateVisitorsDto" : {
+      "type" : "object",
+      "required" : [ "host", "visitors", "visits" ],
+      "properties" : {
+        "visitors" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/WriteVisitorDto"
+          },
+          "maxItems" : 20,
+          "minItems" : 1
+        },
+        "visits" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/VisitDto"
+          },
+          "maxItems" : 20,
+          "minItems" : 1
+        },
+        "host" : {
+          "$ref" : "#/definitions/CallerBlockWriteDto"
+        },
+        "optionalFieldsTab1" : {
+          "$ref" : "#/definitions/OptionalFieldsWriteDto"
+        },
+        "optionalFieldsTab2" : {
+          "$ref" : "#/definitions/OptionalFieldsWriteDto"
+        },
+        "externalLink" : {
+          "$ref" : "#/definitions/ExternalLinkDto"
+        }
+      }
+    },
+    "ErrorDescription" : {
+      "type" : "object",
+      "required" : [ "errorCode" ],
+      "properties" : {
+        "errorCode" : {
+          "type" : "string",
+          "description" : "A consistent code that can be used to determine the type of error programatically"
+        },
+        "appliesTo" : {
+          "type" : "array",
+          "description" : "The field or parameter name this error applies to",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "errorMessage" : {
+          "type" : "string",
+          "description" : "A human-readable description of this error. Should not be used programatically, and can change without notice."
+        }
+      }
+    },
+    "ErrorResponseEntity" : {
+      "type" : "object",
+      "required" : [ "errors" ],
+      "properties" : {
+        "errors" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/ErrorDescription"
+          }
+        }
+      }
+    },
+    "ExternalLinkDto" : {
+      "type" : "object",
+      "required" : [ "id", "type" ],
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "description" : "The id of the entity in the external system<br/>Size range: `maximum 450 characters`"
+        },
+        "type" : {
+          "type" : "string",
+          "description" : "The type of the link<br/>Range: `A non-zero integer formatted as string`. Each integration should use its own value. If multiple integrations use the same value, records could be shared between the integrations"
+        },
+        "date" : {
+          "type" : "string",
+          "format" : "date-time",
+          "description" : "The date of the synchronization"
+        }
+      }
+    },
+    "FullSearchlistDto" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "format" : "uuid"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "archived" : {
+          "type" : "boolean"
+        }
+      }
+    },
+    "GetSearchlistsDto" : {
+      "type" : "object",
+      "properties" : {
+        "results" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/FullSearchlistDto"
+          }
+        }
+      }
+    },
+    "GetSearchlistsWithExternalLinkDto" : {
+      "type" : "object",
+      "properties" : {
+        "results" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/SearchlistWithExternalLinkDto"
+          }
+        }
+      }
+    },
+    "GetSingleVisitorDto" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "format" : "uuid"
+        },
+        "number" : {
+          "type" : "string"
+        },
+        "visitor" : {
+          "$ref" : "#/definitions/GetVisitorDto"
+        },
+        "visit" : {
+          "$ref" : "#/definitions/VisitDto"
+        },
+        "host" : {
+          "$ref" : "#/definitions/CallerBlockReadDto"
+        },
+        "comments" : {
+          "type" : "string"
+        },
+        "notes" : {
+          "type" : "string"
+        },
+        "optionalFieldsTab1" : {
+          "$ref" : "#/definitions/OptionalFieldsReadDto"
+        },
+        "optionalFieldsTab2" : {
+          "$ref" : "#/definitions/OptionalFieldsReadDto"
+        },
+        "externalLinks" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/ExternalLinkDto"
+          }
+        },
+        "archived" : {
+          "type" : "boolean"
+        },
+        "creator" : {
+          "type" : "string",
+          "format" : "uuid"
+        },
+        "created" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "modifier" : {
+          "type" : "string",
+          "format" : "uuid"
+        },
+        "modified" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "_links" : {
+          "type" : "object",
+          "properties" : {
+            "host" : {
+              "$ref" : "#/definitions/HALLink"
+            },
+            "self" : {
+              "$ref" : "#/definitions/HALLink"
+            }
+          }
+        }
+      }
+    },
+    "GetVisitorDto" : {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "organization" : {
+          "type" : "string"
+        },
+        "phoneNumber" : {
+          "type" : "string"
+        },
+        "email" : {
+          "type" : "string"
+        },
+        "carPark" : {
+          "$ref" : "#/definitions/SearchlistDto"
+        },
+        "numberPlate" : {
+          "type" : "string"
+        },
+        "identificationType" : {
+          "$ref" : "#/definitions/SearchlistDto"
+        },
+        "identificationNumber" : {
+          "type" : "string"
+        },
+        "badge" : {
+          "$ref" : "#/definitions/SearchlistDto"
+        }
+      }
+    },
+    "HALLink" : {
+      "type" : "object",
+      "properties" : {
+        "href" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string"
+        }
+      }
+    },
+    "ListOfVisitorsDto" : {
+      "type" : "object",
+      "properties" : {
+        "total" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "results" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/GetSingleVisitorDto"
+          }
+        },
+        "_links" : {
+          "type" : "object",
+          "properties" : {
+            "first" : {
+              "$ref" : "#/definitions/HALLink"
+            },
+            "item" : {
+              "$ref" : "#/definitions/HALLink"
+            },
+            "last" : {
+              "$ref" : "#/definitions/HALLink"
+            },
+            "next" : {
+              "$ref" : "#/definitions/HALLink"
+            },
+            "previous" : {
+              "$ref" : "#/definitions/HALLink"
+            }
+          }
+        }
+      }
+    },
+    "Lookup" : {
+      "type" : "object",
+      "required" : [ "id" ],
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "format" : "uuid",
+          "description" : "Look up this value by id"
+        }
+      }
+    },
+    "LookupByName" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "format" : "uuid",
+          "description" : "Look up this value by id"
+        },
+        "name" : {
+          "type" : "string",
+          "description" : "Look up this value by name. If there are multiple values with this name, will give a bad request."
+        }
+      }
+    },
+    "OptionalFieldsReadDto" : {
+      "type" : "object",
+      "properties" : {
+        "boolean1" : {
+          "type" : "boolean"
+        },
+        "boolean2" : {
+          "type" : "boolean"
+        },
+        "boolean3" : {
+          "type" : "boolean"
+        },
+        "boolean4" : {
+          "type" : "boolean"
+        },
+        "boolean5" : {
+          "type" : "boolean"
+        },
+        "number1" : {
+          "type" : "number",
+          "format" : "double"
+        },
+        "number2" : {
+          "type" : "number",
+          "format" : "double"
+        },
+        "number3" : {
+          "type" : "number",
+          "format" : "double"
+        },
+        "number4" : {
+          "type" : "number",
+          "format" : "double"
+        },
+        "number5" : {
+          "type" : "number",
+          "format" : "double"
+        },
+        "date1" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "date2" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "date3" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "date4" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "date5" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "text1" : {
+          "type" : "string"
+        },
+        "text2" : {
+          "type" : "string"
+        },
+        "text3" : {
+          "type" : "string"
+        },
+        "text4" : {
+          "type" : "string"
+        },
+        "text5" : {
+          "type" : "string"
+        },
+        "memo1" : {
+          "type" : "string"
+        },
+        "memo2" : {
+          "type" : "string"
+        },
+        "memo3" : {
+          "type" : "string"
+        },
+        "memo4" : {
+          "type" : "string"
+        },
+        "memo5" : {
+          "type" : "string"
+        },
+        "searchlist1" : {
+          "$ref" : "#/definitions/SearchlistDto"
+        },
+        "searchlist2" : {
+          "$ref" : "#/definitions/SearchlistDto"
+        },
+        "searchlist3" : {
+          "$ref" : "#/definitions/SearchlistDto"
+        },
+        "searchlist4" : {
+          "$ref" : "#/definitions/SearchlistDto"
+        },
+        "searchlist5" : {
+          "$ref" : "#/definitions/SearchlistDto"
+        }
+      }
+    },
+    "OptionalFieldsWriteDto" : {
+      "type" : "object",
+      "properties" : {
+        "boolean1" : {
+          "type" : "boolean"
+        },
+        "boolean2" : {
+          "type" : "boolean"
+        },
+        "boolean3" : {
+          "type" : "boolean"
+        },
+        "boolean4" : {
+          "type" : "boolean"
+        },
+        "boolean5" : {
+          "type" : "boolean"
+        },
+        "number1" : {
+          "type" : "number",
+          "format" : "double"
+        },
+        "number2" : {
+          "type" : "number",
+          "format" : "double"
+        },
+        "number3" : {
+          "type" : "number",
+          "format" : "double"
+        },
+        "number4" : {
+          "type" : "number",
+          "format" : "double"
+        },
+        "number5" : {
+          "type" : "number",
+          "format" : "double"
+        },
+        "date1" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "date2" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "date3" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "date4" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "date5" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "text1" : {
+          "type" : "string"
+        },
+        "text2" : {
+          "type" : "string"
+        },
+        "text3" : {
+          "type" : "string"
+        },
+        "text4" : {
+          "type" : "string"
+        },
+        "text5" : {
+          "type" : "string"
+        },
+        "searchlist1" : {
+          "$ref" : "#/definitions/LookupByName"
+        },
+        "searchlist2" : {
+          "$ref" : "#/definitions/LookupByName"
+        },
+        "searchlist3" : {
+          "$ref" : "#/definitions/LookupByName"
+        },
+        "searchlist4" : {
+          "$ref" : "#/definitions/LookupByName"
+        },
+        "searchlist5" : {
+          "$ref" : "#/definitions/LookupByName"
+        }
+      }
+    },
+    "SearchlistDto" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "format" : "uuid"
+        },
+        "name" : {
+          "type" : "string"
+        }
+      }
+    },
+    "SearchlistWithExternalLinkDto" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "format" : "uuid"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "archived" : {
+          "type" : "boolean"
+        },
+        "externalLink" : {
+          "$ref" : "#/definitions/ExternalLinkDto"
+        }
+      }
+    },
+    "UpdateSearchlistDto" : {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        }
+      }
+    },
+    "UpdateSearchlistWithExternalLinkDto" : {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "externalLink" : {
+          "$ref" : "#/definitions/ExternalLinkDto"
+        }
+      }
+    },
+    "UpdateVisitorDto" : {
+      "type" : "object",
+      "properties" : {
+        "visitor" : {
+          "$ref" : "#/definitions/WriteVisitorDto"
+        },
+        "visit" : {
+          "$ref" : "#/definitions/VisitDto"
+        },
+        "host" : {
+          "$ref" : "#/definitions/CallerBlockWriteDto"
+        },
+        "optionalFieldsTab1" : {
+          "$ref" : "#/definitions/OptionalFieldsWriteDto"
+        },
+        "optionalFieldsTab2" : {
+          "$ref" : "#/definitions/OptionalFieldsWriteDto"
+        },
+        "externalLink" : {
+          "$ref" : "#/definitions/ExternalLinkDto"
+        }
+      }
+    },
+    "VisitDto" : {
+      "type" : "object",
+      "properties" : {
+        "arrivalStatus" : {
+          "type" : "string",
+          "enum": [ "arrived", "expected", "departed", "cancelled" ]
+        },
+        "expectedArrival" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "expectedDeparture" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "actualArrival" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "actualDeparture" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "cancellationDate" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "reason" : {
+          "type" : "string"
+        }
+      }
+    },
+    "WriteVisitorDto" : {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "organization" : {
+          "type" : "string"
+        },
+        "phoneNumber" : {
+          "type" : "string"
+        },
+        "email" : {
+          "type" : "string"
+        },
+        "carPark" : {
+          "$ref" : "#/definitions/LookupByName"
+        },
+        "numberPlate" : {
+          "type" : "string"
+        },
+        "identificationType" : {
+          "$ref" : "#/definitions/LookupByName"
+        },
+        "identificationNumber" : {
+          "type" : "string"
+        },
+        "badge" : {
+          "$ref" : "#/definitions/LookupByName"
+        }
+      }
+    }
+  }
+}

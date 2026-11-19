@@ -1,0 +1,881 @@
+{
+	"openapi": "3.0.3",
+	"info": {
+		"title": "Custom Action Support API",
+		"description": "The operations in this API do not belong to one specific module, but can be used for example in custom Action Sequences.",
+		"version": "SaaS",
+		"termsOfService": "/legal.html",
+		"contact": {
+			"name": "TOPdesk",
+			"url": "https://www.topdesk.com",
+			"email": "info@topdesk.com"
+		}
+	},
+	"tags": [
+		{
+			"name": "Sending Emails"
+		},
+		{
+			"name": "PDF Generation"
+		},
+		{
+			"name": "Barcode Generation"
+		},
+		{
+			"name": "Triggering Webhooks"
+		}
+	],
+	"paths": {
+		"/services/email-v1/api/send": {
+			"post": {
+				"tags": [
+					"Sending Emails"
+				],
+				"summary": "Sends an email",
+				"description": "This operation sends an email, using the mail server configured in the TOPdesk settings.\n\nRequires the permission \"Send emails with REST API\".\n\nUse `Content-Type: application/json` to send an email without attachments, or `Content-Type: multipart/form-data` to send an email with attachments.",
+				"operationId": "sendEmail",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "Accept-Language",
+						"schema": {
+							"type": "string"
+						},
+						"example": "nl",
+						"description": "The language to use for localized error messages. If this header is not present or the requested language is not supported, error messages will be returned in English."
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SendEmailBody"
+							}
+						},
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"required": [
+									"email"
+								],
+								"properties": {
+									"email": {
+										"type": "object",
+										"description": "This part is the same as the body for an application/json request."
+									},
+									"attachment": {
+										"type": "string",
+										"format": "binary",
+										"description": "The file content of an attachment. Providing a filename is mandatory (example: `Content-Disposition: form-data; filename=\"manual.pdf\"`), and the filename should be properly encoded according to [RFC-5987](https://greenbytes.de/tech/webdav/rfc5987.html) if it contains non-ASCII characters.\n\nMultiple attachment parts are allowed."
+									},
+									"inline": {
+										"type": "string",
+										"format": "binary",
+										"description": "The file content of an inline attachment. Providing a filename is mandatory (example: `Content-Disposition: form-data; filename=\"logo.png\"`), and the filename should be properly encoded according to [RFC-5987](https://greenbytes.de/tech/webdav/rfc5987.html) if it contains non-ASCII characters.\n\nWhen an attachment part is called inline, it gets a Content-ID equal to its filename minus the extension, allowing it to be referred to from within an image tag in the email body (example: `<img src=\"cid:logo\"/>`). Inline attachments are not supported for plain text emails.\n\nMultiple inline parts are allowed."
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"202": {
+						"description": "The request is accepted. The email will be sent synchronously. It might fail to be sent if the mail server is configured incorrectly."
+					},
+					"400": {
+						"description": "Invalid request data.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseEntity"
+								},
+								"examples": {
+									"No recipients provided": {
+										"description": "No recipients (to, cc or bcc) are provided.",
+										"value": {
+											"errors": [
+												{
+													"errorCode": "no_recipients_provided",
+													"appliesTo": [
+														"to",
+														"cc",
+														"bcc"
+													],
+													"errorMessage": "The email cannot be sent because it has no recipients."
+												}
+											]
+										}
+									},
+									"Invalid email address": {
+										"description": "The value of the \"to\" field is not a valid email address list.",
+										"value": {
+											"errors": [
+												{
+													"errorCode": "value_invalid",
+													"appliesTo": [
+														"to"
+													],
+													"errorMessage": "The email cannot be sent because the following addresses are invalid: a@."
+												}
+											]
+										}
+									},
+									"Sender domain not allowed": {
+										"description": "The sender address has a domain that cannot be used.",
+										"value": {
+											"errors": [
+												{
+													"errorCode": "sender_domain_not_allowed",
+													"appliesTo": [
+														"from"
+													],
+													"errorMessage": "The email cannot be sent because the sender address has a domain that cannot be used."
+												}
+											]
+										}
+									},
+									"Send as denied": {
+										"description": "The configured mail server user is not allowed to send emails from the given sender address.",
+										"value": {
+											"errors": [
+												{
+													"errorCode": "send_as_denied",
+													"errorMessage": "The email cannot be sent because the configured mail server user is not allowed to send emails from the given sender address."
+												}
+											]
+										}
+									},
+									"Message too large": {
+										"description": "The email message (including attachments) is too large to be sent by the configured mail server, or it exceeds the endpoint limit of 50MB.",
+										"value": {
+											"errors": [
+												{
+													"errorCode": "message_too_large",
+													"errorMessage": "The email cannot be sent because it is too large."
+												}
+											]
+										}
+									},
+									"Missing attachment filename": {
+										"description": "The email has an attachment without a filename.",
+										"value": {
+											"errors": [
+												{
+													"errorCode": "attachment_filename_mandatory",
+													"errorMessage": "The email cannot be sent because it has an attachment without a filename."
+												}
+											]
+										}
+									}
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Missing permission: \"Send emails with REST API\"."
+					},
+					"500": {
+						"description": "This error code can have various causes. For example: the authentication on the mail server has failed, there is something wrong with the mail server connection settings, or an unknown error has occurred.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseEntity"
+								},
+								"examples": {
+									"Authentication failed": {
+										"description": "Authentication to the mail server failed.",
+										"value": {
+											"errors": [
+												{
+													"errorCode": "mail_server_authentication_failure",
+													"appliesTo": [],
+													"errorMessage": "The email cannot be sent because authentication to the mail server failed."
+												}
+											]
+										}
+									},
+									"Unknown mail server host": {
+										"description": "The configured mail server host is unknown.",
+										"value": {
+											"errors": [
+												{
+													"errorCode": "unknown_mail_server_host",
+													"appliesTo": [],
+													"errorMessage": "The email cannot be sent because the configured mail server host is unknown."
+												}
+											]
+										}
+									},
+									"Unknown messaging error": {
+										"description": "Unknown messaging error occurred.",
+										"value": {
+											"errors": [
+												{
+													"errorCode": "unknown_messaging_error",
+													"appliesTo": [],
+													"errorMessage": "The email cannot be sent. The error message is:\ncom.sun.mail.util.MailConnectException: Couldn't connect to host, port: localhost, 25; timeout 29000\nCaused by: java.net.ConnectException: Connection timed out: connect"
+												}
+											]
+										}
+									},
+									"Unknown error": {
+										"description": "Unknown error occurred",
+										"value": ""
+									}
+								}
+							}
+						}
+					},
+					"502": {
+						"description": "Connection to the mail server failed.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseEntity"
+								},
+								"examples": {
+									"Connection failure": {
+										"description": "Connection to the mail server failed",
+										"value": {
+											"errors": [
+												{
+													"errorCode": "mail_server_connection_failure",
+													"appliesTo": [],
+													"errorMessage": "The email cannot be sent because connecting to the mail server failed."
+												}
+											]
+										}
+									}
+								}
+							}
+						}
+					},
+					"504": {
+						"description": "Connection to the mail server timed out after 29 seconds.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseEntity"
+								},
+								"examples": {
+									"Connection timeout": {
+										"description": "Connection to the mail server timed out after 29 seconds",
+										"value": {
+											"errors": [
+												{
+													"errorCode": "mail_server_connection_timeout",
+													"appliesTo": [],
+													"errorMessage": "The email cannot be sent because connecting to the mail server failed."
+												}
+											]
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/services/pdf-generator-v1/convert/html": {
+			"post": {
+				"tags": [
+					"PDF Generation"
+				],
+				"summary": "Converts HTML to PDF",
+				"description": "This operation converts HTML to a PDF file.",
+				"operationId": "convertHtmlToPdf",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ConvertHtmlToPdfBody"
+							},
+							"examples": {
+								"Required fields only": {
+									"value": {
+										"html": "<!DOCTYPE html>\n<html>\n<head>\n<meta charset=\"utf-8\">\n<title>Hello</title>\n</head>\n<body>\n<p>Hello World!</p>\n</body>\n</html>"
+									}
+								},
+								"With format options": {
+									"value": {
+										"html": "<!DOCTYPE html>\n<html>\n<head>\n<meta charset=\"utf-8\">\n<title>Hello</title>\n</head>\n<body>\n<p>Hello World!</p>\n</body>\n</html>",
+										"format": "A5",
+										"margin": {
+											"top": "1cm",
+											"bottom": "1cm",
+											"left": "0.5cm",
+											"right": "0.5cm"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successfully created PDF document. The response body contains the generated PDF file as `application/octet-stream`.",
+						"headers": {
+							"Content-Disposition": {
+								"description": "Always has the value \"attachment; filename=output.pdf\"",
+								"schema": {
+									"type": "string"
+								}
+							}
+						},
+						"content": {
+							"application/octet-stream": {
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid request data.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseEntity"
+								},
+								"examples": {
+									"value_mandatory": {
+										"description": "The required field \"html\" is missing.",
+										"value": {
+											"errors": [
+												{
+													"errorCode": "value_mandatory",
+													"appliesTo": [
+														"html"
+													]
+												}
+											]
+										}
+									},
+									"document_generation_exceeded_timeout": {
+										"description": "This PDF conversion takes longer than the timeout (default: 10 seconds). Typically, when this happens it's because the HTML took too long to render.",
+										"value": {
+											"errors": [
+												{
+													"errorCode": "document_generation_exceeded_timeout"
+												}
+											]
+										}
+									},
+									"value_invalid": {
+										"description": "The width does not match the regular expression.",
+										"value": {
+											"errors": [
+												{
+													"errorCode": "value_invalid",
+													"appliesTo": [
+														"width"
+													]
+												}
+											]
+										}
+									}
+								}
+							}
+						}
+					},
+					"503": {
+						"description": "Service unavailable. This will be returned when the service is overloaded with too many concurrent requests. Parallel conversions are limited and incoming requests beyond that limit are put in a queue with a timeout. If this timeout is exceeded the request will be aborted."
+					}
+				}
+			}
+		},
+		"/solutions/multi-barcode-creator-1/qr": {
+			"post": {
+				"tags": [
+					"Barcode Generation"
+				],
+				"summary": "Generates a barcode",
+				"description": "This operation creates a Barcode (multiple formats supported) image based on a given input.",
+				"operationId": "createBarcode",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/BarcodeCreate"
+							},
+							"examples": {
+								"Barcode image only": {
+									"value": {
+										"metadata": {
+											"format": "QR_CODE",
+											"width": 400,
+											"height": 400,
+											"imageType": "PNG"
+										},
+										"content": {
+											"text": "https://example.com"
+										}
+									}
+								},
+								"Including header and footer": {
+									"value": {
+										"metadata": {
+											"format": "QR_CODE",
+											"width": 400,
+											"height": 400,
+											"imageType": "PNG"
+										},
+										"content": {
+											"text": "https://example.com",
+											"header": "https://example.com",
+											"footer": "Automatic URL"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successfully created Barcode. The response body contains the generated image file as `image/*`.",
+						"content": {
+							"image/*": {}
+						}
+					},
+					"400": {
+						"description": "Invalid request data.",
+						"content": {
+							"application/json": {
+								"examples": {
+									"Image too large": {
+										"description": "The image exceeds the maximum size of 100,000,000 pixels.",
+										"value": {
+											"error": "Image too large."
+										}
+									},
+									"Invalid content": {
+										"description": "No content provided.",
+										"value": {
+											"error": "No content provided."
+										}
+									},
+									"Illegal character": {
+										"description": "Illegal character in content",
+										"value": {
+											"error": "illegal character encountered: "
+										}
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Unknown error."
+					}
+				}
+			}
+		},
+		"/services/action-v1/api/webhooks/{urlPathSegment}": {
+			"post": {
+				"tags": [
+					"Triggering Webhooks"
+				],
+				"summary": "Triggers a webhook action via a customizable URL",
+				"description": "This operation triggers a webhook action configured in Action Management. The URL to trigger the webhook is partially customizable via a URL path segment defined by the operator when creating the action.\n\nWhen a POST request is made to this URL, the action will be retrieved and executed using the information contained in the headers and in the request body.\n\nRequires the permission \"Webhooks and Scheduled Actions: Trigger\".\n\nValues from the request body and headers can be used in the action. Use the header `Content-Type: application/json` if the request body is in the JSON format or `Content-Type: application/xml` if the request body is in the XML format. For other values of the Content-Type header, the request body (if present) will be interpreted as text with the UTF-8 encoding.",
+				"operationId": "triggerWebhook",
+				"parameters": [
+					{
+						"in": "path",
+						"name": "urlPathSegment",
+						"schema": {
+							"type": "string",
+							"pattern": "[a-z0-9-_]{1,50}"
+						},
+						"example": "a_custom_url",
+						"description": "The customizable URL path segment to use in order to trigger the webhook action.",
+						"required": true
+					}
+				],
+				"requestBody": {
+					"required": false,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"description": "The request body must be valid JSON. It is possible to use values from the JSON request body (or the whole request body) in the action configuration.",
+								"example": {
+									"person": {
+										"name": {
+											"firstName": "Jane",
+											"lastName": "Doe"
+										},
+										"dateOfBirth": "2000/01/01"
+									}
+								}
+							}
+						},
+						"application/xml": {
+							"schema": {
+								"type": "object",
+								"description": "The request body must be valid XML. It is possible to use values from the XML request body (or the whole request body) in the action configuration.",
+								"xml": {
+									"name": "request-body"
+								},
+								"example": "<person>\n    <name>\n        <firstName>\n            Jane\n        </firstName>\n        <lastName>\n            Doe\n        </lastName>\n    </name>\n    <dateOfBirth>\n        2000/01/01\n    </dateOfBirth>\n</person>"
+							}
+						},
+						"Other": {
+							"schema": {
+								"type": "string",
+								"description": "It is possible to use the request body in the action configuration. The request body is assumed to use the UTF-8 encoding.",
+								"example": "This is just some text."
+							}
+						}
+					}
+				},
+				"responses": {
+					"202": {
+						"description": "Request accepted. The action will be triggered asynchronously."
+					},
+					"400": {
+						"description": "Invalid request data.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseEntity"
+								},
+								"examples": {
+									"Request body too large": {
+										"description": "The request body exceeds the maximal size of 15,000,000 bytes.",
+										"value": {
+											"errors": [
+												{
+													"errorCode": "value_overflow",
+													"appliesTo": [
+														"body"
+													]
+												}
+											]
+										}
+									}
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Missing permission: \"Webhooks and Scheduled Actions: Trigger\"."
+					},
+					"404": {
+						"description": "No action could be found with the requested URL path segment, or the action with the requested URL path segment is not active."
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"SendEmailBody": {
+				"type": "object",
+				"properties": {
+					"from": {
+						"type": "string",
+						"description": "The sender of the email. An email address using the syntax of [RFC 822](http://www.ietf.org/rfc/rfc822.txt). If this field is absent or empty, the 'default email of sender' (see Functional Settings > General) will be used as the `from` address (from TOPdesk version 11.07.003 onwards).",
+						"example": "Dunya Turan <dunya.turan@example.com>"
+					},
+					"to": {
+						"type": "string",
+						"description": "The main recipients of the email. An email address list using the syntax of [RFC 822](http://www.ietf.org/rfc/rfc822.txt). At least one recipient field (to, cc or bcc) must be filled in.",
+						"example": "Michaela Azevedo <michaela.azevedo@example.com>, hr@example.com"
+					},
+					"cc": {
+						"type": "string",
+						"description": "The CC recipients of the email. An email address list using the syntax of [RFC 822](http://www.ietf.org/rfc/rfc822.txt). At least one recipient field (to, cc or bcc) must be filled in.",
+						"example": "frank.childers@example.com, Susan Carpenter <susan.carpenter@example.com>"
+					},
+					"bcc": {
+						"type": "string",
+						"description": "The BCC recipients of the email. An email address list using the syntax of [RFC 822](http://www.ietf.org/rfc/rfc822.txt). At least one recipient field (to, cc or bcc) must be filled in.",
+						"example": "Camilla Delacour <camilla.delacour@example.com>"
+					},
+					"replyTo": {
+						"type": "string",
+						"description": "The sender of the email. An email address list using the syntax of [RFC 822](http://www.ietf.org/rfc/rfc822.txt).",
+						"example": "support@example.com"
+					},
+					"subject": {
+						"type": "string",
+						"description": "The subject of the email.",
+						"example": "Update on your request"
+					},
+					"body": {
+						"type": "string",
+						"description": "The content of the email. Can be plain text, or HTML if \"isHtmlBody\" is true.",
+						"example": "<html><head><title></title></head><body><img alt=\"\" src=\"cid:logo\" /><br /><span style=\"font-family:Tahoma,Geneva,sans-serif;\">Dear Michaela,<br /><br />Please find attached the manual you requested.<br /><br />Kind regards,<br /><br />Dunya Turan</span></body></html>"
+					},
+					"isHtmlBody": {
+						"type": "boolean",
+						"description": "Whether the body of the email is HTML (true) or plain text (false).",
+						"example": true,
+						"default": false
+					},
+					"priority": {
+						"format": "int32",
+						"type": "integer",
+						"description": "The priority of the email. A number between 1 (highest priority) and 5 (lowest priority). Will be used as the value for the `X-Priority` header. This may not be supported by every mail server.",
+						"example": 3,
+						"default": 3,
+						"minimum": 1,
+						"maximum": 5
+					},
+					"requestDeliveryReceipt": {
+						"type": "boolean",
+						"description": "Whether to request a delivery receipt. When true, the Delivery Status Notification options are set to `SUCCESS`, `FAILURE` and `DELAY`, and a `Return-Receipt-To` header will be added with the `from` address as value. This may not be supported by every mail server.",
+						"example": false,
+						"default": false
+					},
+					"requestReadReceipt": {
+						"type": "boolean",
+						"description": "Whether to request a read receipt. When true, a `Disposition-Notification-To` header will be added with the `from` address as value. This may not be supported by every mail server.",
+						"example": false,
+						"default": false
+					},
+					"suppressAutomaticReplies": {
+						"type": "boolean",
+						"description": "Whether to request to suppress automatic replies to this email. When true, an `X-Auto-Response-Suppress` header will be added with value `all` and an `Auto-Submitted` header will be added with value `auto-generated`. This may not be supported by every mail server.",
+						"example": false,
+						"default": false
+					}
+				}
+			},
+			"ConvertHtmlToPdfBody": {
+				"type": "object",
+				"required": [
+					"html"
+				],
+				"properties": {
+					"html": {
+						"type": "string",
+						"description": "The HTML content of the generated PDF",
+						"example": "<!DOCTYPE html>\n<html>\n<head>\n<meta charset=\"utf-8\">\n<title>Hello</title>\n</head>\n<body>\n<p>Hello World!</p>\n</body>\n</html>"
+					},
+					"format": {
+						"type": "string",
+						"description": "The page size of the generated PDF. Overrides width and height if present.",
+						"enum": [
+							"A0",
+							"A1",
+							"A2",
+							"A3",
+							"A4",
+							"A5",
+							"A6",
+							"Ledger",
+							"Legal",
+							"Letter",
+							"Tabloid"
+						],
+						"example": "Letter",
+						"default": "A4"
+					},
+					"width": {
+						"type": "string",
+						"pattern": "^\\d+(\\.\\d+)?(px|mm|in|cm)?$",
+						"description": "The width of pages in the generated PDF. Allowed units are px, cm, mm, in. If no unit is provided, the width is assumed to be in pixels.",
+						"example": "21cm"
+					},
+					"height": {
+						"type": "string",
+						"pattern": "^\\d+(\\.\\d+)?(px|mm|in|cm)?$",
+						"description": "The height of pages in the generated PDF. Allowed units are px, cm, mm, in. If no unit is provided, the height is assumed to be in pixels.",
+						"example": "29.7cm"
+					},
+					"margin": {
+						"type": "object",
+						"properties": {
+							"top": {
+								"type": "string",
+								"pattern": "^\\d+(\\.\\d+)?(px|mm|in|cm)?$",
+								"description": "The size of the top margin of pages in the generated PDF. Allowed units are px, cm, mm, in. If no unit is provided, the size is assumed to be in pixels. Top and bottom margins combined have to be smaller than page height.",
+								"example": "1.2cm",
+								"default": "1in"
+							},
+							"bottom": {
+								"type": "string",
+								"pattern": "^\\d+(\\.\\d+)?(px|mm|in|cm)?$",
+								"description": "The size of the bottom margin of pages in the generated PDF. Allowed units are px, cm, mm, in. If no unit is provided, the size is assumed to be in pixels. Top and bottom margins combined have to be smaller than page height.",
+								"example": "1.2cm",
+								"default": "1in"
+							},
+							"left": {
+								"type": "string",
+								"pattern": "^\\d+(\\.\\d+)?(px|mm|in|cm)?$",
+								"description": "The size of the left margin of pages in the generated PDF. Allowed units are px, cm, mm, in. If no unit is provided, the size is assumed to be in pixels. Left and right margins combined have to be smaller than page width.",
+								"example": "1.2cm",
+								"default": "1in"
+							},
+							"right": {
+								"type": "string",
+								"pattern": "^\\d+(\\.\\d+)?(px|mm|in|cm)?$",
+								"description": "The size of the right margin of pages in the generated PDF. Allowed units are px, cm, mm, in. If no unit is provided, the size is assumed to be in pixels. Left and right margins combined have to be smaller than page width.",
+								"example": "1.2cm",
+								"default": "1in"
+							}
+						}
+					}
+				}
+			},
+			"BarcodeCreate": {
+				"type": "object",
+				"properties": {
+					"metadata": {
+						"$ref": "#/components/schemas/BarcodeCreateMetadata"
+					},
+					"content": {
+						"$ref": "#/components/schemas/BarcodeCreateContent"
+					}
+				}
+			},
+			"BarcodeCreateContent": {
+				"required": [
+					"text"
+				],
+				"type": "object",
+				"properties": {
+					"text": {
+						"type": "string",
+						"description": "Text to convert into the Barcode",
+						"example": "CI 0001"
+					},
+					"header": {
+						"type": "string",
+						"description": "Text set above the barcode",
+						"example": "Laptop CI 0001"
+					},
+					"footer": {
+						"type": "string",
+						"description": "Text set below the barcode"
+					}
+				}
+			},
+			"BarcodeCreateMetadata": {
+				"type": "object",
+				"properties": {
+					"format": {
+						"enum": [
+							"AZTEC",
+							"CODABAR",
+							"CODE_39",
+							"CODE_93",
+							"CODE_128",
+							"DATA_MATRIX",
+							"EAN_8",
+							"EAN_13",
+							"ITF",
+							"PDF_417",
+							"QR_CODE",
+							"UPC_A",
+							"UPC_E"
+						],
+						"type": "string",
+						"description": "Format for the barcode",
+						"example": "QR_CODE",
+						"default": "QR_CODE"
+					},
+					"width": {
+						"format": "int32",
+						"type": "integer",
+						"description": "Width in pixels for the resulting image",
+						"example": 400,
+						"default": 100
+					},
+					"height": {
+						"format": "int32",
+						"type": "integer",
+						"description": "Height in pixels for the resulting image",
+						"example": 400,
+						"default": 100
+					},
+					"imageType": {
+						"enum": [
+							"JPG",
+							"GIF",
+							"PNG"
+						],
+						"type": "string",
+						"description": "Image type to be returned",
+						"default": "PNG"
+					}
+				}
+			},
+			"ErrorMessage": {
+				"type": "object",
+				"properties": {
+					"timestamp": {
+						"format": "date-time",
+						"type": "string"
+					},
+					"error": {
+						"type": "string",
+						"description": "Information on the error that just occurred."
+					},
+					"errorId": {
+						"type": "string"
+					},
+					"responseBody": {
+						"type": "string"
+					},
+					"httpResponse": {
+						"type": "string"
+					}
+				}
+			},
+			"ErrorDescription": {
+				"type": "object",
+				"required": [
+					"errorCode"
+				],
+				"properties": {
+					"errorCode": {
+						"type": "string",
+						"description": "A consistent code that can be used to determine the type of error programmatically"
+					},
+					"appliesTo": {
+						"type": "array",
+						"description": "The field or parameter name this error applies to",
+						"items": {
+							"type": "string"
+						}
+					},
+					"errorMessage": {
+						"type": "string",
+						"description": "A human-readable description of this error. Should not be used programmatically, and can change without notice. If the request includes an Accept-Language header with a supported language, the error message will be returned in the requested language. Otherwise, it will be returned in English."
+					}
+				}
+			},
+			"ErrorResponseEntity": {
+				"type": "object",
+				"required": [
+					"errors"
+				],
+				"properties": {
+					"errors": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/ErrorDescription"
+						}
+					}
+				}
+			}
+		},
+		"responses": {
+			"BadRequest": {
+				"description": "Invalid request data",
+				"content": {
+					"application/json": {
+						"schema": {
+							"$ref": "#/components/schemas/ErrorResponseEntity"
+						}
+					}
+				}
+			}
+		}
+	}
+}

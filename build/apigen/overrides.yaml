@@ -1,0 +1,94 @@
+# Curated exceptions for build/apigen/apigen.py
+#
+# Keys are "<METHOD> <full path>" exactly as listed in docs/api-coverage.md.
+#
+# names:   function name to generate for an operation (instead of the derived one).
+#          Use {name: ..., switch: ...} to also select a parameter-set switch.
+# covered: operations a hand-written function already covers, but that the URI
+#          scanner cannot detect (for example a by-id twin of a by-number command).
+# skip:    operations that are deliberately not generated, with the reason.
+
+names:
+  # By-id and version 2 twins of hand-written commands
+  GET /tas/api/operators/id/{id}: Get-TdOperatorDetail
+  GET /tas/api/operatorgroups/id/{id}: Get-TdOperatorGroupDetail
+  GET /tas/api/persongroups/{id}: Get-TdPersonGroupDetail
+  GET /tas/api/persons/{id}: Get-TdPersonDetail
+  GET /tas/api/persons/{id}/persongroups: Get-TdPersonPersonGroup
+  PATCH /tas/api/persons/{id}: Update-TdPerson
+  GET /tas/api/suppliers/{id}: Get-TdSupplierDetail
+  GET /tas/api/supplierContacts/{id}: Get-TdSupplierContactDetail
+  GET /tas/api/operatorChangeActivities/{identifier}: Get-TdChangeActivityDetail
+  PATCH /tas/api/operatorChangeActivities/{identifier}: Update-TdChangeActivity
+  GET /tas/api/categories: Get-TdCategoryTree
+  POST /tas/api/assetmgmt/assets/templateId/{templateId}: New-TdAssetFromTemplate
+  PATCH /tas/api/assetmgmt/assets/templateId/{templateId}/{assetId}: Update-TdAsset
+
+  # Clearer names than the derived ones
+  GET /tas/api/assetmgmt/assets/getGridFieldValues: Get-TdAssetGridFieldValue
+  GET /tas/api/assetmgmt/assets/gridFieldAsset: Get-TdAssetGridFieldRow
+  POST /tas/api/assetmgmt/assets/gridFieldAsset: Set-TdAssetGridFieldRow
+  POST /tas/api/assetmgmt/assets/deleteGridFieldAsset: Remove-TdAssetGridFieldRow
+  POST /tas/api/assetmgmt/assets/linkedKnowledgeItem: Add-TdAssetKnowledgeItemLink
+  POST /tas/api/assetmgmt/assets/linkedService: Add-TdAssetServiceLink
+  POST /tas/api/assetmgmt/assets/linkedTask: Add-TdAssetTaskLink
+  POST /tas/api/assetmgmt/assets/unlink/{type}/{targetId}: Remove-TdAssetEntityLink
+  PUT /tas/api/assetmgmt/assets/assignments: Add-TdAssetBulkAssignment
+  PUT /tas/api/assetmgmt/import/assets/{assetId}/links/child: Set-TdAssetChildLink
+  PUT /tas/api/assetmgmt/import/assets/{assetId}/links/parent: Set-TdAssetParentLink
+  PUT /tas/api/assetmgmt/import/assets/{assetId}/links/incoming/{linkTypeId}: Set-TdAssetIncomingLink
+  PUT /tas/api/assetmgmt/import/assets/{assetId}/links/outgoing/{linkTypeId}: Set-TdAssetOutgoingLink
+  POST /tas/api/assetmgmt/dropdowns/{dropdownId}: New-TdAssetDropdownOption
+  GET /tas/api/assetmgmt/dropdowns/{dropdownId}: Get-TdAssetDropdownOption
+  GET /tas/api/requester/avatars/operator/{id}: Get-TdRequesterOperatorAvatar
+  GET /tas/api/operators/current/id: Get-TdLoggedInOperatorId
+  GET /tas/api/operators/current/settings: Get-TdLoggedInOperatorSetting
+  POST /tas/api/managerAuthorizableChanges/{id}/processingStatusTransitions: Set-TdManagerAuthorizableChangeProcessingStatus
+  PUT /tas/api/managerAuthorizableActivities/{id}/managerAction: Set-TdManagerAuthorizableActivityDecision
+  GET /tas/api/operationalActivities/reasonsForSkipping: Get-TdOperationalActivitySkipReason
+  GET /tas/api/operationalActivities/reasonsForAnomaly: Get-TdOperationalActivityAnomalyReason
+  POST /tas/api/operationalActivities/{identifier}/requests/{requestId}: Set-TdOperationalActivityRequest
+  POST /tas/api/reservations/{identifier}/makeRecurrent/dates: Set-TdReservationRecurrence
+  POST /tas/api/reservations/{identifier}/occurrences/dates: Add-TdReservationOccurrence
+  PUT /tas/api/reservations/{identifier}/occurrences/dates: Set-TdReservationOccurrence
+  POST /tas/api/reservations/{identifier}/reschedule: Move-TdReservation
+  GET /tas/api/search: Search-TdTopdesk
+  GET /services/knowledge-base-v1/explorer/migrated: Get-TdKnowledgeBaseMigrationStatus
+  GET /services/knowledge-base-v1/explorer/migrated/folder/{identifier}: Get-TdKnowledgeBaseMigratedFolder
+  GET /services/permissions/reporting/1.0.0/roles: Get-TdReportingAccessRole
+
+  # Custom Action Support
+  POST /services/email-v1/api/send: Send-TdEmail
+  POST /services/pdf-generator-v1/convert/html: ConvertTo-TdPdf
+  POST /solutions/multi-barcode-creator-1/qr: New-TdQrCode
+  POST /services/action-v1/api/webhooks/{urlPathSegment}: Invoke-TdWebhook
+
+covered:
+  GET /tas/api/login/operator: Connect-TdService
+  GET /tas/api/login/person: Connect-TdService
+  GET /tas/api/incidents/number/{number}: Get-TdIncident -Number
+  GET /tas/api/incidents/id/{id}: Get-TdIncident -Id
+  PUT /tas/api/incidents/id/{id}: Set-TdIncident (by number)
+  PATCH /tas/api/incidents/id/{id}: Set-TdIncident (by number)
+  PATCH /tas/api/incidents/number/{number}: Set-TdIncident (same action, PUT)
+  GET /tas/api/incidents/id/{id}/timespent: Get-TdIncidentTimeSpent (by number)
+  POST /tas/api/incidents/id/{id}/timespent: Set-TdIncidentTimeSpent (by number)
+  GET /tas/api/incidents/id/{id}/actions: Get-TdIncidentAction (by number)
+  GET /tas/api/incidents/id/{incidentid}/actions/{actionid}: Get-TdIncidentAction (lists all actions)
+  GET /tas/api/incidents/number/{incidentnumber}/actions/{actionid}: Get-TdIncidentAction (lists all actions)
+  PATCH /tas/api/branches/id/{id}: Set-TdBranch (same action, PUT)
+  PATCH /tas/api/operatorgroups/id/{id}: Set-TdOperatorGroup (same action, PUT)
+  PUT /tas/api/operators/id/{id}: Set-TdOperator (same action, PATCH)
+  GET /tas/api/avatars/person/{id}: Get-TdPersonAvatar
+
+skip:
+  GET /.well-known/oauth-authorization-server: OAuth authorization server metadata for interactive OAuth clients, not a PowerShell use case.
+  GET /services/oauth/authorize: Interactive OAuth authorization (browser redirect), not a PowerShell use case.
+  POST /oauth/token: OAuth token exchange for OAuth clients; TOPdeskPS authenticates with application passwords.
+
+# Notes shown in docs/api-coverage.md for hand-written functions that still use
+# an endpoint that is deprecated or missing from the current specifications.
+notes:
+  Connect-TdService: Kept for compatibility; writes a warning. Use -ApplicationPassword.
+  Send-TdAssetImportFile: The import-to-api service is not part of the published specifications.
+  Set-TdPerson: Version 1 of the persons endpoint (spec 1.58.0); version 2 is not backward compatible, see Update-TdPerson.

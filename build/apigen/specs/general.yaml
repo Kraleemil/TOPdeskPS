@@ -1,0 +1,640 @@
+openapi: 3.0.1
+info:
+  version: 1.2.0
+  title: General API
+  description: |
+    General TOPdesk API. See older version [here](/documentation/index-apidoc.html#api-General)
+servers:
+  - url: "https://{topdesk_host}/tas/api"
+    variables:
+      topdesk_host:
+        default: "customer.topdesk.net"
+paths:
+  /login/operator:
+    get:
+      tags:
+        - login / logout
+      summary:  Login - (Deprecated) Log in as an operator
+      description: |
+        **Deprecated**. This feature has been deprecated in favor of [application passwords](https://developers.topdesk.com/tutorial.html#show-collapse-usage-createAppPassword)
+      responses:
+        200:
+          description: The operator was authenticated
+          content:
+            application/json:
+              schema:
+                type: string
+                description: The authorization token as string
+
+        401:
+          description: Invalid Credentials
+        500:
+          description: Internal server error
+
+  /login/person:
+    get:
+      tags:
+        - login / logout
+      summary:  Login - as a person
+      description: |
+        Generate an authentication token for a person. See the [old tutorial](https://developers.topdesk.com/tutorial-old.html#show-collapse-usage-incidents) for details on how to use it.
+      responses:
+        200:
+          description: The person was authenticated
+          content:
+            application/json:
+              schema:
+                type: string
+                description: The authorization token as string
+
+        401:
+          description: Invalid Credentials
+        500:
+          description: Internal server error
+
+  /logout:
+    get:
+      tags:
+        - login / logout
+      summary:  Log out as operator or person
+      responses:
+        200:
+          description: The operator or person was logged out
+        401:
+          description: Invalid Credentials
+        500:
+          description: Internal server error
+  /archiving-reasons:
+    get:
+      tags:
+        - archiving
+      summary: Get list of reasons for archiving
+      description: |
+        | Permission | Remarks |
+        | -------- | -----------|
+        | Operator | Needs to be allowed to use the REST Api |
+        | Person   | No access  |
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IdAndName'
+        401:
+          description: Invalid Credentials or no Permission
+        500:
+          description: Internal server error
+  /emails/id/{id}:
+    get:
+      tags:
+        - Email
+      summary: |
+        Get details of email by id for incidents, changes and change activites.
+      description: |
+        | Permission | Remarks |
+        | ------- | --------|
+        | Operator   | Branch filters apply, requires read permission on "Sent email messages"  |
+        | Person   | No access  |
+      parameters:
+        - name: id
+          in: path
+          description: The id of the email
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: Success. Get the email
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Email'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        403:
+          $ref: '#/components/responses/403'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+    delete:
+      tags:
+        - Email
+      summary: delete email by id
+      parameters:
+        - name: id
+          in: path
+          description: The id of the email
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        204:
+          description: Success. No content
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        403:
+          $ref: '#/components/responses/403'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+  /serviceWindow/lookup/:
+    get:
+      tags:
+        - service windows
+      summary: Get list of service windows
+      description: |
+        | Permission | Remarks |
+        | -------- | -----------|
+        | Operator | Needs to be allowed to use the REST Api |
+        | Person   | No access  |
+      parameters:
+        - in: query
+          name: '$top'
+          description: |
+            The number of the service windows to be returned.
+          schema:
+            type: number
+            format: int
+            minimum: 1
+            maximum: 10000
+            default: 1000
+        - in: query
+          name: name
+          description: |
+            The prefix of the name of service windows
+          schema:
+            type: string
+        - in: query
+          name: archived
+          description: |
+            The archived state of service windows
+          schema:
+            type: boolean
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IdAndName'
+        401:
+          description: Invalid Credentials or no Permissions
+        500:
+          description: Internal server error
+  /serviceWindow/lookup/{id}:
+    get:
+      tags:
+        - service windows
+      summary: Get service window
+      description: |
+        | Permission | Remarks |
+        | -------- | -----------|
+        | Operator | Needs to be allowed to use the REST Api |
+        | Person   | No access  |
+      parameters:
+        - in: path
+          name: id
+          description: The id of the service window to be returned.
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref:  '#/components/schemas/IdAndName'
+        401:
+          description: Invalid Credentials or no Permissions
+        404:
+          description: Service window not found
+        500:
+          description: Internal server error
+  /search:
+    get:
+      tags:
+        - search
+      summary: Search via the REST-API
+      description: |
+        | Permission | Remarks |
+        | ------- | --------|
+        | Operator   | No acess  |
+        | Person   | Unrestricted access |
+      parameters:
+        - in: query
+          name: query
+          description: |
+            The search term, for example: printer
+          schema:
+            type: string
+        - in: query
+          name: index
+          description:
+            The search index you want to search on
+          schema:
+            type: string
+            enum:
+              - incidents
+        - in: query
+          name: start
+          description: |
+            The offset at which to start listing the search results at
+          schema:
+            type: string
+            default: 0
+      responses:
+        200:
+          description: Up to 30 search results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                        type:
+                          type: string
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        403:
+          $ref: '#/components/responses/403'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+  /timespent-reasons:
+    get:
+      tags:
+        - time spent
+      summary: Get list of reasons for time spent
+      description: |
+        | Permission | Remarks    |
+        | ---------- | -----------|
+        | Operator   | Needs to be allowed to use the REST Api |
+        | Person     | No access  |
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IdAndName'
+        401:
+          description: Invalid Credentials or no Permissions
+        500:
+          description: Internal server error
+
+  /version:
+    get:
+      tags:
+        - version
+      summary: Get API version
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  version:
+                    type: string
+
+  /productVersion:
+    get:
+      tags:
+        - version
+      summary: Get TOPdesk version
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  major:
+                    type: number
+                    example: 1
+                  minor:
+                    type: number
+                    example: 10
+                  patch:
+                    type: number
+                    example: 2
+  /categories:
+    get:
+      tags:
+        - categories
+      summary: Lists categories and subcategories
+      description: |
+        Notes:
+        - For now all categories and subcategories are returned and there is no support for paging. But we might want
+          to limit this to 1000 per page at a later time. So if you have exceptionally many categories, check the next 
+          property if it contains a link to a next page.  
+        - The translations are only returned if explicitely requested by fields=translations or fields=all. All other 
+          fields are returned by default when no fields parameter is used.
+        
+        | Permission | Remarks   |
+        | ---------- | --------- |
+        | Operator   | Yes. Database Filters are applied so operators can only see categories they could pick in dropdowns. |
+        | Person     | No access |
+      parameters:
+        - name: fields
+          description: |
+            A comma-separated list of which fields should be returned. By default all fields will be returned.
+          in: query
+          schema:
+            type: string
+        - name: query
+          description: |
+            A FIQL string to select which categories should be returned. (See [Tutorial](https://developers.topdesk.com/tutorial.html#query))
+          in: query
+          schema:
+            type: string
+        - name: sort
+          description: |
+            The sort order of the returned categories.  
+            To specify if the order should be ascending or descending, append ":asc" or ":desc" to the field name. 
+            Multiple columns can be specified by comma-joining the orderings.  
+            Example: sort=parent.name:asc,name:desc.
+          in: query
+          schema:
+            type: string
+        - name: pretty
+          schema:
+            type: boolean
+          in: query
+          description: If set to true the response will be pretty printed to be better human readable.
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  item:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                        name:
+                          type: string
+                          example: Phone
+                        archived:
+                          type: boolean
+                        parent:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              format: uuid
+                            name:
+                              type: string
+                              example: Hardware
+                        modules:
+                          type: object
+                          properties:
+                            incidents:
+                              type: boolean
+                            changes:
+                              type: boolean
+                            operations:
+                              type: boolean
+                            services:
+                              type: boolean
+                            problems:
+                              type: boolean
+                            projects:
+                              type: boolean
+                        translations:
+                          type: array
+                          description: |
+                            A list of translations for this categories name.  
+                            Note: Categories don't have to have all translations.
+                          items:
+                            type: object
+                            properties:
+                              locale:
+                                type: string
+                                description: The locale code of the language. E.g. "de" or "pt_BR"
+                                example: de
+                              name:
+                                type: string
+                                description: The name of the category in that language.
+                                example: Telefon
+                  next:
+                    type: string
+                    example: https://customer.topdesk.net/tas/api/categories/?pageStart=100
+                  size:
+                    type: integer
+        400:
+          description: bad request
+        401:
+          description: No authentication token provided
+  /requester/categories:
+    get:
+      tags:
+        - categories
+      summary: Lists categories and subcategories for SSP user
+      description: |
+        Notes:
+        - For now all categories and subcategories are returned and there is no support for paging. But we might want
+          to limit this to 1000 per page at a later time. So if you have exceptionally many categories, check the next 
+          property if it contains a link to a next page.  
+        - The translations are only returned if explicitely requested by fields=translations or fields=all. All other 
+          fields are returned by default when no fields parameter is used.
+        
+        | Permission | Remarks   |
+        | ---------- | --------- |
+        | Operator   | No access |
+        | Person     | Yepp      |
+      parameters:
+        - name: fields
+          description: |
+            A comma-separated list of which fields should be returned. By default all fields will be returned.
+          in: query
+          schema:
+            type: string
+        - name: query
+          description: |
+            A FIQL string to select which categories should be returned. (See [Tutorial](https://developers.topdesk.com/tutorial.html#query))
+          in: query
+          schema:
+            type: string
+        - name: sort
+          description: |
+            The sort order of the returned categories.  
+            To specify if the order should be ascending or descending, append ":asc" or ":desc" to the field name. 
+            Multiple columns can be specified by comma-joining the orderings.  
+            Example: sort=parent.name:asc,name:desc.
+          in: query
+          schema:
+            type: string
+        - name: pretty
+          schema:
+            type: boolean
+          in: query
+          description: If set to true the response will be pretty printed to be better human readable.
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  item:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                        name:
+                          type: string
+                          example: Phone
+                        archived:
+                          type: boolean
+                        parent:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              format: uuid
+                            name:
+                              type: string
+                              example: Hardware
+                        modules:
+                          type: object
+                          properties:
+                            incidents:
+                              type: boolean
+                            changes:
+                              type: boolean
+                            operations:
+                              type: boolean
+                            services:
+                              type: boolean
+                            problems:
+                              type: boolean
+                            projects:
+                              type: boolean
+                        translations:
+                          type: array
+                          description: |
+                            A list of translations for this categories name.  
+                            Note: Categories don't have to have all translations.
+                          items:
+                            type: object
+                            properties:
+                              locale:
+                                type: string
+                                description: The locale code of the language. E.g. "de" or "pt_BR"
+                                example: de
+                              name:
+                                type: string
+                                description: The name of the category in that language.
+                                example: Telefon
+                  next:
+                    type: string
+                    example: https://customer.topdesk.net/tas/api/categories/?pageStart=100
+                  size:
+                    type: integer
+        400:
+          description: bad request
+        401:
+          description: No authentication token provided
+
+components:
+  schemas:
+    Email:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        sendDate:
+          type: string
+          format: date-time
+        sender:
+          type: string
+        subject:
+          type: string
+        recipient:
+          type: string
+        replyTo:
+          type: string
+        content:
+          type: string
+        attachments:
+          type: string
+        copyToSender:
+          type: boolean
+        deliveryReceipt:
+          type: boolean
+        readReceipt:
+          type: boolean
+        suppressAutoReply:
+          type: boolean
+        priority:
+          type: string
+        htmlFormat:
+          type: boolean
+        user:
+          $ref: '#/components/schemas/IdAndName'
+        cc:
+          type: string
+        bcc:
+          type: string
+        isRemoved:
+          type: boolean
+
+    IdAndName:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+  responses:
+    400:
+      description: The parameters of the request were malformed
+    401:
+      description: No authentication token provided
+    403:
+      description: No permission on entity
+    404:
+      description: The entity was not found
+    500:
+      description: Error occurred on the server

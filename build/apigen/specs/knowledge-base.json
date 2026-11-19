@@ -1,0 +1,2571 @@
+{
+	"openapi": "3.0.3",
+	"info": {
+		"version": "knowledge-base-after-migration",
+		"termsOfService": "https://developers.topdesk.com/legal.html",
+		"title": "Knowledge Base API",
+		"description": "The Knowledge Base API provides REST endpoints for programmatic access to the TOPdesk Knowledge Base.\n\nThis version of the API can be used after the migration to the folder structure has been completed. If you are not using the folder structure in the knowledge base yet, please use the [API for before the explorer migration](https://developers.topdesk.com/explorer/?page=knowledge-base&version=knowledge-base-before-migration) instead.\n\n[Read the guide to help you with the transition.](https://my.topdesk.com/tas/public/ssp/content/detail/knowledgeitem?unid=95c50b8eb96c4e709ef1d98006ac3cae)",
+		"contact": {
+			"name": "TOPdesk",
+			"url": "https://www.topdesk.com",
+			"email": "info@topdesk.com"
+		}
+	},
+	"servers": [
+		{
+			"url": "https://{topdesk_host}/services/knowledge-base-v1",
+			"variables": {
+				"topdesk_host": {
+					"default": "customer.topdesk.net"
+				}
+			}
+		}
+	],
+	"tags": [
+		{
+			"name": "Knowledge Items",
+			"description": "Knowledge Item Operations"
+		},
+		{
+			"name": "Folders",
+			"description": "Folder Operations"
+		},
+		{
+			"name": "Searchlists",
+			"description": "Knowledge Base related searchlists"
+		}
+	],
+	"paths": {
+		"/knowledgeItems": {
+			"get": {
+				"tags": [
+					"Knowledge Items"
+				],
+				"summary": "Returns a list of Knowledge Items.",
+				"description": "Returns a list of Knowledge Items, satisfying a given `query`. When called without any parameters, this endpoint will return the first 100 Knowledge Items, sorted by the Knowledge Item number, smallest first. Only the Knowledge Items which have content in the requested language will be listed. It is necessary to have the permission to read Knowledge Items. If additionally the permission to update Knowledge Items is present, then branch filters do not apply.",
+				"operationId": "getKnowledgeItems",
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/start"
+					},
+					{
+						"$ref": "#/components/parameters/page_size"
+					},
+					{
+						"$ref": "#/components/parameters/fields"
+					},
+					{
+						"$ref": "#/components/parameters/query"
+					},
+					{
+						"$ref": "#/components/parameters/language_query"
+					}
+				],
+				"responses": {
+					"200": {
+						"$ref": "#/components/responses/KnowledgeItemListResponse"
+					},
+					"206": {
+						"$ref": "#/components/responses/KnowledgeItemListResponse"
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					}
+				}
+			},
+			"post": {
+				"summary": "Creates a Knowledge Item with given content",
+				"description": "Creates a Knowledge Item with given content. The `parent` is mandatory and must reference a Folder. It is necessary to have the permission to create Knowledge Items. In order for an operator / operator group to be assigned as manager, the \"Knowledge Base Manager\" task must be selected in the Supporting Files module.",
+				"operationId": "createKnowledgeItem",
+				"tags": [
+					"Knowledge Items"
+				],
+				"requestBody": {
+					"$ref": "#/components/requestBodies/CreateKnowledgeItemRequest"
+				},
+				"responses": {
+					"201": {
+						"$ref": "#/components/responses/KnowledgeItemCreatedResponse"
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					}
+				}
+			}
+		},
+		"/knowledgeItems/{identifier}": {
+			"get": {
+				"tags": [
+					"Knowledge Items"
+				],
+				"summary": "Returns the Knowledge Item by id or number.",
+				"description": "Returns the Knowledge Item with the given identifier. By default, this endpoint will only return the Knowledge Item which has content in the requested language. It is necessary to have the permission to read Knowledge Items. If additionally the permission to update Knowledge Items is present, then branch filters do not apply.",
+				"operationId": "getKnowledgeItem",
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/identifier"
+					},
+					{
+						"$ref": "#/components/parameters/fields"
+					},
+					{
+						"$ref": "#/components/parameters/language_query"
+					}
+				],
+				"responses": {
+					"200": {
+						"$ref": "#/components/responses/KnowledgeItemResponse"
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/KnowledgeItemNotFoundResponse"
+					}
+				}
+			},
+			"patch": {
+				"summary": "Updates properties of the Knowledge Item.",
+				"description": "Updates the Knowledge Item with the given `identifier`. Using this endpoint, `visibility`,`status`, `manager`, and `externalLink` can be updated.Changes that affect the visibility for operators / users in linked branches take up to 5 minutes to become effective.In order for an operator / operator group to be assigned as manager, the \"Knowledge Base Manager\"task must be selected in the Supporting Files module.It is necessary to have the permission to update Knowledge Items.\n\nTo unset `status`, `manager` or `externalLink`, declare the field as `null` in the request. For example: `\"status\": null`\n\n Any field that is not present in the request will not be changed.\n\n ⚠️**Note**: It is not possible to update the properties of an archived knowledge item.\n\n ⚠️**Note**: It is no longer possible to set the parent of a knowledge item through this method. Please use the dedicated <i>/move</i> endpoint for this purpose. \n\n ⚠️**Note**: It is not possible to update any knowledge items that live in the root of the explorer (which means they do not have a parent). Should these knowledge items exist, please use the `/move` endpoint to move them to a folder first.\n\n⚠️**Note**: It is not possible to change the `sspVisibilityFilteredOnBranches` and `operatorVisibilityFilteredOnBranches` without 'read' permission for Branches.",
+				"operationId": "updateKnowledgeItem",
+				"tags": [
+					"Knowledge Items"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/identifier"
+					}
+				],
+				"requestBody": {
+					"$ref": "#/components/requestBodies/UpdateKnowledgeItemRequest"
+				},
+				"responses": {
+					"204": {
+						"description": "Successful operation."
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/KnowledgeItemNotFoundResponse"
+					}
+				}
+			}
+		},
+		"/knowledgeItems/{identifier}/archive": {
+			"post": {
+				"summary": "Archives the Knowledge Item.",
+				"description": "Archives the Knowledge Item with the given identifier. If the Knowledge Item is already archived nothing will change. It is necessary to have the permission to update and archive Knowledge Items.",
+				"operationId": "archiveKnowledgeItem",
+				"tags": [
+					"Knowledge Items"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/identifier"
+					}
+				],
+				"responses": {
+					"204": {
+						"description": "Successful operation."
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/KnowledgeItemNotFoundResponse"
+					}
+				}
+			}
+		},
+		"/knowledgeItems/{identifier}/unarchive": {
+			"post": {
+				"summary": "Unarchives the Knowledge Item.",
+				"description": "Unarchives the Knowledge Item with the given identifier. The Knowledge Item can only be unarchived if the parent folder is not archived. If the Knowledge Item is already unarchived nothing will change. It is necessary to have the permission to update and archive Knowledge Items.",
+				"operationId": "unarchiveKnowledgeItem",
+				"tags": [
+					"Knowledge Items"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/identifier"
+					}
+				],
+				"responses": {
+					"204": {
+						"description": "Successful operation."
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/KnowledgeItemNotFoundResponse"
+					}
+				}
+			}
+		},
+		"/knowledgeItems/{identifier}/translations/{language}": {
+			"post": {
+				"summary": "Creates a new translation for the Knowledge Item.",
+				"description": "Creates a new translation for the Knowledge Item with the given `identifier` in the specified `language`. The language must be in TOPdesk's language list. It is necessary to have the permission to update Knowledge Items.\n\n⚠️**Note**: It is not possible to create a translation for an archived Knowledge Item.\n\n⚠️**Note**: It is not possible to update any knowledge items that live in the root of the explorer (which means they do not have a parent). Should these knowledge items exist, please use the `/move` endpoint to move them to a folder first.",
+				"operationId": "createTranslation",
+				"tags": [
+					"Knowledge Items"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/identifier"
+					},
+					{
+						"$ref": "#/components/parameters/language"
+					}
+				],
+				"requestBody": {
+					"$ref": "#/components/requestBodies/CreateTranslationRequest"
+				},
+				"responses": {
+					"204": {
+						"description": "Successful operation."
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/KnowledgeItemNotFoundResponse"
+					}
+				}
+			},
+			"patch": {
+				"summary": "Updates a translation of the Knowledge Item.",
+				"description": "Updates the translation of the Knowledge Item with the given `identifier` in the specified `language`. Only the fields, which are included in the request, will be updated. Other fields remain unchanged. The language must be in TOPdesk's language list. It is necessary to have the permission to update Knowledge Items.\n\n⚠️**Note:** It is not possible to update the translation of an archived Knowledge Item. \n\n⚠️**Note**: It is not possible to update any knowledge items that live in the root of the explorer (which means they do not have a parent). Should these knowledge items exist, please use the `/move` endpoint to move them to a folder first.",
+				"operationId": "updateTranslation",
+				"tags": [
+					"Knowledge Items"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/identifier"
+					},
+					{
+						"$ref": "#/components/parameters/language"
+					}
+				],
+				"requestBody": {
+					"$ref": "#/components/requestBodies/UpdateTranslationRequest"
+				},
+				"responses": {
+					"204": {
+						"description": "Successful operation."
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/KnowledgeItemNotFoundResponse"
+					}
+				}
+			},
+			"delete": {
+				"summary": "Delete a translation of the Knowledge Item.",
+				"description": "Delete the translation of the Knowledge Item with the given `identifier` in the specified `language`. The operation is successful if the translation was deleted or if the Knowledge Item or the translation does not exist. The translation can only be deleted if it is not the last remaining one. It is necessary to have the permission to update Knowledge Items.\n\n⚠️**Note**: It is not possible to delete a translation for an archived Knowledge Item.\n\n⚠️**Note**: It is not possible to update any knowledge items that live in the root of the explorer (which means they do not have a parent). Should these knowledge items exist, please use the `/move` endpoint to move them to a folder first.",
+				"operationId": "deleteTranslation",
+				"tags": [
+					"Knowledge Items"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/identifier"
+					},
+					{
+						"$ref": "#/components/parameters/language"
+					}
+				],
+				"responses": {
+					"204": {
+						"description": "Successful operation."
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					}
+				}
+			}
+		},
+		"/knowledgeItems/{identifier}/move": {
+			"post": {
+				"summary": "Moves the Knowledge Item under a different parent Folder.",
+				"description": "Moves the Knowledge Item with the given `identifier` to the specified parent Folder. It is necessary to have the permission to update Knowledge Items.\n\n⚠️**Note**: The moved Knowledge Item will inherit the visibility settings of its new parent Folder.\n\n⚠️**Note**: It is not possible to move an archived Knowledge Item. Please unarchive it first.",
+				"operationId": "moveKnowledgeItem",
+				"tags": [
+					"Knowledge Items"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/identifier"
+					}
+				],
+				"requestBody": {
+					"$ref": "#/components/requestBodies/MoveKnowledgeItemRequest"
+				},
+				"responses": {
+					"204": {
+						"description": "Successful operation."
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/KnowledgeItemNotFoundResponse"
+					}
+				}
+			}
+		},
+		"/knowledgeItems/{identifier}/branches": {
+			"get": {
+				"summary": "Returns all linked branches of the Knowledge Item.",
+				"description": "Returns all linked branches of the Knowledge Item with the given `identifier`. It is necessary to have the permission to update Knowledge Items and the permission to read branches. Because of the needed permission to update knowledge items, the branch filters do not apply on the individual knowledge item level, however the returned branches from this endpoint are still limited to the ones visible to the operator.",
+				"operationId": "getLinkedBranches",
+				"tags": [
+					"Knowledge Items"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/identifier"
+					}
+				],
+				"responses": {
+					"200": {
+						"$ref": "#/components/responses/BranchListResponse"
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/KnowledgeItemNotFoundResponse"
+					}
+				}
+			}
+		},
+		"/knowledgeItems/{identifier}/branches/link": {
+			"post": {
+				"summary": "Links a branch to the Knowledge Item.",
+				"description": "Links the specified branch to the Knowledge Item with the given `identifier`. Only branches that are visible to the operator can be linked. Note that it takes up to 5 minutes for the change to become effective.It is necessary to have the permission to update Knowledge Items and the permission to read branches.\n\n⚠️**Note**: It is not possible to link a branch to an archived Knowledge Item.\n\n⚠️**Note**: It is not possible to update any knowledge items that live in the root of the explorer (which means they do not have a parent). Should these knowledge items exist, please use the `/move` endpoint to move them to a folder first.",
+				"operationId": "linkBranch",
+				"tags": [
+					"Knowledge Items"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/identifier"
+					}
+				],
+				"requestBody": {
+					"$ref": "#/components/requestBodies/LinkBranchRequest"
+				},
+				"responses": {
+					"204": {
+						"description": "Successful operation."
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/KnowledgeItemNotFoundResponse"
+					}
+				}
+			}
+		},
+		"/knowledgeItems/{identifier}/branches/unlink": {
+			"post": {
+				"summary": "Unlinks a branch from the Knowledge Item.",
+				"description": "Unlinks the specified branch from the Knowledge Item with the given `identifier`. Only branches that are visible to the operator can be unlinked. Note that it takes up to 5 minutes for the change to become effective. It is necessary to have the permission to update Knowledge Items and the permission to read branches.\n\n⚠️**Note**: It is not possible to unlink a branch from an archived Knowledge Item.\n\n⚠️**Note**: It is not possible to update any knowledge items that live in the root of the explorer (which means they do not have a parent). Should these knowledge items exist, please use the `/move` endpoint to move them to a folder first.",
+				"operationId": "unlinkBranch",
+				"tags": [
+					"Knowledge Items"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/identifier"
+					}
+				],
+				"requestBody": {
+					"$ref": "#/components/requestBodies/UnlinkBranchRequest"
+				},
+				"responses": {
+					"204": {
+						"description": "Successful operation."
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/KnowledgeItemNotFoundResponse"
+					}
+				}
+			}
+		},
+		"/knowledgeItems/{identifier}/giveFeedback": {
+			"post": {
+				"summary": "Adds feedback to the given Knowledge Item",
+				"description": "Adds feedback for the given Knowledge Item.",
+				"operationId": "giveFeedback",
+				"tags": [
+					"Knowledge Items"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/identifier"
+					}
+				],
+				"requestBody": {
+					"$ref": "#/components/requestBodies/GiveFeedbackRequest"
+				},
+				"responses": {
+					"201": {
+						"description": "The feedback was added successfully"
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/KnowledgeItemNotFoundResponse"
+					}
+				}
+			}
+		},
+		"/knowledgeItems/{identifier}/images": {
+			"get": {
+				"summary": "Lists images uploaded under given Knowledge Item.",
+				"description": "Used to list all images that have been uploaded under given Knowledge Item. The list may contain images that were uploaded but not actually used as inline images inside the Knowledge Item. It is necessary to have the permission to read Knowledge Items. If additionally the permission to update Knowledge Items is present, then branch filters will not apply.",
+				"operationId": "listFiles",
+				"tags": [
+					"Knowledge Items"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/identifier"
+					}
+				],
+				"responses": {
+					"200": {
+						"$ref": "#/components/responses/ImageListResponse"
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/KnowledgeItemNotFoundResponse"
+					}
+				}
+			},
+			"post": {
+				"summary": "Uploads an image to the Knowledge Item.",
+				"description": "Uploads an image to an existing Knowledge Item with the given identifier. In order to upload an image the update permission on Knowledge Items is necessary. Therefore, branch filters will not apply. It is not possible to upload an image to an archived Knowledge Item and the allowed image formats are jpg, png, bmp and gif.\n\n⚠️**Note**: It is not possible to update any knowledge items that live in the root of the explorer (which means they do not have a parent). Should these knowledge items exist, please use the `/move` endpoint to move them to a folder first.",
+				"operationId": "uploadImage",
+				"tags": [
+					"Knowledge Items"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/identifier"
+					}
+				],
+				"requestBody": {
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"$ref": "#/components/schemas/ImageUpload"
+							}
+						}
+					}
+				},
+				"responses": {
+					"201": {
+						"description": "Successful operation."
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/KnowledgeItemNotFoundResponse"
+					},
+					"409": {
+						"description": "Image has already been uploaded.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/knowledgeItems/{identifier}/images/{imageName}/download": {
+			"get": {
+				"summary": "Downloads an image from the Knowledge Item.",
+				"description": "Downloads an image with a given name from the Knowledge item with the given identifier. It is necessary to have the permission to read Knowledge Items. If additionally the permission to update Knowledge Items is present, then branch filters will not apply.",
+				"operationId": "downloadImage",
+				"tags": [
+					"Knowledge Items"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/identifier"
+					},
+					{
+						"$ref": "#/components/parameters/fileName"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful operation.",
+						"content": {
+							"image/*": {
+								"schema": {
+									"type": "string",
+									"format": "binary"
+								}
+							}
+						}
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/KnowledgeItemNotFoundResponse"
+					}
+				}
+			}
+		},
+		"/knowledgeItems/{identifier}/images/{imageName}": {
+			"delete": {
+				"summary": "Deletes an image from the Knowledge Item.",
+				"description": "Deletes an image with the given name from the Knowledge Item with the given identifier. It is only possible to delete images from Knowledge Items that are not archived. In order to delete images, the permissions to update a Knowledge Item are necessary. Therefore, branch filters will not apply.\n\n⚠️**Note**: It is not possible to update any knowledge items that live in the root of the explorer (which means they do not have a parent). Should these knowledge items exist, please use the `/move` endpoint to move them to a folder first.",
+				"operationId": "deleteImage",
+				"tags": [
+					"Knowledge Items"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/identifier"
+					},
+					{
+						"$ref": "#/components/parameters/fileName"
+					}
+				],
+				"responses": {
+					"204": {
+						"description": "Successful operation."
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/KnowledgeItemNotFoundResponse"
+					},
+					"409": {
+						"description": "A conflicting modification has occurred.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/knowledgeItems/{identifier}/attachments": {
+			"get": {
+				"summary": "Lists attachments uploaded to given Knowledge Item.",
+				"description": "Used to list all attachments that have been uploaded to the given Knowledge Item. It is necessary to have the permission to read Knowledge Items. If additionally the permission to update Knowledge Items is present, then branch filters will not apply.",
+				"operationId": "listAttachments",
+				"tags": [
+					"Knowledge Items"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/identifier"
+					}
+				],
+				"responses": {
+					"200": {
+						"$ref": "#/components/responses/AttachmentListResponse"
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/KnowledgeItemNotFoundResponse"
+					}
+				}
+			},
+			"post": {
+				"summary": "Uploads an attachment to a Knowledge Item.",
+				"description": "Uploads an attachment to an existing Knowledge Item with the given identifier. In order to upload an attachment the permission to update a Knowledge Item is necessary. Therefore, branch filters will not apply. It is not possible to upload an attachment to an archived Knowledge Item.\n\n⚠️**Note**: It is not possible to update any knowledge items that live in the root of the explorer (which means they do not have a parent). Should these knowledge items exist, please use the `/move` endpoint to move them to a folder first.",
+				"operationId": "uploadAttachment",
+				"tags": [
+					"Knowledge Items"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/identifier"
+					}
+				],
+				"requestBody": {
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"$ref": "#/components/schemas/AttachmentUpload"
+							}
+						}
+					}
+				},
+				"responses": {
+					"201": {
+						"description": "Successful operation."
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/KnowledgeItemNotFoundResponse"
+					}
+				}
+			}
+		},
+		"/knowledgeItems/{identifier}/attachments/{attachmentIdentifier}/download": {
+			"get": {
+				"summary": "Downloads an attachment from a Knowledge Item.",
+				"description": "Downloads an attachment with a given attachment identifier from a Knowledge Item with the given identifier. It is necessary to have the permission to read Knowledge Items. If additionally the permission to update Knowledge Items is present, then branch filters will not apply. The returned content type depends on the file type with a default of 'application/octet-stream' if the file type could not be detected.",
+				"operationId": "downloadAttachment",
+				"tags": [
+					"Knowledge Items"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/identifier"
+					},
+					{
+						"$ref": "#/components/parameters/attachmentIdentifier"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful operation.",
+						"content": {
+							"*/*": {
+								"schema": {
+									"type": "string",
+									"format": "binary"
+								}
+							}
+						}
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/KnowledgeItemNotFoundResponse"
+					}
+				}
+			}
+		},
+		"/knowledgeItems/{identifier}/attachments/{attachmentIdentifier}": {
+			"delete": {
+				"summary": "Deletes an attachment from a Knowledge Item.",
+				"description": "Deletes an attachment with the given attachment identifier from a Knowledge Item with the given identifier. It is only possible to delete attachments from Knowledge Items that are not archived. In order to delete an attachment, the permissions to update a Knowledge Item are necessary. Therefore, branch filters will not apply. \n\n⚠️**Note**: It is not possible to update any knowledge items that live in the root of the explorer (which means they do not have a parent). Should these knowledge items exist, please use the `/move` endpoint to move them to a folder first.",
+				"operationId": "deleteAttachment",
+				"tags": [
+					"Knowledge Items"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/identifier"
+					},
+					{
+						"$ref": "#/components/parameters/attachmentIdentifier"
+					}
+				],
+				"responses": {
+					"204": {
+						"description": "Successful operation."
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/KnowledgeItemNotFoundResponse"
+					}
+				}
+			}
+		},
+		"/folders": {
+			"get": {
+				"tags": [
+					"Folders"
+				],
+				"summary": "Returns a list of Folders.",
+				"description": "Returns a list of Folders, satisfying a given `query`. When called without any parameters, this endpoint\nwill return the first 100 Folders, sorted by the Folder number, smallest first. Only the Folders\nwhich have content in the requested language will be listed.\nIt is necessary to have the permission to read Knowledge Items. If additionally the permission to update Knowledge Items is present, then\nbranch filters do not apply.\n\n⚠️**Note**: When a language is specified, this will only affect the fields related to the translation of the folder (e.g. title, description and the translation creator/modifier fields). If none of these fields are added to the request, the language parameter is ignored.",
+				"operationId": "getFolders",
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/start"
+					},
+					{
+						"$ref": "#/components/parameters/page_size"
+					},
+					{
+						"$ref": "#/components/parameters/folder_fields"
+					},
+					{
+						"$ref": "#/components/parameters/folder_query"
+					},
+					{
+						"$ref": "#/components/parameters/folder_language_query"
+					}
+				],
+				"responses": {
+					"200": {
+						"$ref": "#/components/responses/FolderListResponse"
+					},
+					"206": {
+						"$ref": "#/components/responses/FolderListResponse"
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					}
+				}
+			},
+			"post": {
+				"summary": "Creates a Folder with given content",
+				"description": "Creates a Folder with given content. Optionally, if the `parent` is provided, the new Folder will be a child of this Folder. Otherwise, it will be created on the top level.\nIt is necessary to have the permission to create Knowledge Items.\nIn order for an operator / operator group to be assigned as manager, the \"Knowledge Base Manager\" task must be selected in the Supporting Files module.\n",
+				"operationId": "createFolder",
+				"tags": [
+					"Folders"
+				],
+				"requestBody": {
+					"$ref": "#/components/requestBodies/CreateFolderRequest"
+				},
+				"responses": {
+					"201": {
+						"$ref": "#/components/responses/FolderCreatedResponse"
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					}
+				}
+			}
+		},
+		"/folders/{identifier}": {
+			"get": {
+				"tags": [
+					"Folders"
+				],
+				"summary": "Returns the Folder by id or number.",
+				"description": "Returns the Folder with the given identifier. By default, this endpoint will only return the Folder which has content in the requested language.\nIt is necessary to have the permission to read Knowledge Items. If additionally the permission to update Knowledge Items is present, then branch filters do not apply.",
+				"operationId": "getFolder",
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/folderIdentifier"
+					},
+					{
+						"$ref": "#/components/parameters/folder_fields"
+					},
+					{
+						"$ref": "#/components/parameters/folder_language_query"
+					}
+				],
+				"responses": {
+					"200": {
+						"$ref": "#/components/responses/FolderResponse"
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/FolderNotFoundResponse"
+					}
+				}
+			},
+			"patch": {
+				"summary": "Updates properties of the Folder.",
+				"description": "Updates the Folder with the given `identifier`. Using this endpoint, `visibility`, `manager` and `externalLink` can be updated.\nChanges that affect the visibility for operators / users in linked branches take up to 5 minutes to become effective.\nIn order for an operator / operator group to be assigned as manager, the \"Knowledge Base Manager\"\ntask must be selected in the Supporting Files module.\nIt is necessary to have the permission to update Knowledge Items.\n\nTo unset `manager` or `externalLink`, declare the field as `null` in the request. For example: `\"manager\": null`\n\nAny field that is not present in the request will not be changed.\n\n⚠️**Note**: It is not possible to update the properties of an archived folder. \n\n⚠️**Note**: It is not possible to change the `sspVisibilityFilteredOnBranches` and `operatorVisibilityFilteredOnBranches` without 'read' permission for Branches.",
+				"operationId": "updateFolder",
+				"tags": [
+					"Folders"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/folderIdentifier"
+					}
+				],
+				"requestBody": {
+					"$ref": "#/components/requestBodies/UpdateFolderRequest"
+				},
+				"responses": {
+					"204": {
+						"description": "Successful operation."
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/FolderNotFoundResponse"
+					}
+				}
+			}
+		},
+		"/folders/{identifier}/archive": {
+			"post": {
+				"summary": "Archives the Folder.",
+				"description": "Archives the Folder with the given identifier and all its children and further descendents. If the Folder is already archived nothing will change. It is necessary to have the permission to update and archive Knowledge Items.",
+				"operationId": "archiveFolder",
+				"tags": [
+					"Folders"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/folderIdentifier"
+					}
+				],
+				"responses": {
+					"204": {
+						"description": "Successful operation."
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/FolderNotFoundResponse"
+					}
+				}
+			}
+		},
+		"/folders/{identifier}/unarchive": {
+			"post": {
+				"summary": "Unarchives the Folder.",
+				"description": "Unarchives the Folder with the given identifier and all its children and further descendents. The Folder can only be unarchived if the parent item is not archived. If the Folder is already unarchived nothing will change. It is necessary to have the permission to update and archive Knowledge Items.",
+				"operationId": "unarchiveFolder",
+				"tags": [
+					"Folders"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/folderIdentifier"
+					}
+				],
+				"responses": {
+					"204": {
+						"description": "Successful operation."
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/FolderNotFoundResponse"
+					}
+				}
+			}
+		},
+		"/folders/{identifier}/translations/{language}": {
+			"post": {
+				"summary": "Creates a new translation for the Folder.",
+				"description": "Creates a new translation for the Folder with the given `identifier` in the specified `language`. The language must be in TOPdesk's language list. It is necessary to have the permission to update Knowledge Items.\n\n⚠️**Note**: It is not possible to create a translation for an archived Folder.",
+				"operationId": "createFolderTranslation",
+				"tags": [
+					"Folders"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/folderIdentifier"
+					},
+					{
+						"$ref": "#/components/parameters/language"
+					}
+				],
+				"requestBody": {
+					"$ref": "#/components/requestBodies/CreateFolderTranslationRequest"
+				},
+				"responses": {
+					"204": {
+						"description": "Successful operation."
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/FolderNotFoundResponse"
+					}
+				}
+			},
+			"patch": {
+				"summary": "Updates a translation of the Folder.",
+				"description": "Updates the translation of the Folder with the given `identifier` in the specified `language`.\nOnly the fields, which are included in the request, will be updated. Other fields remain unchanged.\nThe language must be in TOPdesk's language list.\nIt is necessary to have the permission to update Knowledge Items.\n\n⚠️**Note**: It is not possible to update the translation of an archived Folder.",
+				"operationId": "updateFolderTranslation",
+				"tags": [
+					"Folders"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/folderIdentifier"
+					},
+					{
+						"$ref": "#/components/parameters/language"
+					}
+				],
+				"requestBody": {
+					"$ref": "#/components/requestBodies/UpdateFolderTranslationRequest"
+				},
+				"responses": {
+					"204": {
+						"description": "Successful operation."
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/FolderNotFoundResponse"
+					}
+				}
+			},
+			"delete": {
+				"summary": "Delete a translation of the Folder.",
+				"description": "Delete the translation of the Folder with the given `identifier` in the specified `language`.\nThe operation is successful if the translation was deleted or if the Folder or the translation does not exist.\nThe translation can only be deleted if it is not the last remaining one.\nIt is necessary to have the permission to update Knowledge Items.\n\n⚠️**Note**: It is not possible to delete a translation of an archived Folder.",
+				"operationId": "deleteFolderTranslation",
+				"tags": [
+					"Folders"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/folderIdentifier"
+					},
+					{
+						"$ref": "#/components/parameters/language"
+					}
+				],
+				"responses": {
+					"204": {
+						"description": "Successful operation."
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					}
+				}
+			}
+		},
+		"/folders/{identifier}/move": {
+			"post": {
+				"summary": "Moves the Folder under a different parent Folder.",
+				"description": "Moves the Folder with the given `identifier` to the specified parent Folder.\nIt is necessary to have the permission to update Knowledge Items.\n",
+				"operationId": "moveFolder",
+				"tags": [
+					"Folders"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/folderIdentifier"
+					}
+				],
+				"requestBody": {
+					"$ref": "#/components/requestBodies/MoveFolderRequest"
+				},
+				"responses": {
+					"204": {
+						"description": "Successful operation."
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/FolderNotFoundResponse"
+					}
+				}
+			}
+		},
+		"/folders/{identifier}/branches": {
+			"get": {
+				"summary": "Returns all linked branches of the Folder.",
+				"description": "Returns all linked branches of the Folder with the given `identifier`.\nIt is necessary to have the permission to update Knowledge Items and the permission to read branches. Because of the needed permission to update Knowledge Items, the branch filters do not apply on the individual folder level, however the returned branches from this endpoint are still limited to the ones visible to the operator.",
+				"operationId": "getLinkedFolderBranches",
+				"tags": [
+					"Folders"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/folderIdentifier"
+					}
+				],
+				"responses": {
+					"200": {
+						"$ref": "#/components/responses/BranchListResponse"
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/FolderNotFoundResponse"
+					}
+				}
+			}
+		},
+		"/folders/{identifier}/branches/link": {
+			"post": {
+				"summary": "Links a branch to the Folder.",
+				"description": "Links the specified branch to the Folder with the given `identifier`. Only branches that are visible to the operator can be linked.\nNote that it takes up to 5 minutes for the change to become effective.\nIt is necessary to have the permission to update Knowledge Items and the permission to read branches.\n\n⚠️**Note**: It is not possible to link a branch to an archived Folder.",
+				"operationId": "linkFolderBranch",
+				"tags": [
+					"Folders"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/folderIdentifier"
+					}
+				],
+				"requestBody": {
+					"$ref": "#/components/requestBodies/LinkFolderBranchRequest"
+				},
+				"responses": {
+					"204": {
+						"description": "Successful operation."
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/FolderNotFoundResponse"
+					}
+				}
+			}
+		},
+		"/folders/{identifier}/branches/unlink": {
+			"post": {
+				"summary": "Unlinks a branch from the Folder.",
+				"description": "Unlinks the specified branch from the Folder with the given `identifier`. Only branches that are visible to the operator can be unlinked.\nNote that it takes up to 5 minutes for the change to become effective.\nIt is necessary to have the permission to update Knowledge Items and the permission to read branches.\n\n⚠️**Note**: It is not possible to unlink a branch from an archived Folder.",
+				"operationId": "unlinkFolderBranch",
+				"tags": [
+					"Folders"
+				],
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/folderIdentifier"
+					}
+				],
+				"requestBody": {
+					"$ref": "#/components/requestBodies/UnlinkFolderBranchRequest"
+				},
+				"responses": {
+					"204": {
+						"description": "Successful operation."
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/FolderNotFoundResponse"
+					}
+				}
+			}
+		},
+		"/knowledgeItemStatuses": {
+			"get": {
+				"summary": "Returns Knowledge Item statuses",
+				"description": "Returns the list of possible Knowledge Item statuses. It is required to have create or update permissions on knowledge items, or read permission on knowledge base settings to use this endpoint",
+				"operationId": "getStatuses",
+				"tags": [
+					"Searchlists"
+				],
+				"parameters": [
+					{
+						"name": "archived",
+						"in": "query",
+						"description": "Whether to show archived entries. Leave out for all, or specify true/false for only archived, or only active entries, respectively.",
+						"schema": {
+							"type": "boolean"
+						},
+						"required": false
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Returns knowledge item statuses",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SearchlistEnvelope"
+								}
+							}
+						}
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					}
+				}
+			},
+			"post": {
+				"summary": "Creates a knowledge item status.",
+				"description": "Creates a knowledge item status. It is necessary to have the permission to update the Knowledge Base settings.",
+				"operationId": "createStatus",
+				"tags": [
+					"Searchlists"
+				],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/WriteSearchlist"
+							}
+						}
+					}
+				},
+				"responses": {
+					"201": {
+						"description": "Created knowledge item status",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Searchlist"
+								}
+							}
+						}
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					}
+				}
+			}
+		},
+		"/knowledgeItemStatuses/{identifier}": {
+			"patch": {
+				"summary": "Updates the knowledge item status.",
+				"description": "Updates the knowledge item status. It is necessary to have the permission to update the Knowledge Base settings.",
+				"operationId": "updateStatus",
+				"tags": [
+					"Searchlists"
+				],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/WriteSearchlist"
+							}
+						}
+					}
+				},
+				"parameters": [
+					{
+						"name": "identifier",
+						"in": "path",
+						"description": "The id or name of the searchlist entry",
+						"schema": {
+							"type": "string"
+						},
+						"required": true
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Updated knowledge item status",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Searchlist"
+								}
+							}
+						}
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/StatusNotFoundResponse"
+					}
+				}
+			}
+		},
+		"/knowledgeItemStatuses/{identifier}/archive": {
+			"post": {
+				"summary": "Archives the knowledge item status.",
+				"description": "Archives the knowledge item status. It is necessary to have the permission to update the Knowledge Base settings.",
+				"operationId": "archiveStatus",
+				"tags": [
+					"Searchlists"
+				],
+				"parameters": [
+					{
+						"name": "identifier",
+						"in": "path",
+						"description": "The id or name of the searchlist entry",
+						"schema": {
+							"type": "string"
+						},
+						"required": true
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Archived knowledge item status",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Searchlist"
+								}
+							}
+						}
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/StatusNotFoundResponse"
+					}
+				}
+			}
+		},
+		"/knowledgeItemStatuses/{identifier}/unarchive": {
+			"post": {
+				"summary": "Unarchives the knowledge item status",
+				"description": "Unarchives the knowledge item status. It is necessary to have the permission to update the Knowledge Base settings.",
+				"operationId": "unarchiveStatus",
+				"tags": [
+					"Searchlists"
+				],
+				"parameters": [
+					{
+						"name": "identifier",
+						"in": "path",
+						"description": "The id or name of the searchlist entry",
+						"schema": {
+							"type": "string"
+						},
+						"required": true
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Unarchived knowledge item status",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Searchlist"
+								}
+							}
+						}
+					},
+					"400": {
+						"$ref": "#/components/responses/BadRequestResponse"
+					},
+					"404": {
+						"$ref": "#/components/responses/StatusNotFoundResponse"
+					}
+				}
+			}
+		},
+		"/explorer/migrated": {
+			"get": {
+				"summary": "Returns if the explorer is migrated",
+				"description": "Returns if the explorer is migrated or not.<br> This endpoint can be used until 31st of December 2026 to determine which API to use.<br><br>It is required to have read permissions on knowledge items.",
+				"operationId": "getExplorerMigrated",
+				"tags": [
+					"Explorer Migrated"
+				],
+				"responses": {
+					"200": {
+						"$ref": "#/components/responses/ExplorerMigratedResponse"
+					}
+				}
+			}
+		},
+		"/explorer/migrated/folder/{identifier}": {
+			"get": {
+				"summary": "Returns the reference of the folder created from the knowledge identifier",
+				"description": "Returns the identifier and number of the folder created during the Explorer Migration from the provided knowledge item. This only gives results for knowledge items that used to be a parent item in the old explorer.<br>If a knowledge item has been deleted, you will not be able to find the folder using the knowledge item number. In this case, we did maintain the connection via the identifier, so you can use the knowledge item identifier for look-up instead.<br><br>This endpoint can be used until 31st of December 2026 to help with updating the original structure (Knowledge Items) to the new structure (Folders).<br><br>It is required to have read permissions on knowledge items, but branch filters do not apply.",
+				"operationId": "getFolderForKnowledgeItem",
+				"tags": [
+					"Explorer Migrated"
+				],
+				"parameters": [
+					{
+						"name": "identifier",
+						"in": "path",
+						"description": "The id or name of the knowledge item for which the folder is requested",
+						"schema": {
+							"type": "string"
+						},
+						"required": true
+					}
+				],
+				"responses": {
+					"200": {
+						"$ref": "#/components/responses/FolderForKnowledgeItemResponse"
+					},
+					"400": {
+						"$ref": "#/components/responses/FolderForKnowledgeItemNotFoundResponse"
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"parameters": {
+			"identifier": {
+				"in": "path",
+				"name": "identifier",
+				"description": "ID or the number of a Knowledge Item.",
+				"schema": {
+					"type": "string"
+				},
+				"required": true,
+				"examples": {
+					"id": {
+						"summary": "Identifier supplied as an UUID.",
+						"value": "35B3DF7A-9B29-49A7-BAA5-3EE984F39EB7"
+					},
+					"number": {
+						"summary": "Identifier supplied as an item number. The number should include spaces and the abbreviation (like KI)",
+						"value": "KI 0211"
+					}
+				}
+			},
+			"folderIdentifier": {
+				"in": "path",
+				"name": "identifier",
+				"description": "ID or the number of a Folder.",
+				"schema": {
+					"type": "string"
+				},
+				"required": true,
+				"examples": {
+					"id": {
+						"summary": "Identifier supplied as an UUID.",
+						"value": "35B3DF7A-9B29-49A7-BAA5-3EE984F39EB7"
+					},
+					"number": {
+						"summary": "Identifier supplied as an item number. The number should include the prefix (like FOLD-)",
+						"value": "FOLD-0211"
+					}
+				}
+			},
+			"attachmentIdentifier": {
+				"in": "path",
+				"name": "attachmentIdentifier",
+				"description": "UUID of the attachment.",
+				"schema": {
+					"type": "string",
+					"format": "uuid"
+				},
+				"required": true,
+				"example": "35B3DF7A-9B29-49A7-BAA5-3EE984F39EB7"
+			},
+			"language": {
+				"in": "path",
+				"name": "language",
+				"description": "The language of the Knowledge Item content, in BCP 47 format.",
+				"schema": {
+					"type": "string"
+				},
+				"required": true,
+				"example": "en"
+			},
+			"fields": {
+				"name": "fields",
+				"in": "query",
+				"description": "This parameter allows the client to specify which fields of Knowledge Items are present in responses. `ID` and `number`\nfields are always included in Knowledge Item. It's possible to request additional fields of Knowlege Items, by supplying\na comma separated list of field names in `fields` parameter.\nNote that, unknown or repeating items in the `fields` parameter will result in an error. Also, a field that does not have a value\nis never returned, even if it is explicitly requested using this parameter.\nValid field names for Knowledge Items are listed below:\n* parent\n* visibility - will include all values from the KnowledgeItemVisibility schema\n* urls - will include three urls which point to this KI via operator, ssp and public (provided that the Public Knowledge Base feature is enabled in the settings)\n* news\n* manager\n* status\n* standardSolution\n* externalLink\n* language\n* title\n* description\n* content\n* commentsForOperators\n* keywords\n* creator\n* modifier\n* creationDate\n* modificationDate\n* translation.creator\n* translation.modifier\n* translation.creationDate\n* translation.modificationDate\n* availableTranslations\n",
+				"schema": {
+					"type": "string"
+				},
+				"example": "parent,status,content"
+			},
+			"folder_fields": {
+				"name": "fields",
+				"in": "query",
+				"description": "This parameter allows the client to specify which fields of Folders are present in responses. `ID` and `number`\nfields are always included in Folder. It's possible to request additional fields of Folders, by supplying\na comma separated list of field names in `fields` parameter.\nNote that, unknown or repeating items in the `fields` parameter will result in an error. Also, a field that does not have a value\nis never returned, even if it is explicitly requested using this parameter.\nValid field names for Folders are listed below:\n* parent\n* visibility\n* manager\n* externalLink\n* language\n* title\n* description\n* creator\n* modifier\n* creationDate\n* modificationDate\n* translation.creator\n* translation.modifier\n* translation.creationDate\n* translation.modificationDate\n* availableTranslations\n",
+				"schema": {
+					"type": "string"
+				},
+				"example": "parent,title"
+			},
+			"language_query": {
+				"name": "language",
+				"in": "query",
+				"description": "The language of the Knowledge Item content, in standard BCP 47 format. If not specified, defaults to the\n TOPdesk default language. If a Knowledge Item is not translated to this language, it will not be included\nin the results.\n",
+				"schema": {
+					"type": "string"
+				},
+				"example": "en"
+			},
+			"folder_language_query": {
+				"name": "language",
+				"in": "query",
+				"description": "The language of the Folder content, in standard BCP 47 format. If not specified, defaults to the\n TOPdesk default language. If a Folder is not translated to this language, it will not be included\nin the results.\n",
+				"schema": {
+					"type": "string"
+				},
+				"example": "en"
+			},
+			"start": {
+				"name": "start",
+				"in": "query",
+				"description": "The offset at which to start.",
+				"schema": {
+					"type": "integer",
+					"format": "int32",
+					"default": 0
+				}
+			},
+			"page_size": {
+				"name": "page_size",
+				"in": "query",
+				"description": "The maximum amount of results to return. Must be between 1 and 1000.",
+				"schema": {
+					"type": "integer",
+					"format": "int32",
+					"default": 100
+				}
+			},
+			"query": {
+				"name": "query",
+				"in": "query",
+				"description": "An <a href=\"../tutorial.html\">FIQL query</a> to filter the response. The fields available for filtering are:\n* parent.id\n* parent.name\n* visibility.sspVisibility\n* visibility.sspVisibleFrom\n* visibility.sspVisibleUntil\n* visibility.sspVisibilityFilteredOnBranches\n* visibility.operatorVisibilityFilteredOnBranches\n* visibility.publicKnowledgeItem\n* visibility.branches.id\n* visibility.branches.name\n* manager.id\n* manager.name\n* status.id\n* status.name\n* standardSolution.id\n* standardSolution.name\n* creator\n* creationDate\n* modifier\n* modificationDate\n* externalLink.id\n* externalLink.type\n* externalLink.date\n* archived\n* news\n",
+				"schema": {
+					"type": "string"
+				},
+				"example": "parent.id==3fa85f64-5717-4562-b3fc-2c963f66afa6;externalLink.id=in=(oneTool,otherTool)"
+			},
+			"folder_query": {
+				"name": "query",
+				"in": "query",
+				"description": "An <a href=\"../tutorial.html\">FIQL query</a> to filter the response. The fields available for filtering are:\n* parent.id\n* parent.name\n* visibility.sspVisibility\n* visibility.sspVisibleFrom\n* visibility.sspVisibleUntil\n* visibility.sspVisibilityFilteredOnBranches\n* visibility.operatorVisibilityFilteredOnBranches\n* visibility.publicKnowledgeItem\n* visibility.branches.id\n* visibility.branches.name\n* manager.id\n* manager.name\n* externalLink.id\n* externalLink.type\n* externalLink.date\n* archived\n",
+				"schema": {
+					"type": "string"
+				},
+				"example": "parent.id==3fa85f64-5717-4562-b3fc-2c963f66afa6;externalLink.id=in=(oneTool,otherTool)"
+			},
+			"fileName": {
+				"name": "imageName",
+				"in": "path",
+				"description": "Name of the image",
+				"required": true,
+				"schema": {
+					"type": "string"
+				},
+				"example": "image.jpg"
+			}
+		},
+		"requestBodies": {
+			"CreateKnowledgeItemRequest": {
+				"description": "Creates a new Knowledge Item.",
+				"content": {
+					"application/x.topdesk-kb-create-ki-v1+json": {
+						"schema": {
+							"$ref": "#/components/schemas/CreateKnowledgeItemParams"
+						}
+					}
+				}
+			},
+			"UpdateKnowledgeItemRequest": {
+				"description": "Updates a Knowledge Item.",
+				"content": {
+					"application/x.topdesk-kb-update-ki-v1+json": {
+						"schema": {
+							"$ref": "#/components/schemas/UpdateKnowledgeItemParams"
+						}
+					}
+				}
+			},
+			"MoveKnowledgeItemRequest": {
+				"description": "Moves a Knowledge Item.",
+				"content": {
+					"application/x.topdesk-kb-move-ki-v1+json": {
+						"schema": {
+							"$ref": "#/components/schemas/FolderIdNamePair"
+						}
+					}
+				}
+			},
+			"CreateFolderRequest": {
+				"description": "Creates a new Folder.",
+				"content": {
+					"application/x.topdesk-kb-create-folder-v1+json": {
+						"schema": {
+							"$ref": "#/components/schemas/CreateFolderParams"
+						}
+					}
+				}
+			},
+			"UpdateFolderRequest": {
+				"description": "Updates a Folder.",
+				"content": {
+					"application/x.topdesk-kb-update-folder-v1+json": {
+						"schema": {
+							"$ref": "#/components/schemas/UpdateFolderParams"
+						}
+					}
+				}
+			},
+			"CreateTranslationRequest": {
+				"description": "Creates a new translation.",
+				"content": {
+					"application/x.topdesk-kb-create-translation-v1+json": {
+						"schema": {
+							"$ref": "#/components/schemas/CreateKnowledgeItemTranslation"
+						}
+					}
+				}
+			},
+			"UpdateTranslationRequest": {
+				"description": "Updates a translation.",
+				"content": {
+					"application/x.topdesk-kb-update-translation-v1+json": {
+						"schema": {
+							"$ref": "#/components/schemas/KnowledgeItemContent"
+						}
+					}
+				}
+			},
+			"CreateFolderTranslationRequest": {
+				"description": "Creates a new folder translation.",
+				"content": {
+					"application/x.topdesk-kb-create-folder-translation-v1+json": {
+						"schema": {
+							"$ref": "#/components/schemas/FolderContent"
+						}
+					}
+				}
+			},
+			"UpdateFolderTranslationRequest": {
+				"description": "Updates a folder translation.",
+				"content": {
+					"application/x.topdesk-kb-update-folder-translation-v1+json": {
+						"schema": {
+							"$ref": "#/components/schemas/FolderContent"
+						}
+					}
+				}
+			},
+			"LinkBranchRequest": {
+				"description": "Links a branch to a Knowledge Item.",
+				"content": {
+					"application/x.topdesk-kb-link-branch-v1+json": {
+						"schema": {
+							"$ref": "#/components/schemas/Identifier"
+						}
+					}
+				}
+			},
+			"UnlinkBranchRequest": {
+				"description": "Unlinks a branch from a Knowledge Item.",
+				"content": {
+					"application/x.topdesk-kb-unlink-branch-v1+json": {
+						"schema": {
+							"$ref": "#/components/schemas/Identifier"
+						}
+					}
+				}
+			},
+			"LinkFolderBranchRequest": {
+				"description": "Links a branch to a Folder.",
+				"content": {
+					"application/x.topdesk-kb-link-folder-branch-v1+json": {
+						"schema": {
+							"$ref": "#/components/schemas/Identifier"
+						}
+					}
+				}
+			},
+			"UnlinkFolderBranchRequest": {
+				"description": "Unlinks a branch from a Folder.",
+				"content": {
+					"application/x.topdesk-kb-unlink-folder-branch-v1+json": {
+						"schema": {
+							"$ref": "#/components/schemas/Identifier"
+						}
+					}
+				}
+			},
+			"MoveFolderRequest": {
+				"description": "Moves a Folder.",
+				"content": {
+					"application/x.topdesk-kb-move-folder-v1+json": {
+						"schema": {
+							"$ref": "#/components/schemas/FolderIdNamePair"
+						}
+					}
+				}
+			},
+			"GiveFeedbackRequest": {
+				"description": "Adds feedback to a Knowledge Item",
+				"content": {
+					"application/x.topdesk-kb-give-feedback-v1+json": {
+						"schema": {
+							"$ref": "#/components/schemas/Feedback"
+						}
+					}
+				}
+			}
+		},
+		"responses": {
+			"KnowledgeItemCreatedResponse": {
+				"description": "Knowledge Item successfully created.",
+				"content": {
+					"application/x.topdesk-kb-ki-created-v1+json": {
+						"schema": {
+							"$ref": "#/components/schemas/KnowledgeItemReference"
+						}
+					}
+				}
+			},
+			"KnowledgeItemResponse": {
+				"description": "A single Knowledge Item.",
+				"content": {
+					"application/x.topdesk-kb-ki-v1+json": {
+						"schema": {
+							"$ref": "#/components/schemas/KnowledgeItem"
+						}
+					}
+				}
+			},
+			"KnowledgeItemListResponse": {
+				"description": "A list of Knowledge Items.",
+				"content": {
+					"application/x.topdesk-kb-ki-list-v1+json": {
+						"schema": {
+							"$ref": "#/components/schemas/KnowledgeItemList"
+						}
+					}
+				}
+			},
+			"FolderCreatedResponse": {
+				"description": "Folder successfully created.",
+				"content": {
+					"application/x.topdesk-kb-folder-created-v1+json": {
+						"schema": {
+							"$ref": "#/components/schemas/Reference"
+						}
+					}
+				}
+			},
+			"FolderResponse": {
+				"description": "A single Folder.",
+				"content": {
+					"application/x.topdesk-kb-folder-v1+json": {
+						"schema": {
+							"$ref": "#/components/schemas/Folder"
+						}
+					}
+				}
+			},
+			"FolderListResponse": {
+				"description": "A list of Folders.",
+				"content": {
+					"application/x.topdesk-kb-folder-list-v1+json": {
+						"schema": {
+							"$ref": "#/components/schemas/FolderList"
+						}
+					}
+				}
+			},
+			"BranchListResponse": {
+				"description": "A list of branches.",
+				"content": {
+					"application/x.topdesk-kb-branch-list-v1+json": {
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/components/schemas/BranchReference"
+							}
+						}
+					}
+				}
+			},
+			"ImageListResponse": {
+				"description": "A list of inline image file names.",
+				"content": {
+					"application/x.topdesk-kb-image-list-v1+json": {
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							},
+							"example": [
+								"image3.jpg",
+								"screenshot2.png"
+							]
+						}
+					}
+				}
+			},
+			"AttachmentListResponse": {
+				"description": "A list of attachments.",
+				"content": {
+					"application/x.topdesk-kb-attachment-list-v1+json": {
+						"schema": {
+							"type": "array",
+							"items": {
+								"$ref": "#/components/schemas/Attachment"
+							}
+						}
+					}
+				}
+			},
+			"BadRequestResponse": {
+				"description": "Bad request",
+				"content": {
+					"application/json": {
+						"schema": {
+							"$ref": "#/components/schemas/ErrorResponse"
+						}
+					}
+				}
+			},
+			"KnowledgeItemNotFoundResponse": {
+				"description": "Knowledge Item with the supplied identifier is not found.",
+				"content": {
+					"application/json": {
+						"schema": {
+							"$ref": "#/components/schemas/ErrorResponse"
+						}
+					}
+				}
+			},
+			"FolderNotFoundResponse": {
+				"description": "Folder with the supplied identifier is not found.",
+				"content": {
+					"application/json": {
+						"schema": {
+							"$ref": "#/components/schemas/ErrorResponse"
+						}
+					}
+				}
+			},
+			"FolderForKnowledgeItemNotFoundResponse": {
+				"description": "The requested folder created from the given Knowledge Item is not found or the identifier is incorrect.",
+				"content": {
+					"application/json": {
+						"schema": {
+							"$ref": "#/components/schemas/ErrorResponse"
+						}
+					}
+				}
+			},
+			"StatusNotFoundResponse": {
+				"description": "Knowledge Item Status with the supplied identifier is not found.",
+				"content": {
+					"application/json": {
+						"schema": {
+							"$ref": "#/components/schemas/ErrorResponse"
+						}
+					}
+				}
+			},
+			"ExplorerMigratedResponse": {
+				"description": "Explorer migrated state",
+				"content": {
+					"application/x.topdesk-kb-explorer-migrated-v1+json": {
+						"schema": {
+							"$ref": "#/components/schemas/ExplorerMigrated"
+						}
+					}
+				}
+			},
+			"FolderForKnowledgeItemResponse": {
+				"description": "Folder created from provided Knowledge Item during migration",
+				"content": {
+					"application/x.topdesk-kb-explorer-migrated-folder-v1+json": {
+						"schema": {
+							"$ref": "#/components/schemas/FolderReference"
+						}
+					}
+				}
+			}
+		},
+		"schemas": {
+			"Attachment": {
+				"properties": {
+					"id": {
+						"type": "string",
+						"format": "uuid",
+						"example": "D8A884C4-0876-4ADF-B072-50DD48033904"
+					},
+					"filename": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"size": {
+						"type": "integer",
+						"format": "int64",
+						"description": "The size of the attachment in bytes."
+					},
+					"uploadDate": {
+						"type": "string",
+						"format": "date-time",
+						"example": "2019-08-04T12:13:00Z"
+					},
+					"uploadedBy": {
+						"type": "string",
+						"format": "uuid",
+						"example": "D8A884C4-0876-4ADF-B072-50DD48033904",
+						"description": "The id of the operator that uploaded the attachment."
+					}
+				}
+			},
+			"AttachmentUpload": {
+				"properties": {
+					"file": {
+						"type": "string",
+						"format": "binary"
+					},
+					"description": {
+						"type": "string"
+					}
+				}
+			},
+			"BranchReference": {
+				"properties": {
+					"id": {
+						"type": "string",
+						"format": "uuid",
+						"example": "D8A884C4-0876-4ADF-B072-50DD48033904"
+					},
+					"name": {
+						"type": "string",
+						"example": "TOPdesk Netherlands"
+					}
+				}
+			},
+			"CreateFolderParams": {
+				"required": [
+					"translation"
+				],
+				"description": "Translation is mandatory when creating a new Folder.\n",
+				"properties": {
+					"parent": {
+						"$ref": "#/components/schemas/FolderIdNamePair"
+					},
+					"translation": {
+						"$ref": "#/components/schemas/FolderTranslation"
+					},
+					"manager": {
+						"$ref": "#/components/schemas/Identifier"
+					},
+					"externalLink": {
+						"$ref": "#/components/schemas/ExternalLink"
+					}
+				}
+			},
+			"CreateKnowledgeItemParams": {
+				"required": [
+					"parent",
+					"translation"
+				],
+				"description": "Translation and parent folder are mandatory when creating a new Knowledge Item.\n",
+				"properties": {
+					"parent": {
+						"$ref": "#/components/schemas/FolderIdNamePair"
+					},
+					"translation": {
+						"$ref": "#/components/schemas/KnowledgeItemTranslation"
+					},
+					"status": {
+						"$ref": "#/components/schemas/Identifier"
+					},
+					"manager": {
+						"$ref": "#/components/schemas/Identifier"
+					},
+					"externalLink": {
+						"$ref": "#/components/schemas/ExternalLink"
+					}
+				}
+			},
+			"CreateKnowledgeItemTranslation": {
+				"required": [
+					"title"
+				],
+				"description": "Represents a translation of a Knowledge Item, with the translated content.\nWhen creating a translation, `title` is a mandatory field.\n",
+				"properties": {
+					"title": {
+						"type": "string",
+						"maxLength": 80,
+						"minLength": 1,
+						"description": "Title of the Knowledge Item.",
+						"example": "Printer has insufficient paper"
+					},
+					"description": {
+						"type": "string",
+						"description": "The description of the Knowledge Item. The maximum text length (excluding tags) is 50000 characters.\nThe following html tags can be used to format the text:\n  * italic \\<i\\> or \\<em\\>\n  * bold: \\<b\\> or \\<strong\\>\n  * underline: \\<u\\>\n  * link: \\<a\\>\n  * line break: \\<br\\>\n  * \\<p\\> and \\<div\\> tags are left as they are, but a line break (same as with \\<br\\>) is added afterwards\n\nNote: HTML entities can be used to encode characters that are reserved in HTML, e.g., use \\&lt; instead of <.\n",
+						"example": "<b>bold</b><br><i>italic</i><br><u>underline</u><br><a href=\"http://www.topdesk.com\">Link to TOPdesk</a>\n"
+					},
+					"content": {
+						"type": "string",
+						"description": "The content of the Knowledge Item. The maximum text length (excluding tags) is 50000 characters.\nThe following html tags can be used to format the text:\n  * italic \\<i\\> or \\<em\\>\n  * bold: \\<b\\> or \\<strong\\>\n  * underline: \\<u\\>\n  * link: \\<a\\>\n  * images: \\<img\\> (When creating or updating Knowledge Items, images must have been uploaded to the Knowledge Item with the help of the corresponding endpoint. The images are uniquely identified by their name and the image height and width have to be given (in pixel).)\n  * line break: \\<br\\>\n  * \\<p\\> and \\<div\\> tags are left as they are, but a line break (same as with \\<br\\>) is added afterwards\n\nNote: HTML entities can be used to encode characters that are reserved in HTML, e.g., use \\&lt; instead of <.\n",
+						"example": "<b>bold</b><br><i>italic</i><br><u>underline</u><br><a href=\"http://www.topdesk.com\">Link to TOPdesk</a><img src=\"image.jpg\" width=\"100\" height=\"100\">\n"
+					},
+					"commentsForOperators": {
+						"type": "string",
+						"description": "The comments for operators accessing this Knowledge Item. The maximum text length (excluding tags) is 50000 characters.\nThe following html tags can be used to format the text:\n  * italic \\<i\\> or \\<em\\>\n  * bold: \\<b\\> or \\<strong\\>\n  * underline: \\<u\\>\n  * link: \\<a\\>\n  * images: \\<img\\> (When creating or updating Knowledge Items, images must have been uploaded to the Knowledge Item with the help of the corresponding endpoint. The images are uniquely identified by their name and the image height and width have to be given (in pixel).)\n  * line break: \\<br\\>\n  * \\<p\\> and \\<div\\> tags are left as they are, but a line break (same as with \\<br\\>) is added afterwards\n\nNote: HTML entities can be used to encode characters that are reserved in HTML, e.g., use \\&lt; instead of <.\n",
+						"example": "<b>bold</b><br><i>italic</i><br><u>underline</u><br><a href=\"http://www.topdesk.com\">Link to TOPdesk</a><img src=\"image.jpg\" width=\"100\" height=\"100\">\n"
+					},
+					"keywords": {
+						"type": "string",
+						"maxLength": 50000,
+						"description": "List of tags/keywords used for search. The list is represented as a single string (whitespace or comma separated).",
+						"example": "printer, IPv4, DNS"
+					}
+				}
+			},
+			"ErrorDescription": {
+				"required": [
+					"errorCode"
+				],
+				"properties": {
+					"errorCode": {
+						"type": "string",
+						"description": "A consistent error code that can be used to recognize types of errors programatically"
+					},
+					"appliesTo": {
+						"type": "string",
+						"description": "The property this error applies to"
+					},
+					"errorMessage": {
+						"type": "string",
+						"description": "A human-readable description of the error"
+					}
+				}
+			},
+			"ErrorResponse": {
+				"required": [
+					"errors"
+				],
+				"properties": {
+					"errors": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/ErrorDescription"
+						}
+					}
+				}
+			},
+			"ExplorerMigrated": {
+				"properties": {
+					"migrated": {
+						"type": "boolean",
+						"example": "true"
+					}
+				}
+			},
+			"ExternalLink": {
+				"required": [
+					"id",
+					"type"
+				],
+				"properties": {
+					"id": {
+						"type": "string",
+						"description": "The id of the entity in the external system<br/>Size range: `maximum 450 characters`.\n",
+						"example": "external-id-1"
+					},
+					"type": {
+						"type": "string",
+						"description": "The type of the link<br/>Range: `A non-zero integer formatted as string`. Each integration should use its own value. If multiple integrations use the same value, records could be shared between the integrations.\n",
+						"example": "2"
+					},
+					"date": {
+						"type": "string",
+						"description": "The date of the synchronization.",
+						"format": "date-time"
+					}
+				}
+			},
+			"Feedback": {
+				"required": [
+					"questionAnswered"
+				],
+				"properties": {
+					"questionAnswered": {
+						"type": "boolean",
+						"description": "Field indicating whether the knowledge item is useful according to the user",
+						"example": "true"
+					},
+					"feedbackText": {
+						"type": "string",
+						"description": "Feedback written by the user for this knowledge item",
+						"example": "Thank you for the clear explanation written in this article."
+					}
+				}
+			},
+			"Folder": {
+				"properties": {
+					"id": {
+						"type": "string",
+						"format": "uuid",
+						"description": "ID of the folder.",
+						"example": "35B3DF7A-9B29-49A7-BAA5-3EE984F39EB7"
+					},
+					"number": {
+						"type": "string",
+						"description": "The unique folder number.",
+						"example": "FOLD-0080"
+					},
+					"parent": {
+						"$ref": "#/components/schemas/Reference"
+					},
+					"translation": {
+						"$ref": "#/components/schemas/FolderTranslation"
+					},
+					"visibility": {
+						"$ref": "#/components/schemas/VisibilityRead"
+					},
+					"manager": {
+						"$ref": "#/components/schemas/Reference"
+					},
+					"externalLink": {
+						"$ref": "#/components/schemas/ExternalLink"
+					},
+					"creator": {
+						"description": "ID and name of the operator which created this Folder.",
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/Reference"
+							}
+						]
+					},
+					"creationDate": {
+						"type": "string",
+						"format": "date-time",
+						"description": "The creation date and time. Provided in ISO-8601 format and always in UTC.\n",
+						"example": "2019-08-01T12:13:00Z"
+					},
+					"modifier": {
+						"description": "ID and name of the operator which updated this Folder most recently.",
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/Reference"
+							}
+						]
+					},
+					"modificationDate": {
+						"type": "string",
+						"format": "date-time",
+						"description": "The last update date and time of the Folder. Provided in ISO-8601 format and always in UTC.\n",
+						"example": "2019-08-04T12:13:00Z"
+					},
+					"availableTranslations": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						},
+						"example": [
+							"en",
+							"de"
+						],
+						"description": "A list containing a language code for each translation of the Folder, provided in BCP 47 format.\n"
+					}
+				}
+			},
+			"FolderContent": {
+				"description": "Represents the content of a Folder in a specific language.\n",
+				"properties": {
+					"title": {
+						"type": "string",
+						"maxLength": 80,
+						"minLength": 1,
+						"description": "Title of the Folder.",
+						"example": "Network"
+					},
+					"description": {
+						"type": "string",
+						"description": "The description of the Folder. The maximum text length (excluding tags) is 50000 characters.\nThe following html tags can be used to format the text:\n  * italic \\<i\\> or \\<em\\>\n  * bold: \\<b\\> or \\<strong\\>\n  * underline: \\<u\\>\n  * link: \\<a\\>\n  * line break: \\<br\\>\n  * \\<p\\> and \\<div\\> tags are left as they are, but a line break (same as with \\<br\\>) is added afterwards\n\nNote: HTML entities can be used to encode characters that are reserved in HTML, e.g., use \\&lt; instead of <.\n",
+						"example": "<b>bold</b><br><i>italic</i><br><u>underline</u><br><a href=\"http://www.topdesk.com\">Link to TOPdesk</a>\n"
+					}
+				}
+			},
+			"FolderIdNamePair": {
+				"description": "An ID or a number referencing a folder.",
+				"properties": {
+					"id": {
+						"type": "string",
+						"format": "uuid",
+						"description": "ID of the folder. Must be present if the number is not supplied."
+					},
+					"number": {
+						"type": "string",
+						"minLength": 3,
+						"description": "The unique folder number. The number should include the prefix FOLD-. Must be present if id is not supplied."
+					}
+				},
+				"example": {
+					"number": "FOLD-0080"
+				}
+			},
+			"FolderList": {
+				"properties": {
+					"item": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Folder"
+						}
+					},
+					"prev": {
+						"description": "A link to the previous page of Folders",
+						"type": "string",
+						"example": "/services/knowledge-base-v1/folders?start=100&page_size=50"
+					},
+					"next": {
+						"description": "A link to the next page of Folders",
+						"type": "string",
+						"example": "/services/knowledge-base-v1/folders?start=200&page_size=50"
+					}
+				}
+			},
+			"FolderReference": {
+				"properties": {
+					"id": {
+						"type": "string",
+						"format": "uuid",
+						"example": "D8A884C4-0876-4ADF-B072-50DD48033904"
+					},
+					"number": {
+						"type": "string",
+						"example": "FOLD-1234"
+					}
+				}
+			},
+			"FolderTranslation": {
+				"required": [
+					"language",
+					"content"
+				],
+				"description": "Represents a translation of a Folder, consisting of a language code and the translated content in that language.\nWhen creating a Folder, `language` and `title` (in `content`) are mandatory fields.\n",
+				"properties": {
+					"language": {
+						"type": "string",
+						"description": "Language code in BCP 47 format.\n",
+						"example": "en"
+					},
+					"content": {
+						"$ref": "#/components/schemas/FolderContent"
+					},
+					"creator": {
+						"description": "Read-only. ID and name of the operator which created this translation.\n",
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/Reference"
+							}
+						]
+					},
+					"creationDate": {
+						"type": "string",
+						"format": "date-time",
+						"description": "Read-only. The creation date and time. Provided in ISO-8601 format and always in UTC.\n",
+						"example": "2019-08-01T12:13:00Z"
+					},
+					"modifier": {
+						"description": "Read-only. ID and name of the operator, which updated this translation most recently.\n",
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/Reference"
+							}
+						]
+					},
+					"modificationDate": {
+						"type": "string",
+						"format": "date-time",
+						"description": "Read-only. The last update date and time of the translation. Provided in ISO-8601 format and always in UTC.\n",
+						"example": "2019-08-04T12:13:00Z"
+					}
+				}
+			},
+			"Identifier": {
+				"required": [
+					"id"
+				],
+				"properties": {
+					"id": {
+						"type": "string",
+						"format": "uuid",
+						"example": "D8A884C4-0876-4ADF-B072-50DD48033904"
+					}
+				}
+			},
+			"ImageUpload": {
+				"properties": {
+					"file": {
+						"type": "string",
+						"format": "binary"
+					}
+				}
+			},
+			"KnowledgeItem": {
+				"properties": {
+					"id": {
+						"type": "string",
+						"format": "uuid",
+						"description": "ID of the item.",
+						"example": "35B3DF7A-9B29-49A7-BAA5-3EE984F39EB7"
+					},
+					"number": {
+						"type": "string",
+						"description": "The unique item number.",
+						"example": "KI 0080"
+					},
+					"parent": {
+						"$ref": "#/components/schemas/Reference"
+					},
+					"translation": {
+						"$ref": "#/components/schemas/KnowledgeItemTranslation"
+					},
+					"visibility": {
+						"$ref": "#/components/schemas/VisibilityRead"
+					},
+					"urls": {
+						"$ref": "#/components/schemas/KnowledgeItemUrls"
+					},
+					"manager": {
+						"$ref": "#/components/schemas/Reference"
+					},
+					"status": {
+						"$ref": "#/components/schemas/Reference"
+					},
+					"standardSolution": {
+						"$ref": "#/components/schemas/Reference"
+					},
+					"externalLink": {
+						"$ref": "#/components/schemas/ExternalLink"
+					},
+					"news": {
+						"type": "boolean",
+						"description": "True, if this item is a News Item."
+					},
+					"creator": {
+						"description": "ID and name of the operator which created this Knowledge Item.",
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/Reference"
+							}
+						]
+					},
+					"creationDate": {
+						"type": "string",
+						"format": "date-time",
+						"description": "The creation date and time. Provided in ISO-8601 format and always in UTC.\n",
+						"example": "2019-08-01T12:13:00Z"
+					},
+					"modifier": {
+						"description": "ID and name of the operator which updated this Knowledge Item most recently.",
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/Reference"
+							}
+						]
+					},
+					"modificationDate": {
+						"type": "string",
+						"format": "date-time",
+						"description": "The last update date and time of the Knowledge Item. Provided in ISO-8601 format and always in UTC.\n",
+						"example": "2019-08-04T12:13:00Z"
+					},
+					"availableTranslations": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						},
+						"example": [
+							"en",
+							"de"
+						],
+						"description": "A list containing a language code for each translation of the Knowledge Item, provided in BCP 47 format.\n"
+					}
+				}
+			},
+			"KnowledgeItemContent": {
+				"description": "Represents the content of a Knowledge Item in a specific language.\n",
+				"properties": {
+					"title": {
+						"type": "string",
+						"maxLength": 80,
+						"minLength": 1,
+						"description": "Title of the Knowledge Item.",
+						"example": "Printer has insufficient paper"
+					},
+					"description": {
+						"type": "string",
+						"description": "The description of the Knowledge Item. The maximum text length (excluding tags) is 50000 characters.\nThe following html tags can be used to format the text:\n  * italic \\<i\\> or \\<em\\>\n  * bold: \\<b\\> or \\<strong\\>\n  * underline: \\<u\\>\n  * link: \\<a\\>\n  * line break: \\<br\\>\n  * \\<p\\> and \\<div\\> tags are left as they are, but a line break (same as with \\<br\\>) is added afterwards\n\nNote: HTML entities can be used to encode characters that are reserved in HTML, e.g., use \\&lt; instead of <.\n",
+						"example": "<b>bold</b><br><i>italic</i><br><u>underline</u><br><a href=\"http://www.topdesk.com\">Link to TOPdesk</a>\n"
+					},
+					"content": {
+						"type": "string",
+						"description": "The content of the Knowledge Item. The maximum text length (excluding tags) is 50000 characters.\nThe following html tags can be used to format the text:\n  * italic \\<i\\> or \\<em\\>\n  * bold: \\<b\\> or \\<strong\\>\n  * underline: \\<u\\>\n  * link: \\<a\\>\n  * images: \\<img\\> (When creating or updating Knowledge Items, images must have been uploaded to the Knowledge Item with the help of the corresponding endpoint. The images are uniquely identified by their name and the image height and width have to be given (in pixel).)\n  * line break: \\<br\\>\n  * \\<p\\> and \\<div\\> tags are left as they are, but a line break (same as with \\<br\\>) is added afterwards\n\nNote: HTML entities can be used to encode characters that are reserved in HTML, e.g., use \\&lt; instead of <.\n",
+						"example": "<b>bold</b><br><i>italic</i><br><u>underline</u><br><a href=\"http://www.topdesk.com\">Link to TOPdesk</a><img src=\"image.jpg\" width=\"100\" height=\"100\">\n"
+					},
+					"commentsForOperators": {
+						"type": "string",
+						"description": "The comments for operators accessing this Knowledge Item. The maximum text length (excluding tags) is 50000 characters.\nThe following html tags can be used to format the text:\n  * italic \\<i\\> or \\<em\\>\n  * bold: \\<b\\> or \\<strong\\>\n  * underline: \\<u\\>\n  * link: \\<a\\>\n  * images: \\<img\\> (When creating or updating Knowledge Items, images must have been uploaded to the Knowledge Item with the help of the corresponding endpoint. The images are uniquely identified by their name and the image height and width have to be given (in pixel).)\n  * line break: \\<br\\>\n  * \\<p\\> and \\<div\\> tags are left as they are, but a line break (same as with \\<br\\>) is added afterwards\n\nNote: HTML entities can be used to encode characters that are reserved in HTML, e.g., use \\&lt; instead of <.\n",
+						"example": "<b>bold</b><br><i>italic</i><br><u>underline</u><br><a href=\"http://www.topdesk.com\">Link to TOPdesk</a><img src=\"image.jpg\" width=\"100\" height=\"100\">\n"
+					},
+					"keywords": {
+						"type": "string",
+						"maxLength": 50000,
+						"description": "List of tags/keywords used for search. The list is represented as a single string (whitespace or comma separated).",
+						"example": "printer, IPv4, DNS"
+					}
+				}
+			},
+			"KnowledgeItemList": {
+				"properties": {
+					"item": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/KnowledgeItem"
+						}
+					},
+					"prev": {
+						"description": "A link to the previous page of Knowledge Items",
+						"type": "string",
+						"example": "/services/knowledge-base-v1/knowledgeItems?start=100&page_size=50"
+					},
+					"next": {
+						"description": "A link to the next page of Knowledge Items",
+						"type": "string",
+						"example": "/services/knowledge-base-v1/knowledgeItems?start=200&page_size=50"
+					}
+				}
+			},
+			"KnowledgeItemReference": {
+				"properties": {
+					"id": {
+						"type": "string",
+						"format": "uuid",
+						"example": "D8A884C4-0876-4ADF-B072-50DD48033904"
+					},
+					"number": {
+						"type": "string",
+						"example": "KI 1234"
+					}
+				}
+			},
+			"KnowledgeItemTranslation": {
+				"required": [
+					"language",
+					"content"
+				],
+				"description": "Represents a translation of a Knowledge Item, consisting of a language code and the translated content in that language.\nWhen creating a Knowledge Item, `language` and `title` (in `content`) are mandatory fields.\n",
+				"properties": {
+					"language": {
+						"type": "string",
+						"description": "Language code in BCP 47 format.\n",
+						"example": "en"
+					},
+					"content": {
+						"$ref": "#/components/schemas/KnowledgeItemContent"
+					},
+					"creator": {
+						"description": "Read-only. ID and name of the operator which created this translation.\n",
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/Reference"
+							}
+						]
+					},
+					"creationDate": {
+						"type": "string",
+						"format": "date-time",
+						"description": "Read-only. The creation date and time. Provided in ISO-8601 format and always in UTC.\n",
+						"example": "2019-08-01T12:13:00Z"
+					},
+					"modifier": {
+						"description": "Read-only. ID and name of the operator, which updated this translation most recently.\n",
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/Reference"
+							}
+						]
+					},
+					"modificationDate": {
+						"type": "string",
+						"format": "date-time",
+						"description": "Read-only. The last update date and time of the translation. Provided in ISO-8601 format and always in UTC.\n",
+						"example": "2019-08-04T12:13:00Z"
+					}
+				}
+			},
+			"KnowledgeItemUrls": {
+				"description": "The URLs where the given Knowledge Item is directly accessible. These URLs are generated by TOPdesk for viewing in a browser.\nAll URLs are generated and returned; however, depending on the Knowledge Item's visibility, they may not all be reachable.\nURLs will be relative to the http root (i.e. starting with a '/')\n",
+				"properties": {
+					"operator": {
+						"type": "string",
+						"description": "This is the URL for operators; an operator login is required to view this page."
+					},
+					"ssp": {
+						"type": "string",
+						"description": "This is the URL for Self-Service-Portal users, a login to Self Service Portal is required to view this page.\nIt is only reachable if the Knowledge Item's Visibility is set so that it is currently visible in the SSP.\n"
+					},
+					"public": {
+						"type": "string",
+						"description": "This is the URL for public access (if this feature is enabled), no login is required to see this page. This link will provide you with the knowledge item in the default\nlanguage. To view it in another language, replace the last part of the url (i.e. \"/en/\") with the language code of your choice.\nOnly present if the Public Knowledge Base feature is enabled in the settings and the knowledge item is published.\n"
+					}
+				}
+			},
+			"Reference": {
+				"properties": {
+					"id": {
+						"type": "string",
+						"format": "uuid",
+						"example": "D8A884C4-0876-4ADF-B072-50DD48033904"
+					},
+					"name": {
+						"type": "string"
+					}
+				}
+			},
+			"Searchlist": {
+				"required": [
+					"id",
+					"name"
+				],
+				"properties": {
+					"id": {
+						"type": "string",
+						"format": "uuid",
+						"example": "D8A884C4-0876-4ADF-B072-50DD48033904"
+					},
+					"name": {
+						"type": "string",
+						"description": "The name of the searchlist entry"
+					}
+				}
+			},
+			"SearchlistEnvelope": {
+				"required": [
+					"results"
+				],
+				"properties": {
+					"results": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/Searchlist"
+						}
+					}
+				}
+			},
+			"SspVisibility": {
+				"type": "string",
+				"enum": [
+					"VISIBLE_IN_PERIOD",
+					"NOT_VISIBLE",
+					"VISIBLE"
+				],
+				"description": "Visible items will be available in Self Service Portal.\n"
+			},
+			"UpdateFolderParams": {
+				"description": "Defines the updatable fields of a Folder.\n",
+				"properties": {
+					"visibility": {
+						"$ref": "#/components/schemas/VisibilityWrite"
+					},
+					"manager": {
+						"$ref": "#/components/schemas/Identifier"
+					},
+					"externalLink": {
+						"$ref": "#/components/schemas/ExternalLink"
+					}
+				}
+			},
+			"UpdateKnowledgeItemParams": {
+				"description": "Defines the updatable fields of a Knowledge Item.\n",
+				"properties": {
+					"visibility": {
+						"$ref": "#/components/schemas/VisibilityWrite"
+					},
+					"status": {
+						"$ref": "#/components/schemas/Identifier"
+					},
+					"manager": {
+						"$ref": "#/components/schemas/Identifier"
+					},
+					"externalLink": {
+						"$ref": "#/components/schemas/ExternalLink"
+					}
+				}
+			},
+			"VisibilityRead": {
+				"required": [
+					"sspVisibility",
+					"sspVisibilityFilteredOnBranches",
+					"operatorVisibilityFilteredOnBranches"
+				],
+				"properties": {
+					"sspVisibility": {
+						"$ref": "#/components/schemas/SspVisibility"
+					},
+					"sspVisibleFrom": {
+						"type": "string",
+						"format": "date-time",
+						"description": "The date and time when the item is first visible in SSP. Should be provided in ISO-8601 format. The return\nvalues are always in UTC. This field is only set or required when `sspVisibility` is set to VISIBLE_IN_PERIOD.\n",
+						"example": "2024-08-01T12:13:00Z"
+					},
+					"sspVisibleUntil": {
+						"type": "string",
+						"format": "date-time",
+						"description": "The date and time when the item is visible until in SSP. Should be provided in ISO-8601 format. The return\nvalues are always in UTC. This field is only set or required when `sspVisibility` is set to VISIBLE_IN_PERIOD.\n",
+						"example": "2024-08-01T12:13:00Z"
+					},
+					"sspVisibilityFilteredOnBranches": {
+						"type": "boolean"
+					},
+					"operatorVisibilityFilteredOnBranches": {
+						"type": "boolean"
+					},
+					"publicKnowledgeItem": {
+						"type": "boolean",
+						"description": "Read-only. True, if the item is a Public Knowledge Item (provided that the Public Knowledge Base feature is enabled in the settings)."
+					}
+				}
+			},
+			"VisibilityWrite": {
+				"required": [
+					"sspVisibility",
+					"sspVisibilityFilteredOnBranches",
+					"operatorVisibilityFilteredOnBranches"
+				],
+				"properties": {
+					"sspVisibility": {
+						"$ref": "#/components/schemas/SspVisibility"
+					},
+					"sspVisibleFrom": {
+						"type": "string",
+						"format": "date-time",
+						"description": "The date and time when the item is first visible in SSP. Should be provided in ISO-8601 format. The return\nvalues are always in UTC. This field is only set or required when `sspVisibility` is set to VISIBLE_IN_PERIOD.\n",
+						"example": "2024-08-01T12:13:00Z"
+					},
+					"sspVisibleUntil": {
+						"type": "string",
+						"format": "date-time",
+						"description": "The date and time when the item is visible until in SSP. Should be provided in ISO-8601 format. The return\nvalues are always in UTC. This field is only set or required when `sspVisibility` is set to VISIBLE_IN_PERIOD.\n",
+						"example": "2024-08-01T12:13:00Z"
+					},
+					"sspVisibilityFilteredOnBranches": {
+						"type": "boolean"
+					},
+					"operatorVisibilityFilteredOnBranches": {
+						"type": "boolean"
+					}
+				}
+			},
+			"WriteSearchlist": {
+				"required": [
+					"name"
+				],
+				"properties": {
+					"name": {
+						"type": "string",
+						"description": "The name of the searchlist entry. Must be unique for this searchlist."
+					}
+				}
+			}
+		}
+	}
+}

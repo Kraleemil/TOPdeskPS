@@ -1,0 +1,258 @@
+openapi: '3.0.0'
+info:
+  title: Oauth client
+  description: >
+    Use this API to operate OAuth 2.0 clients that integrate with TOPdesk in accordance with [RFC 6749](https://www.rfc-editor.org/rfc/rfc6749).
+    For more details see the [Connected applications documentation](https://docs.topdesk.com/en/oauth-clients.html).
+  version: "1.0"
+servers:
+  - url: https://{topdesk_host}
+    variables:
+      topdesk_host:
+        default: "customer.topdesk.net"
+tags:
+  - name: Oauth
+paths:
+  /.well-known/oauth-authorization-server:
+    get:
+      tags:
+        - Oauth
+      summary: Retrieve OAuth 2.0 authorization server metadata
+      description: >-
+        Returns metadata about the OAuth 2.0 authorization server in accordance with
+        [RFC 8414](https://www.rfc-editor.org/rfc/rfc8414). Clients can use this endpoint
+        to discover supported grant types, endpoints, and authentication methods without
+        requiring manual configuration.
+      responses:
+        "200":
+          description: Authorization server metadata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorizationServerMetadata'
+  /services/oauth/authorize:
+    get:
+      tags:
+        - Oauth
+      summary: Authorize a client to make request on behalf of a user.
+      description: Authorize a client to make request on behalf of a user. A successful request will be redirected to the provided <code>redirect_uri</code> with query parameter <code>code</code> which can be used to obtain an access token.
+      parameters:
+        - name: response_type
+          in: query
+          description: The type of response. Only 'code' is supported
+          required: true
+          schema:
+            type: string
+            enum:
+              - code
+        - name: client_id
+          in: query
+          description: The id of the client. See the [Connected applications documentation](https://docs.topdesk.com/en/oauth-clients.html) for how to create a client.
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: redirect_uri
+          in: query
+          description: The url that successful results will be redirected to. Must be a uri that is registered with the client.
+          required: true
+          schema:
+            type: string
+            format: uri
+        - name: state
+          in: query
+          description: Can be used to maintain state between the request and callback to the redirect_uri.
+          required: false
+          schema:
+            type: string
+        - name: scope
+          in: query
+          description: >
+            A space delimited list of scopes the client requests for this authorization, as advertised by
+            `GET /.well-known/oauth-authorization-server`. Scopes the client is not registered for, or that the
+            end user did not consent to, are silently dropped. When omitted, the scopes recorded with the consent
+            are used. If no consent exists yet, the scopes assigned to the client are used. The consent page is shown 
+            again whenever the requested scopes are not already fully covered by
+            the end user's existing consent, even if some consent already exists — in that case, consent is
+            extended (a union of the old and newly requested scopes) rather than replaced.
+          required: false
+      responses:
+        "302":
+          description: The request is redirected to either the error page, a consent page or the registered redirect_uri
+          headers:
+            location:
+              description: The redirect url. If the request is successful, the redirect contains the query parameter 'code' containing the code required for the token request, as well as the parameter 'state' with the same value as the request if provided.
+              schema:
+                type: string
+                format: uri
+      security:
+        - CookieAuth: [ ]
+        - BasicAuthUser: [ ]
+  /oauth/token:
+    post:
+      tags:
+        - Oauth
+      summary: Obtain an access token for API requests
+      description: >
+        Obtain an access token. Depending on the grant_type different fields are required.
+        <ul>
+          <li> For every <code>grant_type</code> the fields <code>client_id</code> and <code>client_secret</code> should be provided in either the authorize header or the request body.</li>
+          <li> For grant_type <code>authorization_code</code> the fields <code>code</code> and <code>redirect_uri</code> are required.</li>
+          <li> For grant_type <code>refresh_token</code> the field <code>refresh_token</code> is required.</li>
+          <li> The flow for <code>client_credentials</code> does not have extra required parameters. This flow does not contain <code>refresh_token</code> in the response.</li>
+          <li> The field <code>scope</code> is only honoured for grant_type <code>refresh_token</code>, where it narrows the scopes of the issued token. It is ignored for the other grant types, whose scopes are fixed when the grant is created.</li>
+        </ul>
+      requestBody:
+        content:
+          "application/x-www-form-urlencoded":
+            schema:
+              $ref: '#/components/schemas/TokenRequest'
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        "400":
+          description: Bad request.
+        "401":
+          description: >
+            Unauthorized.
+            <ul>
+              <li>The authorization header was malformed</li>
+              <li>The client_id did not exist</li>
+              <li>The client_secret was invalid</li>
+              <li>The client was not authorized for the requested grant_type</li>
+              <li>The provided code did not exist, did not match the client, was already used or was expired</li>
+              <li>The provided refresh_token did not exist, did not match the client, was already used or was expired</li>
+            </ul>
+      security:
+        - BasicAuthClient: [ ]
+components:
+  schemas:
+    AuthorizationServerMetadata:
+      type: object
+      properties:
+        issuer:
+          type: string
+          format: uri
+          description: The URL of the authorization server.
+        authorization_endpoint:
+          type: string
+          format: uri
+          description: URL of the authorization endpoint.
+        token_endpoint:
+          type: string
+          format: uri
+          description: URL of the token endpoint.
+        grant_types_supported:
+          type: array
+          items:
+            type: string
+          description: List of OAuth 2.0 grant types supported by the token endpoint.
+          example:
+            - authorization_code
+            - client_credentials
+            - refresh_token
+        response_types_supported:
+          type: array
+          items:
+            type: string
+          description: List of OAuth 2.0 response types supported by the authorization endpoint.
+          example:
+            - code
+        response_modes_supported:
+          type: array
+          items:
+            type: string
+          description: List of OAuth 2.0 response modes supported by the authorization endpoint.
+          example:
+            - query
+        scopes_supported:
+          type: array
+          items:
+            type: string
+          description: List of OAuth 2.0 scope values supported.
+        token_endpoint_auth_methods_supported:
+          type: array
+          items:
+            type: string
+          description: List of client authentication methods supported by the token endpoint.
+          example:
+            - client_secret_basic
+            - client_secret_post
+    TokenRequest:
+      required:
+        - grant_type
+      type: object
+      properties:
+        grant_type:
+          type: string
+          enum:
+            - authorization_code
+            - client_credentials
+            - refresh_token
+        client_id:
+          type: string
+          description: The id of the client. See the [Connected applications documentation](https://docs.topdesk.com/en/oauth-clients.html) for how to create a client. When supplying the client credentials via the request body, the Authorization header should be empty.
+          format: uuid
+        client_secret:
+          type: string
+          description: The secret of the client. See the [Connected applications documentation](https://docs.topdesk.com/en/oauth-clients.html) for how to create a client. When supplying the client credentials via the request body, the Authorization header should be empty.
+        code:
+          description: The authorization code received from an authorization request. Required when 'grant_type' is 'authorization_code'
+          type: string
+        redirect_uri:
+          type: string
+          description: The redirect_uri of the authorization request. Required when 'grant_type' is 'authorization_code'
+          format: uri
+        refresh_token:
+          description: The refresh token from a previous /token request. Required when 'grant_type' is 'refresh_token'
+          type: string
+        scope:
+          description: >
+            A space delimited list of scopes to narrow the issued token to. Only honoured when 'grant_type' is
+            'refresh_token'; ignored for the other grant types. When omitted, the token is issued for the scopes
+            currently recorded with the consent. Never widens beyond the consent: scopes that are no
+            longer consented to are dropped. Naming a scope that does not exist returns `invalid_scope`.
+    TokenResponse:
+      required:
+        - access_token
+        - token_type
+        - expires_in
+      type: object
+      properties:
+        access_token:
+          type: string
+          description: A token that can be used as Bearer token for API requests to TOPdesk.
+        token_type:
+          type: string
+          enum:
+            - Bearer
+        expires_in:
+          type: integer
+          format: int32
+          description: The amount of seconds the access_token is valid. When a token expires, the client can obtain a new token via this same endpoint. Either by providing the client authorization again (for client_credentials) or by using the refresh_token or a new authorization_code (for authorization_code)
+          default: 900
+        refresh_token:
+          type: string
+          description: A token that can be used to obtain a new access_token when the current one has expired. Only returned for grant_types authorization_code and refresh_token. A refresh_token is valid for 60 days.
+        scope:
+          type: string
+          description: The space delimited list of scopes the access_token was granted. Empty for the `client_credentials` grant.
+          example: examples.read
+  securitySchemes:
+    BasicAuthClient:
+      description: The id and secret of the client. See the [Connected applications documentation](https://docs.topdesk.com/en/oauth-clients.html) for how to create a client. When supplying the client credentials via the request body, the Authorization header should be empty.
+      type: http
+      scheme: basic
+    CookieAuth:
+      description: This cookie is set when the user logs in in a browser. Opening this uri in a browser window will allow the user to log in. The consent page can then be show in that browser window.
+      type: apiKey
+      in: cookie
+      name: authsession
+    BasicAuthUser:
+      description: The standard TOPdesk API Tokens are NOT recommended for this endpoint. Opening this uri in a browser window will allow the user to log in. The consent page can then be show in that browser window.
+      type: http
+      scheme: basic
