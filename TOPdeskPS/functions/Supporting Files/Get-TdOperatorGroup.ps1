@@ -14,6 +14,10 @@
     The offset at which to start listing the operator groups at. Must be greater or equal to 0, default is 0
 .PARAMETER Archived
     Specify whether you want archived operator groups included
+.PARAMETER Query
+    A FIQL expression to select operator groups, for example "stockManager==true". It is combined with the other filters using AND. See https://developers.topdesk.com/tutorial.html#query
+.PARAMETER Fields
+    Only include these fields in the response, for example 'id','groupName'.
 .EXAMPLE
     PS > Get-TdOperatorGroup -resultsize 1000
     returns up to 1000 operator groups.
@@ -23,7 +27,7 @@
     Returns operator groups for operators
 #>
 
-    [CmdletBinding(HelpUri = 'https://andrewpla.github.io/TOPdeskPS/commands/Get-TdOperatorGroup',
+    [CmdletBinding(HelpUri = 'https://andrewpla.github.io/TOPdeskPS/commands/TOPdeskPS/Get-TdOperatorGroup',
         DefaultParameterSetName = 'List')]
     param (
         [Parameter(Position = 0,
@@ -35,7 +39,7 @@
         $OperatorId,
 
         [Parameter(ParameterSetName = 'List')]
-        [ValidateRange(1, 100000)]
+        [ValidateRange(1, [int]::MaxValue)]
         [int]
         $ResultSize = 100,
 
@@ -45,7 +49,15 @@
 
         [Parameter(ParameterSetName = 'List')]
         [int]
-        $Start = 0
+        $Start = 0,
+
+        [Parameter(ParameterSetName = 'List')]
+        [string]
+        $Query,
+
+        [Parameter(ParameterSetName = 'List')]
+        [string[]]
+        $Fields
     )
 
     process {
@@ -60,60 +72,16 @@
             }
 
             List {
-                $uri = (Get-TdUrl) + "/tas/api/operatorgroups/?"
+                $conditions = [System.Collections.Generic.List[string]]::new()
+                if ($NameFragment) { $conditions.Add((New-TdFiqlCondition -Field 'name' -Operator '=sw=' -Value $NameFragment)) }
+                # With a FIQL query TOPdesk returns archived and non-archived groups, the old filters only returned non-archived ones.
+                if (-not $Archived) { $conditions.Add('archived==false') }
+                $parameter = [ordered]@{ query = (Join-TdFiql -Condition $conditions -Query $Query) }
+                if ($Fields) { $parameter['fields'] = $Fields -join ',' }
 
-
-                if ($Archived) {
-                    $uri = "$uri&archived=$($archived.tostring().tolower())"
-                }
-                if ($NameFragment) {
-                    $uri = "$uri&name=$NameFragment"
-                }
-
-
-                if ($ResultSize -gt 100) { $pageSize = 100 }
-                else { $pageSize = $ResultSize }
-
-                $uri = $uri.Replace('?&', '?')
-                $count = 0
-
-
-                do {
-                    $groups = @()
-
-                    $remaining = $ResultSize - $count
-                    Write-PSFMessage "$remaining groups remaining"
-
-                    if ($remaining -le 100) {
-                        $pageSize = $remaining
-                        $status = 'finished'
-                    }
-
-                    $loopingUri = "$uri&start=$Start&page_size=$pageSize"
-
-                    $Params = @{
-                        'uri' = $loopingUri.replace('?&', '?')
-                    }
-
-                    $groups = Invoke-TdMethod @Params
-                    foreach ($group in $groups) {
-                        if ($group.id) { $group }
-                        else { $status = 'finished' }
-                    }
-                    if (($groups.count) -eq $remaining) {
-                        Write-PSFMessage 'No groups remaining.'
-                        $status = 'finished'
-                    }
-
-
-                    $remaining = $ResultSize - $count
-                    if ($remaining -eq 0) { $status = 'finished' }
-                    $count += $groups.count
-                    $start += $PageSize
-                }
-                until ($status -like 'finished')
+                Invoke-TdPagedRequest -Uri "$(Get-TdUrl)/tas/api/operatorgroups" -Parameter $parameter -StartParameter 'start' -SizeParameter 'page_size' -MaxPageSize 5000 -ResultSize $ResultSize -Start $Start |
+                Where-Object { $_.id }
             }
         }
     }
 }
-

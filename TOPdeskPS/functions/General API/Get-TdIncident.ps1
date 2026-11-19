@@ -4,12 +4,16 @@
 		Gets incidents
 
 	.DESCRIPTION
-		This command returns incidents from TOPdesk. The most you can grab per request is 100.
+		This command returns incidents from TOPdesk.
+
+		The filter parameters are translated into a FIQL query (the query parameter of GET /tas/api/incidents), which is the filtering TOPdesk documents for version 4 of the Incident API. You can also pass your own FIQL with -Query; it is combined with the other filters using AND.
+
+		The filters -Resolved, -LinkedObjectId and -LinkedObjectName, and the value 'unassigned' for -OperatorId / -OperatorGroupId, have no FIQL equivalent. When you use one of them the command falls back to the old query parameters so existing scripts keep working. They cannot be combined with -Query, -Fields or -Sort.
 
 	.PARAMETER ResultSize
-        The amount of incidents to be returned. Due to API limitations we're only able to return 1000 incidents per api call.
+        The amount of incidents to be returned. Default is 10.
 
-        If you would like to grab more than 10000 incidents at once you can use a very high value for resultsize and it will loop through until it reaches the resultsize or it runs out of events to return.
+        The API returns at most 10000 incidents per request. For larger values the command sends several requests until it reaches the resultsize or there are no more incidents. Use [int]::MaxValue to return all incidents.
 
 	.PARAMETER Start
 		This is the offset at which you want to start listing incidents. Using Resultsize
@@ -137,26 +141,36 @@ Retrieve only incidents with external link type equal to one of these values. Sh
 Retrieve one or more incidents with the given external numbers.
 
 .PARAMETER Id
-Retrieve one or more incidents with the given ids, make sure "page_size" is set accordingly to get all results.
+Retrieve one or more incidents with the given ids, make sure -ResultSize is set accordingly to get all results.
 
+.PARAMETER Query
+A FIQL expression used to select incidents, for example "briefDescription=sw=Printer;priority.name==High". It is combined with the other filter parameters using AND. See https://developers.topdesk.com/tutorial.html#query
+
+.PARAMETER Fields
+The fields to return, for example 'id','number','briefDescription'. By default all fields are returned (slow).
+
+.PARAMETER Sort
+Sort order in the format of the API, for example 'targetDate:asc,creationDate:desc'. Overrides -OrderBy. Default is creationDate:desc (newest first).
 
 	.EXAMPLE
 		PS C:\> Get-TdIncident
-        returns incidents
+
+        Returns the 10 newest incidents.
 
     .EXAMPLE
-        PC> Get-Tdincident | Format-List *
-        return incidents and all of their properties
+        PS C:\> Get-TdIncident -Completed:$false -OperatorGroupId $groupId -ResultSize 500
+
+        Returns up to 500 incidents that are not completed and are assigned to the operator group.
 
     .EXAMPLE
-        PS C:\> Get-TdIncident -Closed
-        Returns incidents and includes closed incidents.
+        PS C:\> Get-TdIncident -Query 'briefDescription=sw=Printer' -Fields 'id', 'number', 'briefDescription'
+
+        Returns the id, number and brief description of the 10 newest incidents with a brief description starting with Printer.
+
     .EXAMPLE
-        PS C:\> Get-TdIncident -ResultSize 2000
-        Returns 2000 incidents.
-    .Example
-        PS > Get-TdIncident -ResultSize Unlimited -ModificationDateStart (Get-date).adddays(-7)
-        Returns all Incidents Modified in the last 7 days
+        PS C:\> Get-TdIncident -ResultSize ([int]::MaxValue) -ModificationDateStart (Get-Date).AddDays(-7)
+
+        Returns all incidents modified in the last 7 days.
 #>
 
     [CmdletBinding(DefaultParameterSetName = 'List',
@@ -170,351 +184,259 @@ Retrieve one or more incidents with the given ids, make sure "page_size" is set 
         [string[]]
         $Number,
 
-        [ValidateRange(1, 999999)]
+        [Parameter(ParameterSetName = 'List')]
+        [ValidateRange(1, [int]::MaxValue)]
         [int]
         $ResultSize = 10,
 
+        [Parameter(ParameterSetName = 'List')]
+        [ValidateRange(0, [int]::MaxValue)]
         [int]
         $Start = 0,
 
-
-        # Filters only one value used for each
+        [Parameter(ParameterSetName = 'List')]
         [switch]
         $Completed,
 
+        [Parameter(ParameterSetName = 'List')]
         [switch]
         $Closed,
 
+        [Parameter(ParameterSetName = 'List')]
         [switch]
         $Resolved,
 
+        [Parameter(ParameterSetName = 'List')]
         [switch]
         $Archived,
 
-        #TODO
+        [Parameter(ParameterSetName = 'List')]
         [switch]
         $MajorCall,
 
+        [Parameter(ParameterSetName = 'List')]
         [datetime]
         $TargetDateStart,
 
+        [Parameter(ParameterSetName = 'List')]
         [datetime]
         $TargetDateEnd,
 
+        [Parameter(ParameterSetName = 'List')]
         [datetime]
         $CallDateStart,
 
+        [Parameter(ParameterSetName = 'List')]
         [datetime]
         $CallDateEnd,
 
+        [Parameter(ParameterSetName = 'List')]
         [datetime]
         $CreationDateStart,
 
+        [Parameter(ParameterSetName = 'List')]
         [datetime]
         $CreationDateEnd,
 
+        [Parameter(ParameterSetName = 'List')]
         [datetime]
         $ModificationDateStart,
 
+        [Parameter(ParameterSetName = 'List')]
         [datetime]
         $ModificationDateEnd,
 
+        [Parameter(ParameterSetName = 'List')]
         [datetime]
         $ClosedDateStart,
 
+        [Parameter(ParameterSetName = 'List')]
         [datetime]
         $ClosedDateEnd,
 
-        # Filters accepting multiple values
-
+        [Parameter(ParameterSetName = 'List')]
         [string[]]
         $CallerId,
 
+        [Parameter(ParameterSetName = 'List')]
         [string[]]
         $OperatorGroupId,
 
+        [Parameter(ParameterSetName = 'List')]
         [string[]]
         $OperatorId,
 
+        [Parameter(ParameterSetName = 'List')]
         [string[]]
         $ProcessingStatusId,
 
+        [Parameter(ParameterSetName = 'List')]
         [string[]]
         $MainIncidentId,
 
-
+        [Parameter(ParameterSetName = 'List')]
         [ValidateSet('firstLine', 'secondLine', 'partial')]
         [string[]]
         $Status,
 
+        [Parameter(ParameterSetName = 'List')]
         [string[]]
         $CallerBranchId,
 
+        [Parameter(ParameterSetName = 'List')]
         [string[]]
         $ObjectId,
 
+        [Parameter(ParameterSetName = 'List')]
         [string[]]
         $ObjectName,
 
+        [Parameter(ParameterSetName = 'List')]
         [string[]]
         $LinkedObjectId,
 
+        [Parameter(ParameterSetName = 'List')]
         [string[]]
         $LinkedObjectName,
 
+        [Parameter(ParameterSetName = 'List')]
         [string[]]
         $ExternalLinkId,
 
+        [Parameter(ParameterSetName = 'List')]
         [string[]]
         $ExternalLinkType,
 
+        [Parameter(ParameterSetName = 'List')]
         [string[]]
         $ExternalNumber,
 
+        [Parameter(ParameterSetName = 'List')]
         [string[]]
         $Id,
-        # Sorting
+
+        [Parameter(ParameterSetName = 'List')]
         [string]
-        $OrderBy
+        $OrderBy,
 
+        [Parameter(ParameterSetName = 'List')]
+        [string]
+        $Query,
+
+        [Parameter(ParameterSetName = 'List')]
+        [string[]]
+        $Fields,
+
+        [Parameter(ParameterSetName = 'List')]
+        [string]
+        $Sort
     )
-
 
     process {
         Write-PSFMessage -Level InternalComment -Message "Bound parameters: $($PSBoundParameters.Keys -join ", ")" -Tag 'debug', 'start', 'param'
         Write-PSFMessage "ParameterSetName: $($PsCmdlet.ParameterSetName)" -level Debug
 
-
         $uri = "$(Get-TdUrl)/tas/api/incidents"
 
         switch ($PSCmdlet.ParameterSetName) {
-
             List {
-                $uri = "$uri/?"
+                $bound = $PSBoundParameters.Keys
+                $legacyOnly = @('Resolved', 'LinkedObjectId', 'LinkedObjectName') | Where-Object { $bound -contains $_ }
+                if (($OperatorId -contains 'unassigned') -or ($OperatorGroupId -contains 'unassigned')) { $legacyOnly = @($legacyOnly) + 'unassigned' }
 
-                switch ($PSBoundParameters.keys) {
-
-                    #Region Filter parameters (used once)
-                    Completed {
-                        $uri = "$uri&completed=$Completed"
+                if ($legacyOnly) {
+                    if ($bound -contains 'Query' -or $bound -contains 'Fields' -or $bound -contains 'Sort') {
+                        Stop-PSFFunction -Message "$($legacyOnly -join ', ') cannot be combined with -Query, -Fields or -Sort because TOPdesk has no FIQL field for it." -EnableException $true -Cmdlet $PSCmdlet
                     }
-
-                    Closed {
-                        $uri = "$uri&closed=$Closed"
+                    Write-PSFMessage -Level Verbose -Message "Using the legacy incident filters because of: $($legacyOnly -join ', ')"
+                    $parameter = [ordered]@{}
+                    $map = [ordered]@{
+                        CallerId = 'caller'; OperatorGroupId = 'operator_group'; OperatorId = 'operator'; ProcessingStatusId = 'processing_status'
+                        MainIncidentId = 'main_incident_id'; Status = 'status'; CallerBranchId = 'caller_branch'; ObjectId = 'object_id'
+                        ObjectName = 'object_name'; LinkedObjectId = 'linked_object_id'; LinkedObjectName = 'linked_object_name'
+                        ExternalLinkId = 'external_link_id'; ExternalLinkType = 'external_link_type'; Id = 'id'; ExternalNumber = 'external_number'
                     }
-
-                    Resolved {
-                        $uri = "$uri&resolved=$Resolved"
-                    }
-
-                    Archived {
-                        $uri = "$uri&archived=$($Archived.tostring().tolower())"
-                    }
-
-
-                    MajorCall {
-                        $uri = "$uri&major_call=$($MajorCall.tostring().tolower())"
-                    }
-
-                    TargetDateStart {
-                        $uri = "$uri&target_date_start=$(Get-Date $TargetDateStart -Format 'yyyy-MM-dd')"
-                    }
-
-                    TargetDateEnd {
-                        $uri = "$uri&target_date_end=$(Get-Date $TargetDateEnd -Format 'yyyy-MM-dd')"
-                    }
-
-                    CallDateStart {
-                        $uri = "$uri&call_date_start=$(Get-Date $CallDateStart -Format 'yyyy-MM-dd')"
-                    }
-                    CallDateEnd {
-                        $uri = "$uri&call_date_end=$(Get-Date $CallDateEnd -Format 'yyyy-MM-dd')"
-                    }
-
-                    CreationDateStart {
-                        $uri = "$uri&creation_date_start=$(Get-Date $CreationDateStart -Format 'yyyy-MM-dd')"
-                    }
-
-                    CreationDateEnd {
-                        $uri = "$uri&creation_date_end=$(Get-Date $CreationDateEnd -Format 'yyyy-MM-dd')"
-                    }
-
-                    ModificationDateStart {
-                        $uri = "$uri&modification_date_start=$(Get-Date $ModificationDateStart -Format 'yyyy-MM-dd')"
-                    }
-
-                    ModificationDateEnd {
-                        $uri = "$uri&modification_date_end=$(Get-Date $ModificationDateEnd -Format 'yyyy-MM-dd')"
-                    }
-
-                    ClosedDateStart {
-                        $uri = "$uri&closed_date_start=$(Get-Date $ClosedDateStart -Format 'yyyy-MM-dd')"
-                    }
-
-                    ClosedDateEnd {
-                        $uri = "$uri&closed_date_end=$(Get-Date $ClosedDateEnd -Format 'yyyy-MM-dd')"
-                    }
-
-                    #endregion Filter parameters (used once)
-
-                    #region Filter Parameters (multiple values)
-
-
-                    CallerId {
-                        foreach ($g in $CallerId) {
-                            $uri = "$uri&caller=$g"
+                    foreach ($name in 'Completed', 'Closed', 'Resolved', 'Archived', 'MajorCall') {
+                        if ($bound -contains $name) {
+                            $parameter[($name -creplace '([a-z])([A-Z])', '$1_$2').ToLower()] = $PSBoundParameters[$name].IsPresent
                         }
                     }
-
-                    OperatorGroupId {
-                        foreach ($g in $OperatorGroupId) {
-                            $uri = "$uri&operator_group=$g"
+                    foreach ($name in 'TargetDate', 'CallDate', 'CreationDate', 'ModificationDate', 'ClosedDate') {
+                        foreach ($suffix in 'Start', 'End') {
+                            if ($bound -contains "$name$suffix") {
+                                $key = ('{0}_{1}' -f ($name -creplace '([a-z])([A-Z])', '$1_$2'), $suffix).ToLower()
+                                $parameter[$key] = (Get-Date $PSBoundParameters["$name$suffix"] -Format 'yyyy-MM-dd')
+                            }
                         }
                     }
-
-                    OperatorId {
-                        foreach ($g in $operatorId) {
-                            $uri = "$uri&operator=$g"
-                        }
+                    foreach ($name in $map.Keys) {
+                        if ($bound -contains $name) { $parameter[$map[$name]] = $PSBoundParameters[$name] }
                     }
+                    if ($OrderBy) { $parameter['order_by'] = $OrderBy }
 
-                    ProcessingStatusId {
-                        foreach ($g in $ProcessingStatusId) {
-                            $uri = "$uri&processing_status=$g"
-                        }
-                    }
-
-                    MainIncidentId {
-                        foreach ($g in $MainIncidentId) {
-                            $uri = "$uri&main_incident_id=$g"
-                        }
-                    }
-
-                    Status {
-                        foreach ($g in $status) {
-                            $uri = "$uri&status=$g"
-                        }
-                    }
-
-                    CallerBranchId {
-                        foreach ($g in $CallerBranchId) {
-                            $uri = "$uri&caller_branch=$g"
-                        }
-                    }
-
-                    ObjectId {
-                        foreach ($g in $ObjectId) {
-                            $uri = "$uri&object_id=$g"
-                        }
-                    }
-
-
-                    ObjectName {
-                        foreach ($g in $ObjectName) {
-                            $uri = "$uri&object_name=$g"
-                        }
-                    }
-
-                    LinkedObjectId {
-                        foreach ($g in $LinkedObjectId) {
-                            $uri = "$uri&linked_object_id=$g"
-                        }
-                    }
-
-                    LinkedObjectName {
-                        foreach ($g in $LinkedObjectName) {
-                            $uri = "$uri&linked_object_name=$g"
-                        }
-                    }
-
-                    ExternalLinkId {
-                        foreach ($g in $ExternalLinkeId) {
-                            $uri = "$uri&external_link_id=$g"
-                        }
-                    }
-
-                    ExternalLinkType {
-                        foreach ($g in $ExternalLinkType) {
-                            $uri = "$uri&external_link_type=$g"
-                        }
-                    }
-
-                    Id {
-                        foreach ($g in $Id) {
-                            $uri = "$uri&id=$g"
-                        }
-                    }
-
-                    ExternalNumber {
-                        foreach ($g in $ExternalNumber) {
-                            $uri = "$uri&external_number=$g"
-                        }
-                    }
+                    Invoke-TdPagedRequest -Uri $uri -Parameter $parameter -StartParameter 'start' -SizeParameter 'page_size' -MaxPageSize 10000 -ResultSize $ResultSize -Start $Start |
+                    Where-Object { $_.Number -notlike '' } |
+                    Select-PSFObject -Typename 'TOPdeskPS.Incident' -KeepInputObject
+                    return
                 }
 
-                #endregion Filter Parameters (multiple values)
-
-
-
-                if ($ResultSize -gt 10000) {
-                    $pageSize = 10000
-                }
-                else {
-                    $pageSize = $ResultSize
+                $conditions = [System.Collections.Generic.List[string]]::new()
+                foreach ($pair in @(@('Completed', 'completed'), @('Closed', 'closed'), @('MajorCall', 'majorCall'))) {
+                    if ($bound -contains $pair[0]) { $conditions.Add((New-TdFiqlCondition -Field $pair[1] -Value $PSBoundParameters[$pair[0]].IsPresent)) }
                 }
 
-                $uri = $uri.Replace('?&', '?')
-                $count = 0
-                do {
-                    # Add a number to 'unlimited'
-                    if ($ResultSize -like 'unlimited') { $ResultSize = 99999999 }
-                    $remaining = $ResultSize - $count
-
-                    # 10000 is the most we can get per api call. if -LE 10k is needed then we don't need to loop any more.
-                    if ($remaining -le 10000) {
-                        $pageSize = $remaining
-                        $loopingStatus = 'finished'
-                    }
-
-                    # Set the uri each time we loop because we need to increase the start
-                    $loopingUri = "$uri&start=$Start&page_size=$pageSize"
-                    $Params = @{
-                        'uri' = $loopingUri
-                    }
-
-                    # grab the incidents
-                    $incidents = Invoke-TdMethod @Params
-
-                    if (($Incidents.count) -eq 1) {
-                        $LoopingStatus = 'finished'
-                    }
-
-                    foreach ($incident in $incidents) {
-                        if ($incident.Number -notlike '') {
-                            $Incident | Select-PSFObject -Typename 'TOPdeskPS.Incident' -KeepInputObject
-                        }
-                    }
-                    $count += $incidents.count
-                    $start += $PageSize
+                # The old filters worked on whole days in the time zone of the user, so do the same here.
+                foreach ($name in 'TargetDate', 'CallDate', 'CreationDate', 'ModificationDate', 'ClosedDate') {
+                    $field = $name.Substring(0, 1).ToLower() + $name.Substring(1)
+                    if ($bound -contains "${name}Start") { $conditions.Add((New-TdFiqlCondition -Field $field -Operator '=ge=' -Value ($PSBoundParameters["${name}Start"].Date))) }
+                    if ($bound -contains "${name}End") { $conditions.Add((New-TdFiqlCondition -Field $field -Operator '=lt=' -Value ($PSBoundParameters["${name}End"].Date.AddDays(1)))) }
                 }
-                until ($loopingStatus -like 'finished')
+
+                $idFields = [ordered]@{
+                    CallerId = 'caller.id'; OperatorGroupId = 'operatorGroup.id'; OperatorId = 'operator.id'; ProcessingStatusId = 'processingStatus.id'
+                    MainIncidentId = 'mainIncident.id'; CallerBranchId = 'callerBranch.id'; ObjectId = 'object.id'; ObjectName = 'object.name'
+                    ExternalLinkId = 'externalLinks.id'; ExternalLinkType = 'externalLinks.type'; ExternalNumber = 'externalNumber'; Id = 'id'
+                }
+                foreach ($name in $idFields.Keys) {
+                    if ($bound -contains $name) { $conditions.Add((New-TdFiqlCondition -Field $idFields[$name] -Value $PSBoundParameters[$name])) }
+                }
+
+                # Archived incidents and partials are only returned with all=true, the status field tells them apart.
+                $parameter = [ordered]@{}
+                if ($Archived -or ($Status -contains 'partial')) {
+                    $statuses = if ($Status) { $Status } else { 'firstLine', 'secondLine' }
+                    if ($Archived) { $statuses = $statuses | ForEach-Object { "${_}Archived" } }
+                    $conditions.Add((New-TdFiqlCondition -Field 'status' -Value $statuses))
+                    $parameter['all'] = $true
+                }
+                elseif ($Status) {
+                    $conditions.Add((New-TdFiqlCondition -Field 'status' -Value $Status))
+                }
+
+                $fiql = Join-TdFiql -Condition $conditions -Query $Query
+                if ($fiql) { $parameter['query'] = $fiql }
+
+                if ($Sort) { $parameter['sort'] = $Sort }
+                elseif ($OrderBy) {
+                    $parameter['sort'] = (($OrderBy -split ',') | ForEach-Object {
+                            $field, $direction = $_.Trim() -split '[+ :]', 2
+                            $field = [regex]::Replace($field, '_([a-z])', { param($m) $m.Groups[1].Value.ToUpper() })
+                            if ($direction) { '{0}:{1}' -f $field, $direction.Trim().ToLower() } else { $field }
+                        }) -join ','
+                }
+                else { $parameter['sort'] = 'creationDate:desc' }
+                if ($Fields) { $parameter['fields'] = $Fields -join ',' }
+
+                Invoke-TdPagedRequest -Uri $uri -Parameter $parameter -StartParameter 'pageStart' -SizeParameter 'pageSize' -MaxPageSize 10000 -ResultSize $ResultSize -Start $Start |
+                Select-PSFObject -Typename 'TOPdeskPS.Incident' -KeepInputObject
             }
 
             Number {
                 foreach ($num in $Number) {
-                    $uri = "$uri/number/$($num.ToLower())"
-                    $Params = @{
-                        'uri' = $uri
-                    }
-
-                    Invoke-TdMethod @Params |
-                    Foreach-Object {
-                        # add the type to the result
-                        $_ | Select-PSFObject -Typename 'TOPdeskPS.Incident' -KeepInputObject
-                    }
+                    Invoke-TdMethod -Uri "$uri/number/$($num.ToLower())" |
+                    Select-PSFObject -Typename 'TOPdeskPS.Incident' -KeepInputObject
                 }
             }
         }
     }
 }
-

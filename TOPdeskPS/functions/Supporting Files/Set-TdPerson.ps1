@@ -3,9 +3,11 @@
     .SYNOPSIS
         Modify properties on a person
     .DESCRIPTION
-        Creates new persons in TOPdesk. Logged in operator must have:
+        Modifies a person in TOPdesk (PUT /tas/api/persons/id/{id}, version 1 of the persons endpoint). Logged in operator must have:
         Write permissions on persons; Branch filters apply
         Login data write permissions to set login name and password
+
+        TOPdesk's version 2 endpoint (PATCH /tas/api/persons/{id}) is not backward compatible: it has no gender, departmentFree or password fields and renames several others. Use Update-TdPerson for version 2.
     .PARAMETER PersonId
         The Id of the person you are interacting with.
     .PARAMETER Surname
