@@ -16,7 +16,7 @@
 
         Returns the decoded response.
     #>
-    [CmdletBinding()]
+    [CmdletBinding(HelpUri = 'https://andrewpla.github.io/TOPdeskPS/commands/TOPdeskPS/ConvertFrom-TdResponse')]
     param (
         [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [AllowNull()]

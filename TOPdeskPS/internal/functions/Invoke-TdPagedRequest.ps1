@@ -43,7 +43,7 @@
 
         Returns the first 500 open incidents.
     #>
-    [CmdletBinding()]
+    [CmdletBinding(HelpUri = 'https://andrewpla.github.io/TOPdeskPS/commands/TOPdeskPS/Invoke-TdPagedRequest')]
     param (
         [Parameter(Mandatory = $true)]
         [string]

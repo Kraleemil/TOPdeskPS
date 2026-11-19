@@ -80,7 +80,8 @@ Describe "UTF-8 handling (æ, ø, å and other non-ASCII text)" {
             }
             It "escapes quotes in file names" {
                 $file = Join-Path $TestDrive 'a"b.txt'
-                if ($IsWindows) { return }
+                # Windows does not allow quotes in file names.
+                if ([System.IO.Path]::GetInvalidFileNameChars() -contains [char]'"') { return }
                 Set-Content -LiteralPath $file -Value 'x'
                 $multipart = New-TdMultipartBody -File $file
                 [System.Text.Encoding]::UTF8.GetString($multipart.Body) | Should Match 'filename="a%22b.txt"'

@@ -15,7 +15,7 @@
 
         Returns an object with the property name = Søren.
     #>
-    [CmdletBinding()]
+    [CmdletBinding(HelpUri = 'https://andrewpla.github.io/TOPdeskPS/commands/TOPdeskPS/ConvertFrom-TdJson')]
     param (
         [Parameter(Mandatory = $true)]
         [AllowEmptyString()]

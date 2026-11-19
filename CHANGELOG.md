@@ -22,6 +22,7 @@ Compared with the official TOPdesk API specifications on developers.topdesk.com 
   * New areas: Knowledge Base, Operations Management, Reservations, Visitor Registration, Services, Settings, SSP Look and Feel, Access Roles and Custom Action Support.
 * build/apigen: downloads the specifications, generates the commands and the coverage report (see build/apigen/README.md).
 * build/New-TdCommandDoc.ps1 regenerates the command reference in docs/commands.
+* GitHub Actions: CI on Windows PowerShell 5.1 and PowerShell 7 (Windows and Linux), a weekly TOPdesk API update that opens a pull request, publishing to the PowerShell Gallery on a version tag, and Dependabot for the workflow actions.
 
 ### Fixed
 * Danish and other non-ASCII text (æ, ø, å, ü, é, …) now works on every PowerShell version:

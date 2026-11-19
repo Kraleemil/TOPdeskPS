@@ -18,7 +18,7 @@
 
         Returns query=closed%3D%3Dfalse&pageSize=100
     #>
-    [CmdletBinding()]
+    [CmdletBinding(HelpUri = 'https://andrewpla.github.io/TOPdeskPS/commands/TOPdeskPS/ConvertTo-TdQueryString')]
     [OutputType([string])]
     param (
         [AllowNull()]

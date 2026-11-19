@@ -22,7 +22,7 @@
 
         Returns operator.id=in=(<id1>,<id2>)
     #>
-    [CmdletBinding()]
+    [CmdletBinding(HelpUri = 'https://andrewpla.github.io/TOPdeskPS/commands/TOPdeskPS/New-TdFiqlCondition')]
     [OutputType([string])]
     param (
         [Parameter(Mandatory = $true)]

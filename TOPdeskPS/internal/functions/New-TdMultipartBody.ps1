@@ -27,7 +27,7 @@
 
         Returns the body and content type for uploading Kvittering.pdf with a description.
     #>
-    [CmdletBinding()]
+    [CmdletBinding(HelpUri = 'https://andrewpla.github.io/TOPdeskPS/commands/TOPdeskPS/New-TdMultipartBody')]
     param (
         [Parameter(Mandatory = $true)]
         [System.IO.FileInfo]

@@ -1,0 +1,74 @@
+name: Publish
+
+# Push a tag like v0.2.0 to publish that version to the PowerShell Gallery and create a GitHub release.
+# Needs the repository secret PSGALLERY_API_KEY, and the account behind that key must own the
+# module name TOPdeskPS in the PowerShell Gallery.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    uses: ./.github/workflows/ci.yml
+
+  publish:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Check that the tag matches the module version
+        id: version
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $tagVersion = $env:GITHUB_REF_NAME.TrimStart('v')
+          $manifest = Import-PowerShellDataFile -Path ./TOPdeskPS/TOPdeskPS.psd1
+          $psm1Version = (Select-String -Path ./TOPdeskPS/TOPdeskPS.psm1 -Pattern '\$script:ModuleVersion = "(.*?)"').Matches[0].Groups[1].Value
+          "Tag: $tagVersion, TOPdeskPS.psd1: $($manifest.ModuleVersion), TOPdeskPS.psm1: $psm1Version"
+          if ($manifest.ModuleVersion -ne $tagVersion -or $psm1Version -ne $tagVersion) {
+            throw "Tag $env:GITHUB_REF_NAME does not match the module version. Update ModuleVersion in TOPdeskPS.psd1 and `$script:ModuleVersion in TOPdeskPS.psm1 first."
+          }
+          "version=$tagVersion" >> $env:GITHUB_OUTPUT
+
+      - name: Publish to the PowerShell Gallery
+        shell: pwsh
+        env:
+          PSGALLERY_API_KEY: ${{ secrets.PSGALLERY_API_KEY }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if (-not $env:PSGALLERY_API_KEY) {
+            "::warning::The secret PSGALLERY_API_KEY is not set, so the module was not published to the PowerShell Gallery."
+            "Not published: the secret PSGALLERY_API_KEY is not set." >> $env:GITHUB_STEP_SUMMARY
+            exit 0
+          }
+          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+          # Publish-Module validates the manifest, which needs the required modules to be installed.
+          Install-Module -Name PSFramework -Force -Scope CurrentUser
+          Publish-Module -Path ./TOPdeskPS -NuGetApiKey $env:PSGALLERY_API_KEY -Verbose
+          "Published TOPdeskPS $env:GITHUB_REF_NAME to the PowerShell Gallery." >> $env:GITHUB_STEP_SUMMARY
+
+      - name: Create the GitHub release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          # Release notes: the section of CHANGELOG.md for this version.
+          $changelog = Get-Content -Path ./CHANGELOG.md -Raw -Encoding UTF8
+          $pattern = '(?ms)^## ' + [regex]::Escape($env:VERSION) + '\b.*?\r?\n(.*?)(?=^## |\z)'
+          $notes = if ($changelog -match $pattern) { $Matches[1].Trim() } else { "See CHANGELOG.md." }
+          $notesFile = Join-Path $env:RUNNER_TEMP 'release-notes.md'
+          [System.IO.File]::WriteAllText($notesFile, $notes, [System.Text.UTF8Encoding]::new($false))
+          gh release view $env:GITHUB_REF_NAME *> $null
+          if ($LASTEXITCODE -eq 0) {
+            "Release $env:GITHUB_REF_NAME already exists."
+            exit 0
+          }
+          gh release create $env:GITHUB_REF_NAME --title "TOPdeskPS $env:VERSION" --notes-file $notesFile --verify-tag

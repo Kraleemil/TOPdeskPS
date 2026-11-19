@@ -19,7 +19,7 @@
 
         Returns closed==false;operator.id==null;(a==1,b==2)
     #>
-    [CmdletBinding()]
+    [CmdletBinding(HelpUri = 'https://andrewpla.github.io/TOPdeskPS/commands/TOPdeskPS/Join-TdFiql')]
     [OutputType([string])]
     param (
         [AllowNull()]

@@ -18,7 +18,7 @@
 
         Returns "LAP 0001" (quoted, because the value contains a space).
     #>
-    [CmdletBinding()]
+    [CmdletBinding(HelpUri = 'https://andrewpla.github.io/TOPdeskPS/commands/TOPdeskPS/ConvertTo-TdFiqlValue')]
     [OutputType([string])]
     param (
         [AllowNull()]
