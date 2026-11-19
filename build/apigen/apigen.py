@@ -632,6 +632,10 @@ def build_variant(op, switch, overrides):
             name = 'Id' if pn == path_names[0] or pn.lower() in ('id', 'identifier') else pascal(pn)
         else:
             name = param_ps_name(pn, 'path', taken)
+        if name.lower() in taken:
+            # A second {id}: name it after the collection it belongs to, e.g. attachments/{id} -> AttachmentId
+            before = op.path.split('{%s}' % pn)[0].rstrip('/').split('/')[-1]
+            name = pascal(singular(before)) + 'Id'
         text = clean_text(pd.get('description') or '', 600)
         if not text:
             text = 'The %s of the item.' % pn if name in ('Id', 'Number') else 'Value for the %s part of the url.' % pn
@@ -707,6 +711,9 @@ def build_variant(op, switch, overrides):
             fdef = spec.res(fdef)
             ftype = 'file' if (fdef.get('type') == 'file' or fdef.get('format') == 'binary') else (schema_ps_type(spec, fdef) or 'string')
             if ftype == 'file':
+                if 'file' in taken:
+                    v.body_kind = 'unsupported'
+                    continue
                 add(Param('File', 'file', fname, 'string', 'Path to the file to upload.', True))
             else:
                 if ftype.endswith('[]'):
@@ -746,7 +753,7 @@ def build_variant(op, switch, overrides):
             else:
                 required = set(sch.get('required') or [])
                 for pname, pdef in props.items():
-                    if pdef.get('readOnly'):
+                    if pdef.get('readOnly') or re.search(r'[0-9a-f]{8}', pname, re.I) and len(pname) > 24:
                         continue
                     ptype = schema_ps_type(spec, pdef)
                     ref = False
@@ -1145,6 +1152,10 @@ def build(check=False):
         variant = build_variant(op, switch, overrides)
         if variant.body_kind == 'raw':
             op.status, op.note = 'skipped', 'Raw (non JSON, non multipart) request bodies are not supported by the generator.'
+            continue
+        form_fields = [p for p in variant.params.values() if p.kind == 'form']
+        if variant.body_kind == 'unsupported' or (variant.body_kind == 'form' and not any(p.kind == 'file' for p in variant.params.values())):
+            op.status, op.note = 'skipped', 'Multipart request with several files or without a file; use Invoke-TdMethod.'
             continue
         fn = functions.get(name)
         if fn is None:

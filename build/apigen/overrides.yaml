@@ -58,7 +58,6 @@ names:
   GET /services/permissions/reporting/1.0.0/roles: Get-TdReportingAccessRole
 
   # Custom Action Support
-  POST /services/email-v1/api/send: Send-TdEmail
   POST /services/pdf-generator-v1/convert/html: ConvertTo-TdPdf
   POST /solutions/multi-barcode-creator-1/qr: New-TdQrCode
   POST /services/action-v1/api/webhooks/{urlPathSegment}: Invoke-TdWebhook
