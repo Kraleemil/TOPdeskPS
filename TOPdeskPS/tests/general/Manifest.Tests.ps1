@@ -5,7 +5,9 @@
     Context "Basic resources validation" {
         It "Exports all functions in the public folder" {
             $files = Get-ChildItem "$moduleRoot\functions" -Recurse -File -Filter "*.ps1"
-            $count = (Compare-Object -ReferenceObject $files.BaseName -DifferenceObject $manifest.FunctionsToExport).Count
+            # Plus the commands created at import from the TOPdesk operations table.
+            $tableNames = (Get-Content "$moduleRoot\data\operations.json" -Raw -Encoding UTF8 | ConvertFrom-Json) | ForEach-Object name
+            $count = (Compare-Object -ReferenceObject (@($files.BaseName) + @($tableNames)) -DifferenceObject $manifest.FunctionsToExport).Count
             $count | Should be 0
         }
 

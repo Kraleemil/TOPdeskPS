@@ -69,7 +69,7 @@
                         $uri = "$uri&templateName=$TemplateName"
                     }
                 }
-                Invoke-TdMethod -Uri $uri | Select-Object -ExpandProperty dataset  | Select-PSFObject -Typename 'TOPdeskPS.Asset' -KeepInputObject
+                Invoke-TdMethod -Uri $uri -Accept 'application/x.topdesk-am-assets-v2+json' | Select-Object -ExpandProperty dataset  | Select-PSFObject -Typename 'TOPdeskPS.Asset' -KeepInputObject
             }
 
             'Template Query' {
@@ -78,7 +78,7 @@
                         $uri = (get-tdurl) + "/tas/api/assetmgmt/assets/templateId/$TemplateId/?"
                     }
                     Archived {
-                        $uri = $uri + "&includeArchived=$Archived/"
+                        $uri = $uri + "&includeArchived=$($Archived.ToString().ToLower())"
                     }
                 }
                 foreach ($f in $field) {

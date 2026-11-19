@@ -1,0 +1,87 @@
+{
+  "general": {
+    "title": "general",
+    "version": "1.2.0",
+    "file": "general_specification_1.2.0.yaml"
+  },
+  "incident": {
+    "title": "Incident Management",
+    "version": "4.2.10",
+    "file": "incident_specification_4.2.10.yaml"
+  },
+  "supporting-files": {
+    "title": "Supporting Files",
+    "version": "2.7.12",
+    "file": "supporting-files_specification_2.7.12.yaml"
+  },
+  "change": {
+    "title": "Change Management",
+    "version": "1.42.0",
+    "file": "change_specification_1.42.0.yaml"
+  },
+  "assets": {
+    "title": "Asset Management",
+    "version": "1.91.3",
+    "file": "assets_specification_1.91.3.json"
+  },
+  "knowledge-base": {
+    "title": "Knowledge Base",
+    "version": "knowledge-base-after-migration",
+    "file": "knowledge-base_after_explorer_migration.json"
+  },
+  "knowledgebase-graphql": {
+    "title": "Knowledge Base (GraphQL)",
+    "version": "1.0.0",
+    "file": "knowledgebase-graphql_specification_1.0.0.yaml"
+  },
+  "operations-management": {
+    "title": "Operations Management",
+    "version": "1.10.1",
+    "file": "operations-management_specification_1.10.1.yaml"
+  },
+  "reservations": {
+    "title": "Reservations",
+    "version": "2.1.0",
+    "file": "reservations_specification_2.1.0.json"
+  },
+  "visitors": {
+    "title": "Visitor Registration",
+    "version": "2.0.0",
+    "file": "visitors_specification_2.0.0.json"
+  },
+  "services": {
+    "title": "Services",
+    "version": "1.4.0",
+    "file": "services_specification_1.4.0.yaml"
+  },
+  "settings": {
+    "title": "Settings",
+    "version": "1.1.0",
+    "file": "settings_specification_1.1.0.yaml"
+  },
+  "lookandfeel": {
+    "title": "SSP Look and Feel",
+    "version": "1.0.0",
+    "file": "lookandfeel_specification_1.0.0.json"
+  },
+  "task-notifications": {
+    "title": "Task Notifications",
+    "version": "1.0.0",
+    "file": "task-notifications_specification_1.0.0.yaml"
+  },
+  "access-roles": {
+    "title": "Access Roles",
+    "version": "SaaS",
+    "file": "access-roles_SaaS.json"
+  },
+  "custom-action-support": {
+    "title": "Custom Action Support",
+    "version": "SaaS",
+    "file": "custom-action-support_SaaS.json"
+  },
+  "oauth": {
+    "title": "OAuth client",
+    "version": "SaaS",
+    "file": "oauth_SaaS.yaml"
+  }
+}

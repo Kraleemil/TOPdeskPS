@@ -3,7 +3,9 @@
 .SYNOPSIS
     returns list of person groups
 .DESCRIPTION
-    returns list of person groups
+    Returns a list of person groups (GET /tas/api/persongroups, version 1 of the endpoint so the output keeps its shape).
+
+    Without -Query the old filter parameters are sent. With -Query the request is a FIQL query; -Archived is then translated to FIQL and -NameFragment cannot be used.
 .PARAMETER NameFragment
    Retrieve only person groups with name starting with this. No wildcards
 .PARAMETER ResultSize
@@ -11,13 +13,15 @@
 .PARAMETER Start
     The offset at which to start listing the operator groups at. This parameter is likely not used since Resultsize takes of this for you.
 .PARAMETER Archived
-    Specify whether you want archived operator groups included
+    Specify whether you want archived person groups included
+.PARAMETER Query
+    A FIQL expression to select person groups, for example "branch.name==Delft". See https://developers.topdesk.com/tutorial.html#query
 
 .EXAMPLE
     PS> Get-TdPersonGroup -ResultSize 500 -Archived
     returns up to 500 person groups. Includes archived groups
 #>
-    [CmdletBinding(HelpUri = 'https://andrewpla.github.io/TOPdeskPS/commands/Get-TdPersonGroup')]
+    [CmdletBinding(HelpUri = 'https://andrewpla.github.io/TOPdeskPS/commands/TOPdeskPS/Get-TdPersonGroup')]
 
 
     param (
@@ -26,7 +30,7 @@
         [string]$NameFragment,
 
         [Parameter(ParameterSetName = 'List')]
-        [ValidateRange(1, 100000)]
+        [ValidateRange(1, [int]::MaxValue)]
         [int]
         $ResultSize = 100,
 
@@ -36,62 +40,32 @@
 
         [Parameter(ParameterSetName = 'List')]
         [int]
-        $Start = 0
+        $Start = 0,
+
+        [Parameter(ParameterSetName = 'List')]
+        [string]
+        $Query
     )
 
     process {
         Write-PsfMessage "ParameterSetName: $($PsCmdlet.ParameterSetName)" -level internalcomment
         Write-PSfMessage "PSBoundParameters: $($PSBoundParameters | Out-String)" -level internalcomment
 
-        $uri = (Get-TdUrl) + "/tas/api/persongroups/?"
-
-
-        if ($Archived) {
-            $uri = "$uri&archived=$($archived.tostring().tolower())"
+        $parameter = [ordered]@{}
+        if ($Query) {
+            if ($NameFragment) {
+                Stop-PSFFunction -Message '-NameFragment cannot be combined with -Query. Add a condition on the name to the query instead.' -EnableException $true -Cmdlet $PSCmdlet
+            }
+            $conditions = @()
+            if (-not $Archived) { $conditions += 'archived==false' }
+            $parameter['query'] = Join-TdFiql -Condition $conditions -Query $Query
         }
-        if ($NameFragment) {
-            $uri = "$uri&name=$NameFragment"
+        else {
+            if ($Archived) { $parameter['archived'] = $true }
+            if ($NameFragment) { $parameter['name'] = $NameFragment }
         }
 
-
-        if ($ResultSize -gt 100) { $pageSize = 100 }
-        else { $pageSize = $ResultSize }
-
-        $uri = $uri.Replace('?&', '?')
-        $count = 0
-
-
-        do {
-            $groups = @()
-
-            $remaining = $ResultSize - $count
-
-            if ($remaining -le 100) {
-                $pageSize = $remaining
-                $status = 'finished'
-            }
-
-            $loopingUri = "$uri&start=$Start&page_size=$pageSize"
-
-            $Params = @{
-                'uri' = $loopingUri.replace('?&', '?')
-            }
-
-            $groups = Invoke-TdMethod @Params
-            foreach ($group in $groups) {
-                if ($group.id) { $group }
-                else { $status = 'finished' }
-            }
-            if (($groups.count) -eq $remaining) {
-                $status = 'finished'
-            }
-
-
-            $remaining = $ResultSize - $count
-            if ($remaining -eq 0) { $status = 'finished' }
-            $count += $groups.count
-            $start += $PageSize
-        }
-        until ($status -like 'finished')
+        Invoke-TdPagedRequest -Uri "$(Get-TdUrl)/tas/api/persongroups" -Parameter $parameter -StartParameter 'start' -SizeParameter 'page_size' -MaxPageSize 100 -ResultSize $ResultSize -Start $Start |
+        Where-Object { $_.id }
     }
 }

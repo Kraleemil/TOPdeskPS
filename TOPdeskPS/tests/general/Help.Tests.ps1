@@ -50,7 +50,9 @@ if ($SkipTest) {
 . $ExceptionsFile
 
 $includedNames = (Get-ChildItem $CommandPath -Recurse -File | Where-Object Name -like "*.ps1").BaseName
-$commands = Get-Command -Module (Get-Module $ModuleName) -CommandType Cmdlet, Function, Workflow | Where-Object Name -in $includedNames
+# Commands created at import from the TOPdesk operations table.
+$includedNames += (Get-Content "$PSScriptRoot\..\..\data\operations.json" -Raw -Encoding UTF8 | ConvertFrom-Json) | ForEach-Object name
+$commands = Get-Command -Module (Get-Module $ModuleName) -CommandType Cmdlet, Function | Where-Object Name -in $includedNames
 
 ## When testing help, remember that help is cached at the beginning of each session.
 ## To test, restart session.
@@ -86,7 +88,7 @@ foreach ($command in $commands) {
 				$Command.HelpUri | Should Be "https://andrewpla.github.io/TOPdeskPS/commands/$commandname"
 			}
 			$testhelperrors += 1
-		}		
+		}
 		
 		$testhelpall += 1
 		if ([String]::IsNullOrEmpty($Help.Description.Text)) {
@@ -107,10 +109,17 @@ foreach ($command in $commands) {
 		}
 		
 		$testhelpall += 1
-		if ([String]::IsNullOrEmpty(($Help.Examples.Example.Remarks | Select-Object -First 1).Text)) {
+		# PowerShell 6+ keeps the lines directly below the example code inside .Code (until a blank line),
+		# so a multi-line code block also counts as an example description there.
+		$firstExample = $Help.Examples.Example | Select-Object -First 1
+		$exampleRemark = ($Help.Examples.Example.Remarks | Select-Object -First 1).Text
+		if ([String]::IsNullOrEmpty($exampleRemark) -and $PSVersionTable.PSVersion.Major -ge 6 -and (($firstExample.Code -split "`n") | Where-Object { $_.Trim() }).Count -gt 1) {
+			$exampleRemark = $firstExample.Code
+		}
+		if ([String]::IsNullOrEmpty($exampleRemark)) {
 			# Should be at least one example description
 			It "gets example help from $commandName" {
-				($Help.Examples.Example.Remarks | Select-Object -First 1).Text | Should Not BeNullOrEmpty
+				$exampleRemark | Should Not BeNullOrEmpty
 			}
 			$testhelperrors += 1
 		}
@@ -126,7 +135,7 @@ foreach ($command in $commands) {
 		Context "Test parameter help for $commandName" {
 			
 			$Common = 'Debug', 'ErrorAction', 'ErrorVariable', 'InformationAction', 'InformationVariable', 'OutBuffer', 'OutVariable',
-			'PipelineVariable', 'Verbose', 'WarningAction', 'WarningVariable'
+			'PipelineVariable', 'Verbose', 'WarningAction', 'WarningVariable', 'ProgressAction'
 			
 			$parameters = $command.ParameterSets.Parameters | Sort-Object -Property Name -Unique | Where-Object Name -notin $common
 			$parameterNames = $parameters.Name

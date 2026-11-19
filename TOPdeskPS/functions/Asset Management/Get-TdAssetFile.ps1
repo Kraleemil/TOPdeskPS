@@ -18,6 +18,8 @@
         [system.string]
         $AssetId
     )
-    $uri = (Get-TdUrl) + "/tas/api/assetmgmt/uploads/?assetId=$AssetId"
-    Invoke-TdMethod -Uri $uri | Select-Object -ExpandProperty DataSet
+    process {
+        $uri = (Get-TdUrl) + "/tas/api/assetmgmt/uploads/?assetId=$AssetId"
+        Invoke-TdMethod -Uri $uri | Select-Object -ExpandProperty DataSet
+    }
 }

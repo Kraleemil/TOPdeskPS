@@ -1,0 +1,89 @@
+name: CI
+
+on:
+  push:
+    branches: [Development, master]
+  pull_request:
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Pester (${{ matrix.name }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Windows PowerShell 5.1
+            id: windows-powershell
+            os: windows-latest
+            shell: powershell
+          - name: PowerShell 7 on Windows
+            id: pwsh-windows
+            os: windows-latest
+            shell: pwsh
+          - name: PowerShell 7 on Linux
+            id: pwsh-linux
+            os: ubuntu-latest
+            shell: pwsh
+    defaults:
+      run:
+        shell: ${{ matrix.shell }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install test dependencies
+        run: |
+          $ErrorActionPreference = 'Stop'
+          [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
+          if ($PSVersionTable.PSVersion.Major -le 5) {
+            Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -Scope CurrentUser | Out-Null
+          }
+          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+          # The test suite uses Pester 4 syntax.
+          Install-Module -Name Pester -RequiredVersion 4.10.1 -Force -SkipPublisherCheck -Scope CurrentUser
+          Install-Module -Name PSFramework -Force -Scope CurrentUser
+          Install-Module -Name PSScriptAnalyzer -Force -Scope CurrentUser
+          Get-Module -ListAvailable Pester, PSFramework, PSScriptAnalyzer | Format-Table Name, Version
+
+      - name: Run tests
+        run: |
+          $ErrorActionPreference = 'Stop'
+          Import-Module Pester -RequiredVersion 4.10.1 -Force
+          Import-Module PSFramework
+          $PSVersionTable | Format-Table -AutoSize
+          ./TOPdeskPS/tests/pester.ps1 -OutputPath ./TestResults
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: test-results-${{ matrix.id }}
+          path: TestResults/
+          if-no-files-found: ignore
+
+  generated-code:
+    name: Operations table is up to date
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Check the operations table and the coverage report
+        run: |
+          python -m pip install --quiet pyyaml
+          # Download the specification versions recorded in build/apigen/specs.lock.json, then fail if
+          # data/operations.json, FunctionsToExport or docs/api-coverage.md differ from what they produce.
+          python build/apigen/apigen.py fetch --locked
+          python build/apigen/apigen.py check

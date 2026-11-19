@@ -1,26 +1,28 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version:
+online version: https://andrewpla.github.io/TOPdeskPS/commands/TOPdeskPS/Invoke-TdMethod
 schema: 2.0.0
 ---
 
 # Invoke-TdMethod
 
 ## SYNOPSIS
-Wrapper for Invoke-RestMethod.
-This command is exposed in case you encounter api calls that aren't part of this module.
-All api commands call this command to perform the web request.
+Sends a request to the TOPdesk API. This command is exposed in case you encounter api calls that aren't part of this module. All api commands call this command to perform the web request.
 
 ## SYNTAX
 
 ```
-Invoke-TdMethod [-Uri] <Uri> [-ContentType <String>] [-Body <PSObject>] [-Method <String>] [-Token <String>]
- [-File <FileInfo>] [<CommonParameters>]
+Invoke-TdMethod [-Uri] <uri> [-ContentType <string>] [-Body <psobject>] [-Method <string>] [-Token <string>] [-Accept <string>] [-OutFile <string>] [-File <FileInfo>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-A detailed description of the Invoke-TdMethod function.
+Sends a request to the TOPdesk API with the authorization header created by Connect-TdService and returns the response as objects.
+
+Text is always sent and read as UTF-8, so characters like æ, ø, å, ü and é work on Windows PowerShell 5.1 as well as PowerShell 7:
+- A string body is sent as UTF-8 bytes and the content type gets charset=utf-8.
+- Responses are decoded with the charset TOPdesk sends, or UTF-8 when it sends none.
+- File uploads are sent as multipart/form-data with UTF-8 field values and file names.
 
 ## EXAMPLES
 
@@ -34,7 +36,7 @@ Sends a Get request to your TOPdesk instance.
 ## PARAMETERS
 
 ### -Uri
-A description of the Uri parameter.
+the uri that you are targeting
 
 ```yaml
 Type: Uri
@@ -43,13 +45,13 @@ Aliases:
 
 Required: True
 Position: 1
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -ContentType
-A description of the ContentType parameter.
+The content type of the body. Default is application/json; charset=utf-8 is added for text bodies. Together with -File it is the content type of the uploaded file (detected from the extension when not given).
 
 ```yaml
 Type: String
@@ -58,15 +60,13 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value: application/json
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -Body
-The body of the request to be sent to TOPdesk.
-Accepts a PSCustomObject.
-If you also specify a file we will convert the body into a multipart/form request.
+The body of the request to be sent to TOPdesk. Accepts a PSCustomObject. If you also specify a file we will convert the body into a multipart/form request.
 
 ```yaml
 Type: PSObject
@@ -75,7 +75,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -105,25 +105,52 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Accept
+Value for the Accept header. Some TOPdesk endpoints need a versioned media type, for example application/x.topdesk-collection-person-v2+json. When not specified no Accept header is sent.
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value:
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -OutFile
+Saves the response body to this file instead of returning it. Used for downloading attachments, images and avatars.
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -File
-path to the file that you want to upload.
-If you specify a body then we will construct a multipart/form request.
-In Windows PowerShell this functionality isn't built in.
-If no body is specified then we will just use the -infile parameter of Invoke-RestMethod
+Path to the file that you want to upload. The request is sent as multipart/form-data with the file in the field "file"; the properties of -Body are added as extra form fields.
 
 ```yaml
 Type: FileInfo
-Parameter Sets: (All)
+Parameter Sets: File
 Aliases: InFile
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

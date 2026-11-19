@@ -1,13 +1,18 @@
 ﻿function Invoke-TdMethod {
     <#
 	.SYNOPSIS
-		Wrapper for Invoke-RestMethod. This command is exposed in case you encounter api calls that aren't part of this module. All api commands call this command to perform the web request.
+		Sends a request to the TOPdesk API. This command is exposed in case you encounter api calls that aren't part of this module. All api commands call this command to perform the web request.
 
 	.DESCRIPTION
-		A detailed description of the Invoke-TdMethod function.
+		Sends a request to the TOPdesk API with the authorization header created by Connect-TdService and returns the response as objects.
+
+		Text is always sent and read as UTF-8, so characters like æ, ø, å, ü and é work on Windows PowerShell 5.1 as well as PowerShell 7:
+		- A string body is sent as UTF-8 bytes and the content type gets charset=utf-8.
+		- Responses are decoded with the charset TOPdesk sends, or UTF-8 when it sends none.
+		- File uploads are sent as multipart/form-data with UTF-8 field values and file names.
 
 	.PARAMETER ContentType
-		default for contenttype is application/json . You may need to use a different contenttype for uploading files.
+		The content type of the body. Default is application/json; charset=utf-8 is added for text bodies. Together with -File it is the content type of the uploaded file (detected from the extension when not given).
 
 	.PARAMETER Uri
 		the uri that you are targeting
@@ -21,10 +26,14 @@
 	.PARAMETER Token
         Custom Api token if you want to avoid using Connect-TdService ex:'TOKEN id="Token id="Base64encodedToken
 
+    .PARAMETER Accept
+        Value for the Accept header. Some TOPdesk endpoints need a versioned media type, for example application/x.topdesk-collection-person-v2+json. When not specified no Accept header is sent.
+
+    .PARAMETER OutFile
+        Saves the response body to this file instead of returning it. Used for downloading attachments, images and avatars.
+
     .PARAMETER File
-    path to the file that you want to upload. If you specify a body then we will construct a multipart/form request.
-    In Windows PowerShell this functionality isn't built in.
-    If no body is specified then we will just use the -infile parameter of Invoke-RestMethod
+    Path to the file that you want to upload. The request is sent as multipart/form-data with the file in the field "file"; the properties of -Body are added as extra form fields.
 
 	.EXAMPLE
 		PS C:\> Invoke-TdMethod -Token $Token -Body $Body
@@ -52,6 +61,12 @@
 
         [string]
         $Token,
+
+        [string]
+        $Accept,
+
+        [string]
+        $OutFile,
 
         [Parameter(ParameterSetName = 'File')]
         [Alias('InFile')]
@@ -91,107 +106,52 @@
             }
         }
 
-        Switch ($PSCmdlet.ParameterSetName) {
-            '__AllParameterSets' {
-                $Params = @{
-                    'Body' = $Body
-                    'Method' = $Method
-                    'Uri' = $Uri
-                    'Headers' = $Headers
-                }
-                if ($ContentType) {
-                    $params.contenttype = $contenttype
-                }
-                Write-PSFMessage -Level InternalComment -Message "Params to be bassed to IRM: $($params.Keys -join ",")"
-                Invoke-RestMethod @Params
-            }
+        if ($Accept) {
+            $Headers['Accept'] = $Accept
+        }
 
-
-            'File' {
-                switch ($PSVersionTable.PSVersion.Major) {
-                    { $_ -le 5 } {
-                        #TOPdesk always want a multipart request for files from what I've seen.
-
-                        # Use fiddler to troubleshoot this.
-                        # We are going to generate webrequest
-
-                        Add-Type -AssemblyName System.web
-
-                        $boundary = [System.Guid]::NewGuid().ToString()
-
-                        # determine content type
-                        $mimeType = [System.Web.MimeMapping]::GetMimeMapping($File)
-
-                        if ($mimeType) {
-                            $ContentType = $mimeType
-                        }
-                        else {
-                            $ContentType = "application/octet-stream"
-                        }
-
-
-                        $fileBin = [System.IO.File]::ReadAllBytes($File)
-                        $enc = [System.Text.Encoding]::GetEncoding("iso-8859-1")
-                        $fileEnc = $enc.GetString($fileBin)
-
-                        $LF = "`r`n"
-                        $fileName = Split-Path $File -leaf
-
-                        # composed contains all lines of our web request
-                        $composedBody = @()
-
-                        # Loop through all members of the body and add their values to the request.
-                        $bodyMembers = $body.psobject.Members | where-object membertype -like 'noteproperty'
-                        foreach ($b in $bodyMembers ) {
-                            $composedBody += "--$boundary"
-                            $composedBody += "Content-Type: text/plain; charset=utf-8"
-                            $composedBody += "Content-Disposition: form-data; name=$($b.name)$LF"
-                            $composedBody += "$($b.value)"
-                        }
-
-
-                        # now we add the actual content of the of file
-                        $composedBody += (
-                            "--$boundary",
-                            "Content-Disposition: form-data; name=`"file`"; filename=`"$fileName`"",
-                            "Content-Type: $ContentType$LF",
-                            $fileEnc,
-                            "--$boundary--$LF"
-                        ) -join $LF
-
-
-                        $composedBody = $composedBody -join $LF
-                        $params = @{
-                            uri = $Uri
-                            Method = $Method
-                            ContentType = "multipart/form-data; boundary=`"$boundary`""
-                            Body = $composedBody
-                            Headers = $Headers
-                        }
-                        Invoke-RestMethod @params
-                    }
-
-
-                    { $_ -ge 6 } {
-                        $form = @{
-                            file = Get-Item $file
-                        }
-
-                        $bodyMembers = $body.psobject.Members | where-object membertype -like 'noteproperty'
-                        foreach ($b in $bodyMembers) {
-                            $form.add( "$($b.name)", "$($b.Value)")
-                        }
-                        $params = @{
-                            Uri = $uri
-                            Method = $Method
-                            Form = $Form
-                            Headers = $Headers
-                        }
-                        Invoke-RestMethod @params
-                    }
-                }
+        if ($PSCmdlet.ParameterSetName -eq 'File') {
+            # Build the multipart body as bytes: UTF-8 for text fields and the file name, the file content unchanged.
+            $multipartParams = @{ File = $File; Field = $Body }
+            if ($PSBoundParameters.ContainsKey('ContentType')) { $multipartParams['FileContentType'] = $ContentType }
+            $multipart = New-TdMultipartBody @multipartParams
+            $Params = @{
+                Uri = $Uri
+                Method = $Method
+                Headers = $Headers
+                Body = $multipart.Body
+                ContentType = $multipart.ContentType
             }
         }
+        else {
+            $Params = @{
+                Method = $Method
+                Uri = $Uri
+                Headers = $Headers
+            }
+            if ($null -ne $Body) {
+                $rawBody = $Body.PSObject.BaseObject
+                if ($rawBody -is [string]) {
+                    # Send text as UTF-8 bytes. Windows PowerShell would otherwise encode it as ISO-8859-1 and break æ, ø, å and other characters.
+                    $Params['Body'] = [System.Text.UTF8Encoding]::new($false).GetBytes($rawBody)
+                    if ($ContentType -and $ContentType -notmatch 'charset=') { $ContentType = "$ContentType; charset=utf-8" }
+                }
+                else {
+                    $Params['Body'] = $Body
+                }
+            }
+            if ($ContentType) {
+                $Params['ContentType'] = $ContentType
+            }
+        }
+
+        Write-PSFMessage -Level InternalComment -Message "Params to be passed to the web request: $($Params.Keys -join ",")"
+        if ($OutFile) {
+            Invoke-RestMethod @Params -OutFile $OutFile
+            return
+        }
+        # Read the raw response and decode it ourselves, so the charset is right on every PowerShell version.
+        Invoke-WebRequest @Params -UseBasicParsing | ConvertFrom-TdResponse
     }
 }
 

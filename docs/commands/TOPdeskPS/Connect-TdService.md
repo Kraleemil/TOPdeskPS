@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version:
+online version: https://andrewpla.github.io/TOPdeskPS/commands/TOPdeskPS/Connect-TdService
 schema: 2.0.0
 ---
 
@@ -13,30 +13,38 @@ Prepares your session for TOPdeskPS
 ## SYNTAX
 
 ```
-Connect-TdService [-Credential] <PSCredential> [[-UserType] <Object>] [-PassThru] [[-Url] <String>] [-Register]
- [-ApplicationPassword] [-EnableException] [<CommonParameters>]
+Connect-TdService [-Credential] <pscredential> [[-UserType] <Object>] [[-Url] <string>] [-PassThru] [-Register] [-ApplicationPassword] [-EnableException] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-This command either generates a login token if you provide TOPdesk credentials or this will generate the headers if you are using an application password (use -ApplicationPassword)
+Prepares the authorization header that every other TOPdeskPS command uses.
+
+Recommended: use an application password (-ApplicationPassword). The credential's user name is your TOPdesk login name and the password is the application password you created in TOPdesk (My settings > Application passwords). TOPdeskPS then sends a Basic authorization header with every request.
+
+Without -ApplicationPassword this command requests a login token from /tas/api/login/<UserType> with your normal TOPdesk password. TOPdesk has deprecated the operator login endpoint in favour of application passwords, so a warning is written when it is used. It keeps working for now so existing scripts don't break.
 
 ## EXAMPLES
 
 ### EXAMPLE 1
 ```
+Connect-TdService -Url 'https://company.topdesk.net' -Credential (Get-Credential) -ApplicationPassword
+```
+
+Prompts you for your TOPdesk login name and application password and uses them for all following requests. This is the recommended way to connect.
+
+### EXAMPLE 2
+```
 Connect-TdService -Url 'https://company.topdesk.net' -Credential (Get-Credential)
 ```
 
-Prompts you for your TOPdesk credentials and then connects to TOPdesk.
+Prompts you for your TOPdesk credentials and requests a login token. Logging in as an operator this way is deprecated by TOPdesk; use -ApplicationPassword instead.
 
-### EXAMPLE 2
+### EXAMPLE 3
 ```
 Connect-TdService -Credential $Cred -Url 'https://company.topdesk.net:90' -Register -ApplicationPassword
 ```
 
-Generates a header that is specific to Application Passwords.
-The Url will be registered so you don't need to enter it the next time you run connect-tdservice.
-We will be using port 90.
+Generates a header that is specific to Application Passwords. The Url will be registered so you don't need to enter it the next time you run connect-tdservice. We will be using port 90.
 
 ## PARAMETERS
 
@@ -50,14 +58,13 @@ Aliases:
 
 Required: True
 Position: 1
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -UserType
-Specify whether you want to login as a person or an operator.
-Default value: operator
+Specify whether you want to login as a person or an operator. Default value: operator
 
 ```yaml
 Type: Object
@@ -66,14 +73,13 @@ Aliases:
 
 Required: False
 Position: 2
-Default value: Operator
+Default value: operator
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -PassThru
-Passes the login token through to the console.
-Can be useful for troubleshooting or if you want to generate a login token to be consumed by a different application.
+Passes the login token through to the console. Can be useful for troubleshooting or if you want to generate a login token to be consumed by a different application.
 
 ```yaml
 Type: SwitchParameter
@@ -88,9 +94,7 @@ Accept wildcard characters: False
 ```
 
 ### -Url
-This is the Url of your TOPdesk instance.
-You can specify a custom port.
-Example: 'https://Company.TOPdesk.net' , 'http://10.1.2.3:90'
+This is the Url of your TOPdesk instance. You can specify a custom port. Example: 'https://Company.TOPdesk.net' , 'http://10.1.2.3:90'
 
 ```yaml
 Type: String
@@ -106,8 +110,7 @@ Accept wildcard characters: False
 ```
 
 ### -Register
-Saves your TOPdesk url so you don't need to manually specify it each time.
-For more information see about_TOPdeskPS_Registration
+Saves your TOPdesk url so you don't need to manually specify it each time. For more information see about_TOPdeskPS_Registration
 
 ```yaml
 Type: SwitchParameter
@@ -122,8 +125,7 @@ Accept wildcard characters: False
 ```
 
 ### -ApplicationPassword
-Specify whether you are supplying an application password credential rather than a TOPdesk credential.
-The credential still needs to be provided to the Credential parameter.
+Specify whether you are supplying an application password credential rather than a TOPdesk credential. The credential still needs to be provided to the Credential parameter.
 
 ```yaml
 Type: SwitchParameter
@@ -160,7 +162,6 @@ For more information, see about_CommonParameters (http://go.microsoft.com/fwlink
 
 ## OUTPUTS
 
-### System.String
 ## NOTES
 
 ## RELATED LINKS

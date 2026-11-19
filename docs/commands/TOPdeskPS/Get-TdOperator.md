@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version:
+online version: https://andrewpla.github.io/TOPdeskPS/commands/TOPdeskPS/Get-TdOperator
 schema: 2.0.0
 ---
 
@@ -13,12 +13,13 @@ returns list of operators
 ## SYNTAX
 
 ```
-Get-TdOperator [[-TOPdeskLoginName] <String>] [-ResultSize <Int32>] [-Start <Int32>] [-Email <String>]
- [-Archived] [-LastName <String>] [-FirstName <String>] [<CommonParameters>]
+Get-TdOperator [[-TOPdeskLoginName] <string>] [-ResultSize <int>] [-Start <int>] [-Email <string>] [-Archived] [-LastName <string>] [-FirstName <string>] [-Query <string>] [-Fields <string[]>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-returns list of operators
+Returns a list of operators (GET /tas/api/operators).
+
+The filter parameters are translated into a FIQL query. You can add your own FIQL with -Query; it is combined with the other filters using AND.
 
 ## EXAMPLES
 
@@ -31,10 +32,10 @@ returns list of operators
 
 ### EXAMPLE 2
 ```
-Get-TdOperator -Name 'John Support'
+Get-TdOperator -Query 'operatorGroup.name==Servicedesk' -ResultSize ([int]::MaxValue)
 ```
 
-returns operator with name John Support (uses the dynamicName field)
+Returns all operators that are not archived and are member of the operator group Servicedesk.
 
 ## PARAMETERS
 
@@ -48,14 +49,13 @@ Aliases:
 
 Required: False
 Position: 1
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -ResultSize
-The amount of operators to be returned.
-Requests greater than 100 require multiple api calls
+The amount of operators to be returned. Requests greater than 5000 require multiple api calls. Use [int]::MaxValue to return all operators.
 
 ```yaml
 Type: Int32
@@ -70,7 +70,7 @@ Accept wildcard characters: False
 ```
 
 ### -Start
-This is the offset at which you want to start listing incidents.
+This is the offset at which you want to start listing operators.
 
 ```yaml
 Type: Int32
@@ -94,13 +94,13 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -Archived
-Whether to return archived operators
+Also return archived operators. Without this switch only operators that are not archived are returned.
 
 ```yaml
 Type: SwitchParameter
@@ -124,7 +124,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -139,7 +139,37 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value:
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Query
+A FIQL expression to select operators, for example "(stockManager==true,operatorGroup.stockManager==true)". See https://developers.topdesk.com/tutorial.html#query
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value:
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Fields
+Only include these fields in the response, for example 'id','dynamicName','email'.
+
+```yaml
+Type: String[]
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value:
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

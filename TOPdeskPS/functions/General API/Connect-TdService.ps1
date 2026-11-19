@@ -4,7 +4,11 @@
 		Prepares your session for TOPdeskPS
 
 	.DESCRIPTION
-		This command either generates a login token if you provide TOPdesk credentials or this will generate the headers if you are using an application password (use -ApplicationPassword)
+		Prepares the authorization header that every other TOPdeskPS command uses.
+
+		Recommended: use an application password (-ApplicationPassword). The credential's user name is your TOPdesk login name and the password is the application password you created in TOPdesk (My settings > Application passwords). TOPdeskPS then sends a Basic authorization header with every request.
+
+		Without -ApplicationPassword this command requests a login token from /tas/api/login/<UserType> with your normal TOPdesk password. TOPdesk has deprecated the operator login endpoint in favour of application passwords, so a warning is written when it is used. It keeps working for now so existing scripts don't break.
 
 	.PARAMETER Credential
 		Credentials used to access TOPdesk.
@@ -28,8 +32,14 @@
         Specify whether you are supplying an application password credential rather than a TOPdesk credential. The credential still needs to be provided to the Credential parameter.
 
 	.EXAMPLE
+		PS C:\> Connect-TdService -Url 'https://company.topdesk.net' -Credential (Get-Credential) -ApplicationPassword
+
+		Prompts you for your TOPdesk login name and application password and uses them for all following requests. This is the recommended way to connect.
+
+	.EXAMPLE
 		PS C:\> Connect-TdService -Url 'https://company.topdesk.net' -Credential (Get-Credential)
-		Prompts you for your TOPdesk credentials and then connects to TOPdesk.
+
+		Prompts you for your TOPdesk credentials and requests a login token. Logging in as an operator this way is deprecated by TOPdesk; use -ApplicationPassword instead.
 
 	.EXAMPLE
 		PS C:\> Connect-TdService -Credential $Cred -Url 'https://company.topdesk.net:90' -Register -ApplicationPassword
@@ -76,6 +86,9 @@
     }
 
     elseif (-not $ApplicationPassword) {
+        if ($UserType -eq 'operator') {
+            Write-PSFMessage -Level Warning -Message "Logging in with an operator password via /tas/api/login/operator is deprecated by TOPdesk. Create an application password in TOPdesk and use Connect-TdService -ApplicationPassword instead."
+        }
         Write-PSFMessage "Sending login request to TOPdesk to generate token." -Level Verbose
         $headers = @{
             'Authorization' = "Basic $(ConvertTo-Base64 "$($Credential.username):$($Credential.GetNetworkCredential().password)")"

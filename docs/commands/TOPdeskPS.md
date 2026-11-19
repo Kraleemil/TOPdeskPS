@@ -45,8 +45,11 @@
  - [Get-TdIncident](TOPdeskPS/Get-TdIncident.html)
  - [Get-TdIncidentAction](TOPdeskPS/Get-TdIncidentAction.html)
  - [Get-TdIncidentTimeSpent](TOPdeskPS/Get-TdIncidentTimeSpent.html)
+ - [Get-TdKnowledgeItem](TOPdeskPS/Get-TdKnowledgeItem.html)
  - [Get-TdLocation](TOPdeskPS/Get-TdLocation.html)
  - [Get-TdLocationDetail](TOPdeskPS/Get-TdLocationDetail.html)
+ - [Get-TdLoggedInOperator](TOPdeskPS/Get-TdLoggedInOperator.html)
+ - [Get-TdLoggedInPerson](TOPdeskPS/Get-TdLoggedInPerson.html)
  - [Get-TdOperator](TOPdeskPS/Get-TdOperator.html)
  - [Get-TdOperatorAvatar](TOPdeskPS/Get-TdOperatorAvatar.html)
  - [Get-TdOperatorFilter](TOPdeskPS/Get-TdOperatorFilter.html)
@@ -106,3 +109,5 @@
  - [Set-TdOperatorOperatorGroup](TOPdeskPS/Set-TdOperatorOperatorGroup.html)
  - [Set-TdOperatorPermissionGroup](TOPdeskPS/Set-TdOperatorPermissionGroup.html)
  - [Set-TdPerson](TOPdeskPS/Set-TdPerson.html)
+
+The commands for the other TOPdesk API operations are created from the official API specifications; [api-coverage.md](../api-coverage.md) lists them. Use `Get-Help <command>` for their help.
