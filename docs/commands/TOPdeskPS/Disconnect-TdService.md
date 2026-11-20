@@ -1,7 +1,7 @@
 ---
 external help file: TOPdeskPS-help.xml
 Module Name: TOPdeskPS
-online version:
+online version: https://andrewpla.github.io/TOPdeskPS/commands/TOPdeskPS/Disconnect-TdService
 schema: 2.0.0
 ---
 
@@ -17,7 +17,10 @@ Disconnect-TdService [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Disconnects you from the TOPdesk service and invalidates your login token.
+Ends the TOPdeskPS session.
+- After Connect-TdService with a TOPdesk password, the login token is invalidated at TOPdesk (GET /tas/api/logout).
+- After Connect-TdService -ApplicationPassword there is no token to invalidate; the stored credentials are removed from the session.
+Either way the module forgets the credentials, so the next command needs Connect-TdService again.
 
 ## EXAMPLES
 

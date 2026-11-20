@@ -1,5 +1,26 @@
 # TOPdeskPS Release History
 
+## 0.2.1
+
+Fixes for open issues and pull requests of the original repository (AndrewPla/TOPdeskPS).
+
+### Fixed
+* Get-TdBranchFilter no longer requires -Operator (AndrewPla/TOPdeskPS#123).
+* Get-TdCategoryFilter -Operator used an undefined variable and asked for the wrong url.
+* Set-TdIncident -LocationId set the incident's object instead of its location (AndrewPla/TOPdeskPS#109).
+* Set-TdIncident accepts -IncidentNumber again, as its documentation example uses (AndrewPla/TOPdeskPS#110).
+* Disconnect-TdService failed after connecting with an application password; it now only forgets the credentials then, and always clears the token (AndrewPla/TOPdeskPS#102).
+* New-TdIncident sent the property "Closed" instead of "closed" (from AndrewPla/TOPdeskPS#99).
+* New-TdIncident and Set-TdIncident serialize nested values (caller, optional fields) completely.
+
+### Added
+* New-TdIncident and Set-TdIncident: -OptionalFields1 and -OptionalFields2 (AndrewPla/TOPdeskPS#106).
+* Get-TdAsset -LinkedTo (from AndrewPla/TOPdeskPS#99); -Archived alone now queries archived assets and is sent as true/false (from AndrewPla/TOPdeskPS#125).
+* Get-TdAssetTemplateBlank -TemplateId, also from the pipeline (from AndrewPla/TOPdeskPS#99).
+* Connect-TdService and README: how to connect without a prompt in scripts and scheduled tasks (AndrewPla/TOPdeskPS#119).
+
+Already solved by 0.2.0: AndrewPla/TOPdeskPS#128 (uploads on PowerShell 7), #91 and #117 (special characters), #101 (-OrderBy), #124 (Set-TdAssetArchiveStatus), #98 (grid field commands), #100 (Update-TdChangeActivity, New-TdChangeActivityProgressTrail).
+
 ## 0.2.0
 
 Compared with the official TOPdesk API specifications on developers.topdesk.com (Incident 4.2.10, Supporting Files 2.7.12, Change 1.42.0, Assets 1.91.3, General 1.2.0, Operations Management 1.10.1, Reservations 2.1.0, Visitors 2.0.0, Services 1.4.0 and others). See [docs/api-coverage.md](docs/api-coverage.md) for the full comparison.

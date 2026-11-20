@@ -178,11 +178,17 @@ Cannot be filled in if the incident has a supplier service linked.
 	.PARAMETER Confirm
 		If this switch is enabled, you will be prompted for confirmation before executing any operations that change state.
 
+	.PARAMETER OptionalFields1
+	Values for the optional fields on tab 1 of the incident, as a hashtable with the API field names, for example @{ boolean1 = $true; text1 = 'Værdi'; searchlist1 = @{ id = $id } }.
+
+	.PARAMETER OptionalFields2
+	Values for the optional fields on tab 2 of the incident, as a hashtable with the API field names, for example @{ number1 = 5 }.
+
 	.PARAMETER WhatIf
 		If this switch is enabled, no actions are performed but informational messages will be displayed that explain what would happen if the command were to run.
 
 	.EXAMPLE
-		PS C:\> Set-TdIncident -IncidentNumber 'I1805-221' -Action 'Example Action'
+		PS C:\> Set-TdIncident -Number 'I1805-221' -Action 'Example Action'
 		Updates incident I1805-221 with the action 'Example Action'
 #>
 
@@ -193,6 +199,7 @@ Cannot be filled in if the incident has a supplier service linked.
         [Parameter(Mandatory = $true,
             ValueFromPipelineByPropertyName = $true,
             position = 0)]
+        [Alias('IncidentNumber')]
         [string]
         $Number,
 
@@ -290,8 +297,13 @@ Cannot be filled in if the incident has a supplier service linked.
         $MajorCallObject,
 
         [switch]
-        $PublishToSsd
+        $PublishToSsd,
 
+        [hashtable]
+        $OptionalFields1,
+
+        [hashtable]
+        $OptionalFields2
     )
     <#TODO
 
@@ -318,6 +330,12 @@ Cannot be filled in if the incident has a supplier service linked.
         $callerBody = [PSCustomObject]@{ }
 
         switch ($PSBoundParameters.Keys) {
+            OptionalFields1 {
+                $Body | Add-Member -MemberType NoteProperty -Name 'optionalFields1' -Value $OptionalFields1
+            }
+            OptionalFields2 {
+                $Body | Add-Member -MemberType NoteProperty -Name 'optionalFields2' -Value $OptionalFields2
+            }
             Action {
                 $Body | Add-Member -MemberType NoteProperty -Name 'action' -Value $Action
             }
@@ -387,7 +405,7 @@ Cannot be filled in if the incident has a supplier service linked.
 
             LocationId {
                 $val = @{ id = $LocationId }
-                $body | Add-Member -MemberType NoteProperty -name object -Value $val
+                $body | Add-Member -MemberType NoteProperty -name location -Value $val
             }
 
             Operator {
@@ -468,7 +486,7 @@ Cannot be filled in if the incident has a supplier service linked.
 
         $Params = @{
             'Uri' = $IncidentURL
-            'Body' = $Body | ConvertTo-Json
+            'Body' = $Body | ConvertTo-Json -Depth 10
             'Method' = 'Put'
         }
         if (-not (Test-PSFShouldProcess -PSCmdlet $PSCmdlet -Target $IncidentUrl -Action "Sending $($Params.body | out-string) ")) {

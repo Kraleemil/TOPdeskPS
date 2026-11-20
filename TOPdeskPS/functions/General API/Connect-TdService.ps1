@@ -37,6 +37,13 @@
 		Prompts you for your TOPdesk login name and application password and uses them for all following requests. This is the recommended way to connect.
 
 	.EXAMPLE
+		PS C:\> $password = Get-Secret -Name TOPdeskAppPassword   # SecretManagement, or ConvertTo-SecureString from a protected source
+		PS C:\> $credential = [pscredential]::new('api-user', $password)
+		PS C:\> Connect-TdService -Url 'https://company.topdesk.net' -Credential $credential -ApplicationPassword
+
+		Connects without any prompt, for scripts and scheduled tasks. The user name is the TOPdesk login name of the operator who created the application password.
+
+	.EXAMPLE
 		PS C:\> Connect-TdService -Url 'https://company.topdesk.net' -Credential (Get-Credential)
 
 		Prompts you for your TOPdesk credentials and requests a login token. Logging in as an operator this way is deprecated by TOPdesk; use -ApplicationPassword instead.

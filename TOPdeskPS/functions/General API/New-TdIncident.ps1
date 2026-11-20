@@ -266,6 +266,12 @@ Can only be set by operators.
 .PARAMETER Confirm
 	If this switch is enabled, you will be prompted for confirmation before executing any operations that change state.
 
+.PARAMETER OptionalFields1
+Values for the optional fields on tab 1 of the incident, as a hashtable with the API field names, for example @{ boolean1 = $true; text1 = 'Værdi'; searchlist1 = @{ id = $id } }.
+
+.PARAMETER OptionalFields2
+Values for the optional fields on tab 2 of the incident, as a hashtable with the API field names, for example @{ number1 = 5 }.
+
 .PARAMETER WhatIf
 		If this switch is enabled, no actions are performed but informational messages will be displayed that explain what would happen if the command were to run.
 
@@ -409,8 +415,11 @@ Can only be set by operators.
 
         [string]$MajorCallObjectId,
 
-        [switch]$PublishToSsd
+        [switch]$PublishToSsd,
 
+        [hashtable]$OptionalFields1,
+
+        [hashtable]$OptionalFields2
     )
 
     begin {
@@ -426,6 +435,12 @@ Can only be set by operators.
         $callerBody = [pscustomobject]@{ }
 
         switch ($PSBoundParameters.Keys) {
+            OptionalFields1 {
+                $Body | Add-Member -MemberType NoteProperty -Name 'optionalFields1' -Value $OptionalFields1
+            }
+            OptionalFields2 {
+                $Body | Add-Member -MemberType NoteProperty -Name 'optionalFields2' -Value $OptionalFields2
+            }
             Action {
                 $Body | Add-Member -MemberType NoteProperty -Name 'action' -Value $Action
             }
@@ -537,7 +552,7 @@ Can only be set by operators.
                 $Body | Add-Member -Membertype NoteProperty -Name 'completedDate' -Value $CompletedDate
             }
             Closed {
-                $Body | Add-Member -Membertype noteproperty -name 'Closed' -Value $Closed.tostring().tolower()
+                $Body | Add-Member -Membertype noteproperty -name 'closed' -Value $Closed.tostring().tolower()
             }
             ClosedDate {
                 $Body | Add-Member -Membertype NoteProperty -Name 'closedDate' -Value $ClosedDate
@@ -682,7 +697,7 @@ Can only be set by operators.
 
         $Params = @{
             'Uri' = $IncidentURL
-            'Body' = $Body | ConvertTo-Json
+            'Body' = $Body | ConvertTo-Json -Depth 10
             'Method' = 'Post'
         }
         if ($PSCmdlet.ShouldProcess("The Request" , "Creating new incident with body -- `n $($body | ConvertTo-Json)")) {

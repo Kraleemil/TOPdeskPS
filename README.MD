@@ -29,6 +29,16 @@ Create an application password in TOPdesk (My settings > Application passwords).
 ```
 Connects to your TOPdesk instance and registers the url. The next time you run Connect-TdService it will remember your TOPdesk Url.
 
+### In scripts and scheduled tasks
+
+`Get-Credential` is what shows a login prompt. In unattended scripts build the credential yourself, for example from [SecretManagement](https://learn.microsoft.com/powershell/utility-modules/secretmanagement/overview):
+
+```powershell
+  $password = Get-Secret -Name TOPdeskAppPassword
+  $credential = [pscredential]::new('api-user', $password)
+  Connect-TdService -Url 'https://company.topdesk.net' -Credential $credential -ApplicationPassword
+```
+
 ### Using TOPdesk login credentials (deprecated)
 ```powershell
   Connect-TdService -Url 'https://Company.TOPdesk.net' -Credential (Get-Credential)

@@ -14,12 +14,12 @@ Returns TOPdesk assets
 
 ### List (Default)
 ```
-Get-TdAsset [-Archived] [-Field <string[]>] [<CommonParameters>]
+Get-TdAsset [-Field <string[]>] [<CommonParameters>]
 ```
 
 ### Standard Query
 ```
-Get-TdAsset [-NameFragment <string>] [-Archived] [-ShowAssignments] [-TemplateName <string>] [-Field <string[]>] [<CommonParameters>]
+Get-TdAsset [-NameFragment <string>] [-Archived] [-ShowAssignments] [-TemplateName <string>] [-LinkedTo <string>] [-Field <string[]>] [<CommonParameters>]
 ```
 
 ### Template Query
@@ -28,9 +28,10 @@ Get-TdAsset -TemplateId <Object> [-Archived] [-Field <string[]>] [<CommonParamet
 ```
 
 ## DESCRIPTION
-This API returns a list of assets. By default the following fields are included: id, name (text), etag and state (archived).
- You can use various parameters to filter this list or to retrieve other fields from the assets. In Asset Management, paging is missing deliberately.
- To return all assets for a given template please use the TemplateId parameter. You can also specify the fields that you would like returned when performing a template query.
+Returns assets. The command works in three ways:
+- Without parameters it calls /assetmgmt/import/assets and returns all non-archived assets (id and name).
+- With -NameFragment, -TemplateName, -LinkedTo, -ShowAssignments or -Archived it calls /assetmgmt/assets. That returns at most 50 assets with id, name, etag and state; use the filters to narrow the list.
+- With -TemplateId it calls /assetmgmt/assets/templateId/{templateId} and returns all assets of that template, with the fields given in -Field.
 
 ## EXAMPLES
 
@@ -40,6 +41,13 @@ Get-TdAsset
 ```
 
 Get all topdesk assets
+
+### EXAMPLE 2
+```
+Get-TdAsset -LinkedTo "person/$personId"
+```
+
+Returns the assets linked to the person.
 
 ## PARAMETERS
 
@@ -59,11 +67,11 @@ Accept wildcard characters: False
 ```
 
 ### -Archived
-Whether to show archived assets. if performing a standard query it will return all, if performing a Tempalte query it will only return active assets.
+Use -Archived to return only archived assets and -Archived:$false to return only active assets. Leave it out to return both.
 
 ```yaml
 Type: SwitchParameter
-Parameter Sets: (All)
+Parameter Sets: Standard Query, Template Query
 Aliases:
 
 Required: False
@@ -90,6 +98,21 @@ Accept wildcard characters: False
 
 ### -TemplateName
 To filter assets by a specific template’s name (case sensitive).
+
+```yaml
+Type: String
+Parameter Sets: Standard Query
+Aliases:
+
+Required: False
+Position: Named
+Default value:
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -LinkedTo
+Only return assets linked to this entity: its type and id separated by a slash, for example 'person/<person id>' or 'incident/<incident id>'. Types: person, personGroup, branch, location and the external link types (incident, change, ...).
 
 ```yaml
 Type: String

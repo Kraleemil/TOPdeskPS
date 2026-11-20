@@ -37,7 +37,7 @@
 
         switch ($PSCmdlet.ParameterSetName) {
             'OperatorId' {
-                $uri = "$(Get-TdUrl)/tas/api/operators/id/$OperatorId/filters/category"
+                $uri = "$(Get-TdUrl)/tas/api/operators/id/$Operator/filters/category"
             }
             '__AllParameterSets' {
                 $uri = "$(Get-TdUrl)/tas/api/operators/filters/category"
